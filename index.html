@@ -3,487 +3,784 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Marcelo Burgos Portfolio</title>
+    <title>Marcelo Burgos - Portfolio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #39ff14;
-            --secondary-color: #0b0c0a;
-            --accent-color: #ff14e9;
-            --text-color: #f0f0f0;
-            --bg-color: #121512;
+            --primary-color: #0D47A1; /* Azul oscuro */
+            --secondary-color: #E3F2FD; /* Azul muy claro */
+            --accent-color: #42A5F5; /* Azul claro */
+            --text-color: #1A237E; /* Azul marino */
+            --bg-color: #FFFFFF; /* Blanco */
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.3);
         }
         
         body {
-            background: var(--secondary-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--text-color);
-            font-family: 'Courier New', monospace;
+            font-family: 'Lato', sans-serif;
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            line-height: 1.8;
             overflow-x: hidden;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2339ff14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>'), auto;
         }
-        
-        .cursor-trail {
+
+        #particles-js {
             position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.7;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease-out, opacity 0.3s ease-out;
-        }
-        
-        .language-selector {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        
-        .language-btn {
-            background: transparent;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .language-btn:hover {
-            background: var(--primary-color);
-            color: var(--secondary-color);
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 40px 20px;
+            position: relative;
+            z-index: 2;
         }
         
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, #0a1628 0%, #0D47A1 50%, #1565C0 100%);
+            color: var(--bg-color);
+            border-radius: 25px;
+            box-shadow: 
+                0 25px 80px rgba(13, 71, 161, 0.5),
+                0 0 100px rgba(66, 165, 245, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.1);
             position: relative;
+            overflow: hidden;
         }
-        
-        .title {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
+
+        /* Geometric grid overlay */
+        header .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(66, 165, 245, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(66, 165, 245, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+            pointer-events: none;
         }
-        
-        .aka {
-            font-size: 1.5rem;
-            color: var(--accent-color);
-            margin-bottom: 30px;
-            display: inline-block;
-            position: relative;
+
+        @keyframes grid-move {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
         }
-        
-        .aka:after {
+
+        /* Floating geometric shapes */
+        header .shape {
+            position: absolute;
+            border: 2px solid rgba(66, 165, 245, 0.4);
+            animation: float-shape 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        header .shape-1 {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 5%;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            background: radial-gradient(circle at 30% 30%, rgba(66, 165, 245, 0.2), transparent 70%);
+            animation-delay: 0s;
+        }
+
+        header .shape-2 {
+            width: 80px;
+            height: 80px;
+            top: 60%;
+            right: 10%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15), transparent 70%);
+            animation-delay: -2s;
+            animation-duration: 6s;
+        }
+
+        header .shape-3 {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 20%;
+            transform: rotate(45deg);
+            background: linear-gradient(135deg, rgba(66, 165, 245, 0.3), transparent);
+            animation-delay: -4s;
+            animation-duration: 10s;
+        }
+
+        header .shape-4 {
+            width: 100px;
+            height: 100px;
+            bottom: 15%;
+            left: 15%;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            animation-delay: -1s;
+            animation-duration: 7s;
+        }
+
+        header .shape-5 {
+            width: 40px;
+            height: 40px;
+            top: 40%;
+            left: 25%;
+            border-radius: 50%;
+            background: rgba(66, 165, 245, 0.4);
+            filter: blur(5px);
+            animation-delay: -3s;
+            animation-duration: 5s;
+        }
+
+        @keyframes float-shape {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg) scale(1); 
+                opacity: 0.6;
+            }
+            25% { 
+                transform: translateY(-20px) rotate(90deg) scale(1.1); 
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translateY(-35px) rotate(180deg) scale(1); 
+                opacity: 1;
+            }
+            75% { 
+                transform: translateY(-15px) rotate(270deg) scale(1.05); 
+                opacity: 0.7;
+            }
+        }
+
+        /* Pulsing rings */
+        header .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(66, 165, 245, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-ring 4s ease-out infinite;
+            pointer-events: none;
+        }
+
+        header .pulse-ring:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        header .pulse-ring:nth-child(3) {
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                width: 100px;
+                height: 100px;
+                opacity: 1;
+                border-width: 3px;
+            }
+            100% {
+                width: 500px;
+                height: 500px;
+                opacity: 0;
+                border-width: 1px;
+            }
+        }
+
+        /* Glowing orbs */
+        header::before {
             content: '';
+            position: absolute;
+            top: -20%;
+            right: -5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(66, 165, 245, 0.4) 0%, rgba(66, 165, 245, 0.1) 40%, transparent 70%);
+            border-radius: 50%;
+            animation: glow-orb 6s ease-in-out infinite;
+            filter: blur(30px);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -25%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(66, 165, 245, 0.15) 40%, transparent 70%);
+            border-radius: 50%;
+            animation: glow-orb 8s ease-in-out infinite reverse;
+            filter: blur(40px);
+        }
+
+        @keyframes glow-orb {
+            0%, 100% { 
+                transform: scale(1) translateY(0); 
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.3) translateY(-30px); 
+                opacity: 1;
+            }
+        }
+
+        /* DNA-like helix lines */
+        header .helix-line {
             position: absolute;
             width: 100%;
             height: 2px;
-            bottom: -5px;
-            left: 0;
-            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            background: linear-gradient(90deg, transparent 0%, rgba(66, 165, 245, 0.5) 50%, transparent 100%);
+            animation: helix-move 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        header .helix-line:nth-child(1) { top: 25%; animation-delay: 0s; }
+        header .helix-line:nth-child(2) { top: 75%; animation-delay: 1.5s; }
+
+        @keyframes helix-move {
+            0%, 100% { transform: scaleX(0.3) translateX(-100px); opacity: 0; }
+            50% { transform: scaleX(1) translateX(0); opacity: 1; }
         }
         
-        /* Animación estilo Minecraft (bounce) */
-        @keyframes minecraftBounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
+        .title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4rem;
+            margin: 0;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.5),
+                0 0 20px rgba(66, 165, 245, 0.5),
+                0 0 40px rgba(66, 165, 245, 0.3),
+                0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: title-glow 3s ease-in-out infinite;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(180deg, #ffffff 0%, #e3f2fd 50%, #90caf9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes title-glow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+                transform: scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 25px rgba(66,165,245,0.6)) drop-shadow(0 0 50px rgba(66,165,245,0.3));
+                transform: scale(1.02);
+            }
         }
         
-        .minecraft-bounce {
-            animation: minecraftBounce 1s infinite;
-            animation-delay: 0.5s;
+        .subtitle {
+            font-size: 1.4rem;
+            margin-top: 20px;
+            opacity: 1;
+            height: 1.5em;
+            position: relative;
+            z-index: 10;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 10px rgba(66, 165, 245, 0.5);
+        }
+
+        .subtitle.fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        .subtitle.fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 40px;
+        }
+
+        .glass-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
         
         section {
-            margin-bottom: 50px;
-            padding: 20px;
-            border-left: 3px solid var(--primary-color);
-            transition: all 0.3s ease;
+            margin-bottom: 40px;
             opacity: 0;
             transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
         
+        section:last-child {
+            margin-bottom: 0;
+        }
+
         section.visible {
             opacity: 1;
             transform: translateY(0);
         }
         
         h2 {
+            font-family: 'Montserrat', sans-serif;
             color: var(--primary-color);
             margin-top: 0;
-            position: relative;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
             display: inline-block;
         }
-        
-        h2:after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 1px;
-            bottom: -5px;
-            left: 0;
-            background: linear-gradient(90deg, var(--primary-color), transparent);
-        }
-        
-        .repos-table {
-            width: 100%;
-            border-collapse: collapse;
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
             margin-top: 20px;
         }
-        
-        .repos-table th, .repos-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        
-        .repos-table th {
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--accent-color);
+        }
+
+        .highlight-card {
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 8px 25px rgba(66, 165, 245, 0.3);
+        }
+
+        .card h3 {
+            margin-top: 0;
             color: var(--primary-color);
-            font-weight: normal;
-        }
-        
-        .repos-table tr:hover {
-            background: rgba(57, 255, 20, 0.05);
-        }
-        
-        .repo-link {
-            color: var(--text-color);
-            text-decoration: none;
             transition: color 0.3s ease;
         }
-        
-        .repo-link:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
+
+        .card p {
+            margin-bottom: 0;
         }
 
-        /* Proyecto destacado */
-        .highlight-project {
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 0 15px rgba(255, 20, 233, 0.4);
-            animation: pulse-border 2s infinite;
+        .repo-link {
+            text-decoration: none;
+            color: var(--text-color);
         }
 
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 10px rgba(255, 20, 233, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(255, 20, 233, 0.7); }
-            100% { box-shadow: 0 0 10px rgba(255, 20, 233, 0.3); }
+        .repo-link:hover h3 {
+            color: var(--accent-color);
         }
-        
-        /* Social Media Styles */
+
         .social-links {
             display: flex;
-            justify-content: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 20px;
+            justify-content: center;
         }
         
         .social-link {
             display: flex;
             align-items: center;
-            color: var(--text-color);
+            justify-content: center;
+            color: var(--primary-color);
             text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
             transition: all 0.3s ease;
-            background: rgba(57, 255, 20, 0.1);
-            border: 1px solid var(--primary-color);
+            background: var(--secondary-color);
+            border: 1px solid #e0e0e0;
+            font-size: 1.4rem;
         }
         
         .social-link:hover {
             background: var(--primary-color);
-            color: var(--secondary-color);
-            transform: translateY(-3px);
-        }
-        
-        .social-link i {
-            margin-right: 8px;
-            font-size: 1.2rem;
+            color: var(--bg-color);
+            transform: scale(1.15);
         }
         
         #visitorInfo {
-            background: var(--bg-color);
-            border: 1px solid var(--primary-color);
+            background: rgba(227, 242, 253, 0.8);
+            border: 1px solid #bbdefb;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 8px;
             white-space: pre-wrap;
-            margin-top: 30px;
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
+            margin-top: 20px;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
         small {
-            color: #a0a0a0;
+            color: #757575;
             display: block;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 15px;
             margin-top: 20px;
         }
-        
-        @keyframes glow {
-            from { text-shadow: 0 0 5px rgba(57, 255, 20, 0.5); }
-            to { text-shadow: 0 0 15px rgba(57, 255, 20, 0.8), 0 0 20px rgba(57, 255, 20, 0.4); }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 15px;
         }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+
+        #video-section {
+            margin-bottom: 40px;
         }
-        
-        .floating {
-            animation: float 3s ease-in-out infinite;
+
+        .video-loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-color);
+            font-style: italic;
+        }
+
+        .reddit-post {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+
+        .reddit-post h3 {
+            margin: 0 0 10px 0;
+            font-size: 0.95rem;
+            color: var(--primary-color);
+        }
+
+        .reddit-post a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .reddit-post a:hover {
+            color: var(--accent-color);
+        }
+
+        .reddit-post-meta {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .reddit-post-loading {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .matrix-widget-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .matrix-widget-container h3 {
+            margin: 0 0 10px 0;
+            font-size: 0.95rem;
+            color: var(--primary-color);
+        }
+
+        .matrix-widget-container iframe {
+            width: 100% !important;
+            height: 350px !important;
+            border: 1px solid var(--accent-color) !important;
+            border-radius: 10px !important;
         }
     </style>
 </head>
 <body>
-    <div class="cursor-trail"></div>
-    
-    <div class="language-selector">
-        <button class="language-btn" id="lang-en">EN</button>
-        <button class="language-btn" id="lang-es">ES</button>
-    </div>
-    
+    <div id="particles-js"></div>
+
     <div class="container">
-        <header class="animate__animated animate__fadeIn">
+        <header class="animate__animated animate__fadeInDown">
+            <!-- Geometric elements -->
+            <div class="grid-overlay"></div>
+            <div class="helix-line"></div>
+            <div class="helix-line"></div>
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            
             <h1 class="title">Marcelo Burgos</h1>
-            <div class="aka minecraft-bounce">Aka. HackCocaine</div>
+            <p class="subtitle" id="slogan">Solutions and Science</p>
         </header>
         
-        <section id="about" class="animate__animated">
-            <h2>About Me</h2>
-            <p>Creative developer with a passion for building innovative solutions and pushing the boundaries of technology. Specializing in web development, security, and privacy-focused applications.</p>
-        </section>
-        
-        <section id="repositories" class="animate__animated">
-            <h2>My Repositories</h2>
-            <table class="repos-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Language</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Proyecto OWASP destacado -->
-                    <tr class="highlight-project">
-                        <td>
-                            <a href="https://github.com/HackCocaine/www-project-wi-fi-security-testing-guide/blob/main/index.md" 
-                               class="repo-link" target="_blank" rel="noopener noreferrer">
-                               OWASP Wi-Fi Security Testing Guide ⭐
-                            </a>
-                        </td>
-                        <td class="repo-desc">Standarized guide for security testing against 802.11 protocol</td>
-                        <td>Markdown</td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://github.com/HackCocaine/BjornCocaine" class="repo-link" target="_blank" rel="noopener noreferrer">Bjorn Cocaine</a></td>
-                        <td class="repo-desc">Automated internal network penetration testing device</td>
-                        <td>Python</td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://github.com/HackCocaine/RobloxBlackList" class="repo-link" target="_blank" rel="noopener noreferrer">Roblox Web extension</a></td>
-                        <td class="repo-desc">Simple Chrome extension for parental control purposes</td>
-                        <td>JavaScript</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-        
-        <section id="social-media" class="animate__animated">
-            <h2>Connect With Me</h2>
-            <div class="social-links">
-                <a href="https://github.com/HackCocaine/HackCocaine" class="social-link" target="_blank" rel="noopener">
-                    <i class="fab fa-github"></i>
-                    <span class="social-text">GitHub</span>
-                </a>
-                <a href="https://www.linkedin.com/in/hackcocaine/" class="social-link" target="_blank" rel="noopener">
-                    <i class="fab fa-linkedin"></i>
-                    <span class="social-text">LinkedIn</span>
-                </a>
-                <a href="https://www.reddit.com/user/hackcocaine/" class="social-link" target="_blank" rel="noopener">
-                    <i class="fab fa-reddit"></i>
-                    <span class="social-text">Reddit</span>
-                </a>
-                <a href="https://www.youtube.com/@HackCocaine" class="social-link" target="_blank" rel="noopener">
-                    <i class="fab fa-youtube"></i>
-                    <span class="social-text">YouTube</span>
-                </a>
-                <a href="https://discord.com/users/476467764794621972" class="social-link" target="_blank" rel="noopener">
-                    <i class="fab fa-discord"></i>
-                    <span class="social-text">Discord</span>
-                </a>
-                <!-- Ko‑Fi -->
-                <a href="https://ko-fi.com/s/f256b35318" class="social-link" target="_blank" rel="noopener">
-                    <i class="fas fa-mug-hot"></i>
-                    <span class="social-text">Ko-Fi</span>
-                </a>
-                <!-- Matrix -->
-                <a href="https://matrix.to/#/#eXcomm:matrix.org" class="social-link" target="_blank" rel="noopener">
-                    <i class="fas fa-comments"></i>
-                    <span class="social-text">Matrix</span>
-                </a>
+        <div class="main-content">
+            <div class="sidebar">
+                <section id="about" class="animate__animated glass-section">
+                    <h2>About Me</h2>
+                    <p>I work at the convergence of mathematics, geometry, and computation, transforming abstract structures into functional systems. My approach blends rigorous analysis with intuition forged through experimentation, combining a hacker’s pragmatism, a scientist’s skepticism, and an engineer’s precision. I explore complex systems by decomposing them into first principles, revealing hidden patterns and leveraging constraints as tools for innovation.</p>
+                </section>
+
+                <section id="social-media" class="animate__animated glass-section">
+                    <h2>Connect</h2>
+                    <div class="social-links">
+                        <a href="https://github.com/HackCocaine/HackCocaine" class="social-link" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/hackcocaine/" class="social-link" target="_blank" rel="noopener" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.reddit.com/user/hackcocaine/" class="social-link" target="_blank" rel="noopener" title="Reddit"><i class="fab fa-reddit"></i></a>
+                        <a href="https://www.youtube.com/@HackCocaine" class="social-link" target="_blank" rel="noopener" title="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://ko-fi.com/s/f256b35318" class="social-link" target="_blank" rel="noopener" title="Ko-Fi"><i class="fas fa-mug-hot"></i></a>
+                        <a href="https://matrix.to/#/#eXcomm:matrix.org" class="social-link" target="_blank" rel="noopener" title="Matrix"><i class="fas fa-comments"></i></a>
+                    </div>
+
+                    <div id="reddit-post-wrapper" class="reddit-post reddit-post-loading">
+                        Loading latest post...
+                    </div>
+
+                    <div class="matrix-widget-container">
+                        <h3>💬 Matrix Community</h3>
+                        <iframe
+                            src="https://matrix.to/#/#eXcomm:matrix.org"
+                            title="Matrix eXcomm Room">
+                        </iframe>
+                    </div>
+                </section>
             </div>
-        </section>
-        
-        <section id="visitor-section" class="animate__animated">
-            <h2>Visitor Information</h2>
-            <p>This is what I know about you!:</p>
-            <pre id="visitorInfo">Loading information...</pre>
-            <small>
-                This information is displayed for demonstration purposes only and <strong>is not stored or sent to any server</strong> (except the IP, which is obtained anonymously via public API).  
-                <br>No cookies or any tracking methods are used.
-            </small>
-        </section>
+
+            <div class="content">
+                <section id="video-section" class="animate__animated">
+                    <h2>Latest Video</h2>
+                    <div id="video-wrapper" class="video-loading">Loading latest video...</div>
+                </section>
+
+                <section id="repositories" class="animate__animated">
+                    <h2>My Repositories</h2>
+                    <div class="card-container" id="repo-container">
+                        <p>Loading repositories...</p>
+                    </div>
+                </section>
+                
+                <section id="visitor-section" class="animate__animated glass-section">
+                    <h2>Visitor Information</h2>
+                    <p>This is what I know about you:</p>
+                    <pre id="visitorInfo">Loading information...</pre>
+                    <small>
+                        This information is displayed for demonstration purposes only and <strong>is not stored or sent to any server</strong> (except the IP, which is obtained anonymously via public API). No cookies or any tracking methods are used.
+                    </small>
+                </section>
+            </div>
+        </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/21.6.10/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Language switcher & translations
-        i18next.init({
-            lng: 'en',
-            resources: {
-                en: {
-                    translation: {
-                        "title": "Marcelo Burgos",
-                        "aka": "Aka. HackCocaine",
-                        "about": "About Me",
-                        "about_text": "Creative developer with a passion for building innovative solutions and pushing the boundaries of technology. Specializing in web development, security, and privacy-focused applications.",
-                        "repositories": "My Repositories",
-                        "social_media": "Connect With Me",
-                        "visitor_info": "Visitor Information",
-                        "visitor_text": "This is what I know about you!:",
-                        "disclaimer": "This information is displayed for demonstration purposes only and <strong>is not stored or sent to any server</strong> (except the IP, which is obtained anonymously via public API).<br>No cookies or any tracking methods are used.",
-                        "repo_owasp": "Standarized guide for security testing against 802.11 protocol",
-                        "repo_bjorn": "Automated internal network penetration testing device",
-                        "repo_roblox": "Simple Chrome extension for parental control purposes",
-                        "social_github": "GitHub",
-                        "social_linkedin": "LinkedIn",
-                        "social_reddit": "Reddit",
-                        "social_youtube": "YouTube",
-                        "social_discord": "Discord",
-                        "social_kofi": "Ko-Fi",
-                        "social_matrix": "Matrix"
+        // Particles.js Configuration
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
                     }
                 },
-                es: {
-                    translation: {
-                        "title": "Marcelo Burgos",
-                        "aka": "Aka. HackCocaine",
-                        "about": "Sobre Mí",
-                        "about_text": "Desarrollador creativo con pasión por construir soluciones innovadoras y expandir los límites de la tecnología. Especializado en desarrollo web, seguridad y aplicaciones enfocadas en privacidad.",
-                        "repositories": "Mis Repositorios",
-                        "social_media": "Conéctate Conmigo",
-                        "visitor_info": "Información del Visitante",
-                        "visitor_text": "¡Hola! Esto es lo que sé de ti!:",
-                        "disclaimer": "Esta información se muestra solo a modo demostrativo y <strong>no se almacena ni envía a ningún servidor</strong> (excepto la IP, que se obtiene de forma anónima vía API pública).<br>No se usan cookies ni ningún tipo de rastreo.",
-                        "repo_owasp": "Guía estandarizada para pruebas de seguridad en redes Wi‑Fi (802.11)",
-                        "repo_bjorn": "Dispositivo automatizado para pruebas de penetración en redes internas",
-                        "repo_roblox": "Extensión simple de Chrome para control parental",
-                        "social_github": "GitHub",
-                        "social_linkedin": "LinkedIn",
-                        "social_reddit": "Reddit",
-                        "social_youtube": "YouTube",
-                        "social_discord": "Discord",
-                        "social_kofi": "Ko-Fi",
-                        "social_matrix": "Matrix"
+                "color": {
+                    "value": "#0D47A1"
+                },
+                "shape": {
+                    "type": "circle",
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#42A5F5",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
                     }
                 }
-            }
+            },
+            "retina_detect": true
         });
 
-        document.getElementById('lang-en').addEventListener('click', () => {
-            i18next.changeLanguage('en');
-            updateContent();
-        });
+        // Dynamic Slogans
+        const slogans = [
+            'Creative Developer | Security & Privacy Advocate',
+            'Building Secure Solutions',
+            'Embrace Knowledge',
+            'Creative Thinking',
+            'Security & Privacy First',
+            'Innovative Problem Solver',
+            'Web Developer | Security Researcher',
+            'Push the Boundaries of Tech',
+            'Privacy Matters',
+            'Code with Purpose'
+        ];
 
-        document.getElementById('lang-es').addEventListener('click', () => {
-            i18next.changeLanguage('es');
-            updateContent();
-        });
+        let currentSloganIndex = 0;
 
-        function updateContent() {
-            document.querySelector('.title').textContent = i18next.t('title');
-            document.querySelector('.aka').textContent = i18next.t('aka');
-            document.querySelector('#about h2').textContent = i18next.t('about');
-            document.querySelector('#about p').textContent = i18next.t('about_text');
-            document.querySelector('#repositories h2').textContent = i18next.t('repositories');
-            document.querySelector('#social-media h2').textContent = i18next.t('social_media');
-            document.querySelector('#visitor-section h2').textContent = i18next.t('visitor_info');
-            document.querySelector('#visitor-section p').textContent = i18next.t('visitor_text');
-            document.querySelector('#visitor-section small').innerHTML = i18next.t('disclaimer');
+        function changeSlogon() {
+            const sloganElement = document.getElementById('slogan');
+            if (!sloganElement) return;
+
+            // Pick a random slogan that's different from current
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * slogans.length);
+            } while (randomIndex === currentSloganIndex && slogans.length > 1);
             
-            // Update repo descriptions (nuevo orden: OWASP, Bjorn, Roblox)
-            const repoDescs = document.querySelectorAll('.repo-desc');
-            if (repoDescs.length >= 3) {
-                repoDescs[0].textContent = i18next.t('repo_owasp');
-                repoDescs[1].textContent = i18next.t('repo_bjorn');
-                repoDescs[2].textContent = i18next.t('repo_roblox');
-            }
-            
-            // Update social media texts (order-sensitive)
-            const socialTexts = document.querySelectorAll('.social-text');
-            if (socialTexts.length >= 7) {
-                socialTexts[0].textContent = i18next.t('social_github');
-                socialTexts[1].textContent = i18next.t('social_linkedin');
-                socialTexts[2].textContent = i18next.t('social_reddit');
-                socialTexts[3].textContent = i18next.t('social_youtube');
-                socialTexts[4].textContent = i18next.t('social_discord');
-                socialTexts[5].textContent = i18next.t('social_kofi');
-                socialTexts[6].textContent = i18next.t('social_matrix');
-            }
+            currentSloganIndex = randomIndex;
+
+            // Add fade-out animation
+            sloganElement.classList.remove('fade-in');
+            sloganElement.classList.add('fade-out');
+
+            // Change text and add fade-in animation
+            setTimeout(() => {
+                sloganElement.textContent = slogans[currentSloganIndex];
+                sloganElement.classList.remove('fade-out');
+                sloganElement.classList.add('fade-in');
+            }, 250);
         }
 
-        // Ejecuta una vez para asegurar consistencia con el idioma por defecto
-        updateContent();
-
-        // Cursor trail effect
-        const cursor = document.querySelector('.cursor-trail');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            
-            // Create additional trail elements
-            if (Math.random() > 0.7) {
-                const trail = document.createElement('div');
-                trail.className = 'cursor-trail';
-                trail.style.left = e.clientX + 'px';
-                trail.style.top = e.clientY + 'px';
-                document.body.appendChild(trail);
-                
-                // Remove after animation
-                setTimeout(() => {
-                    trail.style.opacity = '0';
-                    trail.style.transform = `translate(-50%, -50%) scale(2)`;
-                    setTimeout(() => {
-                        trail.remove();
-                    }, 300);
-                }, 100);
-            }
-        });
+        // Change slogan immediately on page load, then every 5 seconds
+        changeSlogon();
+        setInterval(changeSlogon, 5000);
 
         // Scroll animations
         const sections = document.querySelectorAll('section');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    entry.target.classList.add('visible', 'animate__fadeInUp');
                 }
             });
         }, { threshold: 0.1 });
@@ -492,11 +789,63 @@
             observer.observe(section);
         });
 
+        // GitHub Repositories
+        async function getGitHubRepos() {
+            const repoContainer = document.getElementById('repo-container');
+            const username = 'HackCocaine';
+            const url = `https://api.github.com/users/${username}/repos?sort=pushed&direction=desc`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                let repos = await response.json();
+
+                // Filter out specific repositories
+                const excludedRepos = ['HackCocaine', 'hackcocaine.github.io'];
+                repos = repos.filter(repo => !excludedRepos.includes(repo.name));
+
+                repoContainer.innerHTML = ''; // Clear loading message
+
+                repos.forEach((repo, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    if (index === 0) { // Highlight the first (most recent) repo
+                        card.classList.add('highlight-card');
+                    }
+
+                    const link = document.createElement('a');
+                    link.href = repo.html_url;
+                    link.className = 'repo-link';
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+
+                    const title = document.createElement('h3');
+                    title.textContent = repo.name;
+                    if (repo.stargazers_count > 0) {
+                        title.textContent += ` ⭐ ${repo.stargazers_count}`;
+                    }
+
+                    const description = document.createElement('p');
+                    description.textContent = repo.description || 'No description available.';
+
+                    link.appendChild(title);
+                    link.appendChild(description);
+                    card.appendChild(link);
+                    repoContainer.appendChild(card);
+                });
+
+            } catch (error) {
+                repoContainer.innerHTML = '<p>Could not fetch repositories at this time. Please try again later.</p>';
+                console.error("Error fetching GitHub repos:", error);
+            }
+        }
+
         // Visitor info
         async function getVisitorData() {
             const infoDiv = document.getElementById('visitorInfo');
             
-            // Get public IP via ipify API (IPv4/IPv6)
             let ip = 'Unknown';
             try {
                 const response = await fetch('https://api64.ipify.org?format=json');
@@ -504,9 +853,10 @@
                     const data = await response.json();
                     ip = data.ip;
                 }
-            } catch {}
+            } catch (error) {
+                console.error("Could not fetch IP address:", error);
+            }
 
-            // Build info object with accessible properties
             const navigatorInfo = window.navigator;
             const screenInfo = window.screen;
 
@@ -519,35 +869,129 @@
                 "Screen Resolution": `${screenInfo.width}x${screenInfo.height}`,
                 "Color Depth": screenInfo.colorDepth,
                 "Time Zone": Intl.DateTimeFormat().resolvedOptions().timeZone || 'Not available',
-                "Browser Name": (navigatorInfo.appName || 'Unknown'),
-                "Browser Version": (navigatorInfo.appVersion || 'Unknown'),
                 "Connection Status": navigator.onLine ? 'Online' : 'Offline',
-                "Do Not Track": navigator.doNotTrack || 'Not specified',
                 "CPU Cores": navigatorInfo.hardwareConcurrency || 'Not available',
                 "Device Memory (GB)": navigatorInfo.deviceMemory || 'Not available',
                 "Referrer": document.referrer || 'No referrer',
-                "Touch Support": ('ontouchstart' in window) ? 'Yes' : 'No',
-                "Java Enabled": navigatorInfo.javaEnabled ? navigatorInfo.javaEnabled() : 'Not available',
-                "PDF Viewer Enabled": !!navigator.pdfViewerEnabled || false,
-                "Webdriver": navigator.webdriver || false,
-                "Product": navigatorInfo.product || 'Not available',
-                "Product Sub": navigatorInfo.productSub || 'Not available',
-                "Vendor": navigatorInfo.vendor || 'Not available',
-                "Vendor Sub": navigatorInfo.vendorSub || 'Not available',
-                "Max Touch Points": (navigator.maxTouchPoints !== undefined) ? navigator.maxTouchPoints : 'Not available',
                 "Current Date & Time": new Date().toLocaleString()
             };
 
-            // Format for display
             let output = '';
             for (const [key, value] of Object.entries(data)) {
-                output += `${key}: ${value}\n`;
+                output += `${key.padEnd(20)}: ${value}\n`;
             }
 
             infoDiv.textContent = output;
         }
 
+        // Initial calls
+        getGitHubRepos();
         getVisitorData();
+
+        // YouTube Latest Video
+        const youtubeChannelId = 'UCdGaa7KjkL7o58LU1jQ3SRA';
+
+        async function getLatestYouTubeVideo() {
+            const videoWrapper = document.getElementById('video-wrapper');
+            
+            try {
+                const response = await fetch(
+                    `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch video data');
+                }
+
+                const data = await response.json();
+                
+                if (!data.items || data.items.length === 0) {
+                    throw new Error('No videos found');
+                }
+
+                const latestVideo = data.items[0];
+                const videoId = latestVideo.link.split('v=')[1];
+
+                videoWrapper.innerHTML = `<div class="video-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen="" loading="lazy"></iframe></div>`;
+
+            } catch (error) {
+                videoWrapper.innerHTML = '<p style="color: #999;">Could not load latest video. Please check back later.</p>';
+                console.error("Error fetching YouTube video:", error);
+            }
+        }
+
+        getLatestYouTubeVideo();
+
+        // Reddit Latest Post
+        const redditUsername = 'hackcocaine';
+        const REDDIT_CACHE_KEY = 'reddit_top_post';
+        const REDDIT_CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
+        async function getLatestRedditPost() {
+            const redditWrapper = document.getElementById('reddit-post-wrapper');
+            
+            try {
+                // Check if we have cached data
+                const cachedData = localStorage.getItem(REDDIT_CACHE_KEY);
+                const cacheTimestamp = localStorage.getItem(REDDIT_CACHE_KEY + '_timestamp');
+                
+                let topPost = null;
+
+                // If cache exists and is not expired, use it
+                if (cachedData && cacheTimestamp) {
+                    const now = Date.now();
+                    const cacheAge = now - parseInt(cacheTimestamp);
+                    
+                    if (cacheAge < REDDIT_CACHE_EXPIRY) {
+                        topPost = JSON.parse(cachedData);
+                    }
+                }
+
+                // If no valid cache, fetch fresh data
+                if (!topPost) {
+                    const response = await fetch(
+                        `https://corsproxy.io/?https://www.reddit.com/user/${redditUsername}/submitted.json?sort=top&limit=1`
+                    );
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch Reddit data');
+                    }
+
+                    const data = await response.json();
+                    
+                    if (!data.data || !data.data.children || data.data.children.length === 0) {
+                        throw new Error('No posts found');
+                    }
+
+                    // Get the top upvoted post
+                    topPost = data.data.children[0].data;
+                    
+                    // Cache the data
+                    localStorage.setItem(REDDIT_CACHE_KEY, JSON.stringify(topPost));
+                    localStorage.setItem(REDDIT_CACHE_KEY + '_timestamp', Date.now().toString());
+                }
+                
+                // Extract post information
+                const title = topPost.title;
+                const link = `https://reddit.com${topPost.permalink}`;
+                const upvotes = topPost.score;
+                const pubDate = new Date(topPost.created_utc * 1000).toLocaleDateString();
+
+                redditWrapper.innerHTML = `
+                    <h3>🔥 Featured Post</h3>
+                    <a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>
+                    <div class="reddit-post-meta">⬆️ ${upvotes} • ${pubDate}</div>
+                `;
+                redditWrapper.classList.remove('reddit-post-loading');
+
+            } catch (error) {
+                redditWrapper.innerHTML = '<p style="color: #999; font-size: 0.85rem;">Could not load Reddit post</p>';
+                redditWrapper.classList.remove('reddit-post-loading');
+                console.error("Error fetching Reddit post:", error);
+            }
+        }
+
+        getLatestRedditPost();
     </script>
 </body>
 </html>
