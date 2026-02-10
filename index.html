@@ -762,7 +762,7 @@
                 <section id="social-media" class="animate__animated glass-section">
                     <h2>Connect</h2>
                     <div class="social-links">
-                        <a href="https://github.com/HackCocaine/HackCocaine" class="social-link" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://github.com/mburgc/mburgc" class="social-link" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/hackcocaine/" class="social-link" target="_blank" rel="noopener" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         <a href="https://www.reddit.com/user/hackcocaine/" class="social-link" target="_blank" rel="noopener" title="Reddit"><i class="fab fa-reddit"></i></a>
                         <a href="https://www.youtube.com/@HackCocaine" class="social-link" target="_blank" rel="noopener" title="YouTube"><i class="fab fa-youtube"></i></a>
@@ -961,7 +961,7 @@
         // GitHub Repositories
         async function getGitHubRepos() {
             const repoContainer = document.getElementById('repo-container');
-            const username = 'HackCocaine';
+            const username = 'mburgc';
             const url = `https://api.github.com/users/${username}/repos?sort=pushed&direction=desc`;
 
             try {
@@ -972,7 +972,7 @@
                 let repos = await response.json();
 
                 // Filter out specific repositories
-                const excludedRepos = ['HackCocaine', 'hackcocaine.github.io'];
+                const excludedRepos = ['mburgc', 'mburgc.github.io'];
                 repos = repos.filter(repo => !excludedRepos.includes(repo.name));
 
                 repoContainer.innerHTML = ''; // Clear loading message
