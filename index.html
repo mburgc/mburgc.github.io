@@ -302,6 +302,42 @@
             text-shadow: 0 0 10px rgba(66, 165, 245, 0.5);
         }
 
+        .manual-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #b71c1c 0%, #c62828 50%, #d32f2f 100%);
+            color: white;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 4px 15px rgba(198, 40, 40, 0.4),
+                0 0 20px rgba(211, 47, 47, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .manual-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 25px rgba(198, 40, 40, 0.5),
+                0 0 30px rgba(211, 47, 47, 0.3);
+            background: linear-gradient(135deg, #c62828 0%, #d32f2f 50%, #e53935 100%);
+        }
+
+        .manual-btn i {
+            font-size: 1rem;
+        }
+
         .subtitle.fade-out {
             animation: fadeOut 0.5s ease-out forwards;
         }
@@ -736,6 +772,7 @@
             
             <h1 class="title">Marcelo Burgos</h1>
             <p class="subtitle" id="slogan">Solutions and Science</p>
+            <a href="/bitacora/" class="manual-btn"><i class="fas fa-skull"></i>Bitácora Red Team</a>
         </header>
 
         <!-- Recent Research Highlight -->
