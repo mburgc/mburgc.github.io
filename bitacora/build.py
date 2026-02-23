@@ -16,13 +16,30 @@ def generate_html(
 
     search_script = """<script>
 document.addEventListener('DOMContentLoaded', function() {
+    const menuBtn = document.querySelector('.menu-btn');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.overlay');
+    
+    if (menuBtn && sidebar) {
+        menuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
+        });
+    }
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+    
     const searchInput = document.getElementById('searchbar');
     const searchBtn = document.getElementById('search-btn');
     
     function performSearch() {
         let input = searchInput.value.toLowerCase().trim();
-        let content = document.querySelector('.content-area');
-        let elements = content.querySelectorAll('p, li, h1, h2, h3, h4, h5, h6, pre, code');
+        let article = document.querySelector('.article');
+        let elements = article.querySelectorAll('p, li, h1, h2, h3, h4, h5, h6, pre, code');
         
         elements.forEach(el => {
             el.style.display = '';
@@ -47,12 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (searchBtn) searchBtn.addEventListener('click', performSearch);
     if (searchInput) searchInput.addEventListener('keyup', e => { if (e.key === 'Enter') performSearch(); });
-    
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.querySelector('.sidebar-overlay');
-    if (menuToggle) menuToggle.addEventListener('click', () => { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); });
-    if (overlay) overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
 });
 </script>"""
 
@@ -145,7 +156,9 @@ body {{font-family:var(--mono);background:var(--gray-900);color:var(--gray-200);
 .lang-btn {{background:transparent;border:1px solid var(--gray-600);color:var(--gray-300);padding:6px 14px;border-radius:6px;font-family:var(--mono);font-size:0.75rem;cursor:pointer;transition:all 0.3s;text-transform:uppercase;text-decoration:none;letter-spacing:1px;}}
 .lang-btn:hover {{background:var(--crimson);border-color:var(--crimson);color:var(--white);box-shadow:0 0 15px var(--crimson-glow);}}
 .menu-btn {{display:none;background:transparent;border:1px solid var(--gray-600);color:var(--gray-200);padding:8px 12px;border-radius:6px;cursor:pointer;}}
-.sidebar {{position:fixed;top:var(--header);left:0;width:var(--sidebar);height:calc(100vh - var(--header));background:linear-gradient(180deg,rgba(10,10,10,0.98),rgba(26,26,26,0.95));border-right:1px solid rgba(220,20,60,0.2);overflow-y:auto;z-index:900;padding:30px 20px;}}
+@media(min-width:1025px){{.menu-btn{{display:none}}}}
+.sidebar {{position:fixed;top:var(--header);left:0;width:var(--sidebar);height:calc(100vh - var(--header));background:linear-gradient(180deg,rgba(10,10,10,0.98),rgba(26,26,26,0.95));border-right:1px solid rgba(220,20,60,0.2);overflow-y:auto;z-index:900;padding:30px 20px;transition:transform 0.3s ease;}}
+@media(max-width:1024px){{.sidebar{{transform:translateX(-100%)}}.sidebar.active{{transform:translateX(0)}}}}
 .sidebar-title {{font-size:0.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--gray-500);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(220,20,60,0.2);}}
 .toc-link {{display:flex;align-items:center;gap:12px;padding:12px 15px;color:var(--gray-300);text-decoration:none;border-radius:8px;margin-bottom:8px;transition:all 0.3s;font-size:0.85rem;}}
 .toc-link:hover {{background:rgba(220,20,60,0.1);color:var(--white);transform:translateX(5px);}}
@@ -153,7 +166,9 @@ body {{font-family:var(--mono);background:var(--gray-900);color:var(--gray-200);
 .chapter-num {{font-size:0.7rem;font-weight:700;color:var(--crimson);background:rgba(220,20,60,0.1);padding:4px 8px;border-radius:30px;}}
 .chapter-title {{flex:1;}}
 .overlay {{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:850;}}
+@media(max-width:1024px){{.overlay.active{{display:block}}}}
 .content {{margin-left:var(--sidebar);margin-top:var(--header);min-height:calc(100vh - var(--header));padding:40px 50px;}}
+@media(max-width:1024px){{.content{{margin-left:0}}}}
 .wrapper {{max-width:900px;margin:0 auto;}}
 .article {{background:linear-gradient(135deg,rgba(26,26,26,0.95),rgba(45,45,45,0.9));border:1px solid rgba(220,20,60,0.2);border-radius:16px;padding:50px;box-shadow:0 10px 40px rgba(0,0,0,0.5),0 0 30px rgba(220,20,60,0.1);}}
 .article h1 {{font-size:2.2rem;color:var(--white);margin-bottom:30px;padding-bottom:15px;border-bottom:2px solid var(--crimson);}}
@@ -179,7 +194,6 @@ body {{font-family:var(--mono);background:var(--gray-900);color:var(--gray-200);
 .nav-home:hover {{background:linear-gradient(135deg,var(--gray-600),var(--gray-700));border-color:var(--gray-400);box-shadow:0 0 15px rgba(255,255,255,0.1);}}
 .footer {{text-align:center;padding:30px;color:var(--gray-500);font-size:0.8rem;border-top:1px solid rgba(220,20,60,0.1);margin-top:50px;}}
 .footer a {{color:var(--crimson);text-decoration:none;}}
-@media(max-width:1024px){{.sidebar{{transform:translateX(-100%)}}.sidebar.active{{transform:translateX(0)}}.overlay.active{{display:block}}.content{{margin-left:0;padding:30px 20px}}.menu-btn{{display:block}}}}
 @media(max-width:768px){{.header{{padding:0 15px}}.logo-text{{display:none}}.search{{display:none}}.content{{padding:20px 15px}}.article{{padding:30px 20px}}.article h1{{font-size:1.6rem}}.article h2{{font-size:1.3rem}}.nav{{flex-wrap:wrap;gap:15px}}.nav-btn{{flex:1;justify-content:center;min-width:100px}}}}
 @media(max-width:480px){{.article{{padding:20px 15px;border-radius:12px}}.article h1{{font-size:1.4rem}}.nav{{flex-direction:column}}.nav-btn{{width:100%;justify-content:center}}}}
 </style>
@@ -301,7 +315,6 @@ def main():
     en_ch = []
     for ch in all_chapters:
         for md in en_md:
-            # Use English filename for matching English chapters
             en_file = (
                 ch["file"]
                 .replace("clases-vulnerabilidades", "vulnerability-classes")
@@ -323,7 +336,6 @@ def main():
 
         cur = ""
         for ch in all_chapters:
-            # Use English filename for matching English chapters
             en_file = (
                 ch["file"]
                 .replace("clases-vulnerabilidades", "vulnerability-classes")
@@ -416,6 +428,16 @@ a:hover .arrow{opacity:1;transform:translateX(5px)}
         .replace("Back to Home", "Volver")
         .replace('href="es/"', 'href="index.html"')
         .replace('href="en/"', 'href="../en/"')
+        .replace('href="es/01-introduccion.html"', 'href="01-introduccion.html"')
+        .replace(
+            'href="es/02-clases-vulnerabilidades.html"',
+            'href="02-clases-vulnerabilidades.html"',
+        )
+        .replace('href="es/03-fuzzing.html"', 'href="03-fuzzing.html"')
+        .replace('href="es/04-patch-diffing.html"', 'href="04-patch-diffing.html"')
+        .replace(
+            'href="es/05-analisis-crashes.html"', 'href="05-analisis-crashes.html"'
+        )
     )
     with open("es/index.html", "w", encoding="utf-8") as f:
         f.write(es_idx)
@@ -429,6 +451,14 @@ a:hover .arrow{opacity:1;transform:translateX(5px)}
         .replace('href="es/"', 'href="index.html"')
         .replace('href="en/"', 'href="index.html"')
         .replace("Español", "Spanish")
+        .replace('href="es/01-introduccion.html"', 'href="01-introduction.html"')
+        .replace(
+            'href="es/02-clases-vulnerabilidades.html"',
+            'href="02-vulnerability-classes.html"',
+        )
+        .replace('href="es/03-fuzzing.html"', 'href="03-fuzzing.html"')
+        .replace('href="es/04-patch-diffing.html"', 'href="04-patch-diffing.html"')
+        .replace('href="es/05-analisis-crashes.html"', 'href="05-crash-analysis.html"')
     )
     with open("en/index.html", "w", encoding="utf-8") as f:
         f.write(en_idx)
