@@ -6,7 +6,7 @@ from markdown.extensions.toc import TocExtension
 
 MARKDOWN_DIR = Path(__file__).parent / "markdown"
 TEMPLATE_FILE = Path(__file__).parent / "templates" / "base.html"
-OUTPUT_DIR = Path(__file__).parent.parent / "docs"
+OUTPUT_DIR = Path(__file__).parent.parent / "bitacora"
 
 CHAPTER_ORDER = [
     "01-introduccion",
@@ -143,16 +143,16 @@ def main():
             output_path = OUTPUT_DIR / f"{md_file.stem}.html"
             output_path.write_text(page, encoding="utf-8")
 
-    index_content = f"""<!DOCTYPE html>
+    index_content = f'''<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url=bitacora-red-team/01-introduccion.html">
+    <meta http-equiv="refresh" content="0;url=01-introduccion.html">
 </head>
 <body>
-    <p>Redireccionando a <a href="bitacora-red-team/01-introduccion.html">Capítulo 1</a>...</p>
+    <p>Redireccionando a <a href="01-introduccion.html">Capítulo 1: Introducción</a>...</p>
 </body>
-</html>"""
+</html>'''
     (OUTPUT_DIR / "index.html").write_text(index_content, encoding="utf-8")
 
     print("¡Generación completada!")
