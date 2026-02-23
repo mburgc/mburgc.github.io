@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capítulo 04: Patch Diffing | Bitácora Red Team</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        :root {
+            --primary-color: #0D47A1;
+            --secondary-color: #E3F2FD;
+            --accent-color: #42A5F5;
+            --text-color: #1A237E;
+            --bg-color: #FFFFFF;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --sidebar-width: 300px;
+            --sidebar-collapsed: 60px;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-color);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #0a1628 0%, #0D47A1 50%, #1565C0 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .sidebar-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            margin: 0 0 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-header .subtitle {
+            font-size: 0.7rem;
+            opacity: 0.85;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .nav-section {
+            padding: 5px 0;
+        }
+        
+        .nav-section-title {
+            padding: 12px 20px 8px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-color);
+            font-weight: 700;
+            background: rgba(66, 165, 245, 0.08);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: var(--secondary-color);
+            border-left-color: var(--accent-color);
+        }
+        
+        .nav-item.active {
+            background: var(--secondary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .nav-item i {
+            width: 18px;
+            color: var(--accent-color);
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px 50px;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 200;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(13, 71, 161, 0.3);
+        }
+        
+        .content-header {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        .content-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .breadcrumb a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        
+        .section h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color);
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            font-size: 1.4rem;
+        }
+        
+        .section h2:first-child {
+            margin-top: 0;
+        }
+        
+        .section h3 {
+            color: var(--text-color);
+            margin: 25px 0 15px;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+        
+        .section h4 {
+            color: #333;
+            margin: 20px 0 12px;
+            font-size: 1rem;
+        }
+        
+        .section p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .section ul, .section ol {
+            margin: 15px 0 15px 25px;
+        }
+        
+        .section li {
+            margin-bottom: 8px;
+        }
+        
+        .section pre {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .section code {
+            font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        
+        .section :not(pre) > code {
+            background: var(--secondary-color);
+            padding: 3px 8px;
+            border-radius: 5px;
+            color: var(--primary-color);
+            font-size: 0.9em;
+        }
+        
+        .section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .section th, .section td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section th {
+            background: var(--secondary-color);
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .section tr:hover {
+            background: rgba(66, 165, 245, 0.05);
+        }
+        
+        .vuln-card {
+            background: linear-gradient(135deg, rgba(13, 71, 161, 0.06) 0%, rgba(66, 165, 245, 0.1) 100%);
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .vuln-card.danger {
+            border-left-color: #f44336;
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.06) 0%, rgba(244, 67, 54, 0.1) 100%);
+        }
+        
+        .vuln-card.warning {
+            border-left-color: #ff9800;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.06) 0%, rgba(255, 152, 0, 0.1) 100%);
+        }
+        
+        .vuln-card.success {
+            border-left-color: #4caf50;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.06) 0%, rgba(76, 175, 80, 0.1) 100%);
+        }
+        
+        .toc {
+            background: var(--secondary-color);
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin: 0 0 15px;
+            color: var(--primary-color);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .toc li {
+            margin: 8px 0;
+        }
+        
+        .toc a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--accent-color);
+        }
+        
+        .page-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .page-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .page-nav a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(13, 71, 161, 0.3);
+        }
+        
+        .page-nav a.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 900px) {
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 70px 20px 30px;
+            }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+        
+        .license-notice {
+            font-size: 0.75rem;
+            color: #666;
+            padding: 15px 20px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-shield-alt"></i> Bitácora</h1>
+                <div class="subtitle">Red Team</div>
+            </div>
+            
+            <nav>
+                
+            <a href="01-introduccion.html" class="nav-item">
+                <i class="fas fa-book"></i>Introducción
+            </a>
+            <a href="02-clases-vulnerabilidades.html" class="nav-item">
+                <i class="fas fa-bug"></i>Clases de Vulnerabilidades
+            </a>
+            <a href="03-fuzzing.html" class="nav-item">
+                <i class="fas fa-flask"></i>Fuzzing
+            </a>
+            <a href="04-patch-diffing.html" class="nav-item">
+                <i class="fas fa-code-branch"></i>Patch Diffing
+            </a>
+            <a href="05-analisis-crashes.html" class="nav-item">
+                <i class="fas fa-exclamation-triangle"></i>Análisis de Crashes
+            </a>
+            </nav>
+            
+            <div class="license-notice">
+                <i class="fas fa-creative-commons"></i> CC BY-NC 4.0
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <div class="content-header animate__animated animate__fadeInDown">
+                <div class="breadcrumb"><a href="/">Bitácora Red Team</a> / Capítulo 04: Patch Diffing</div>
+                <h1>Capítulo 04: Patch Diffing</h1>
+            </div>
+            
+            <div class="animate__animated animate__fadeInUp">
+                <div class="section"><h3 id="capitulo-3-fuzzing">CAPÍTULO 3. FUZZING</h3>
+<p>Bitácora Red Team</p>
+<h1 id="include">include <stdint.h></h1>
+<h1 id="include_1">include <stddef.h></h1>
+<p>int LLVMFuzzerTestOneInput(const uint8_t <em>data, size_t size) {
+const char </em>data1 = (const char <em>)data;
+json_tokener </em>tok = json_tokener_new();
+json_object *obj = json_tokener_parse_ex(tok, data1, size);
+if (obj) {
+// Ejercitar diferentes funciones API para aumentar cobertura
+json_object_to_json_string_ext(obj,</p>
+<h3 id="json_c_to_string_pretty-json_c_to_string_spaced">JSON_C_TO_STRING_PRETTY | JSON_C_TO_STRING_SPACED);</h3>
+<p>if (json_object_is_type(obj, json_type_object)) {
+json_object_object_foreach(obj, key, val) {
+(void)json_object_get_type(val);
+(void)json_object_get_string(val);
+}
+}
+if (json_object_is_type(obj, json_type_array)) {
+size_t len = json_object_array_length(obj);
+for (size_t i = 0; i &lt; len; i++) {
+json_object_array_get_idx(obj, i);
+}
+}
+json_object_put(obj);
+// Liberar objeto
+}
+json_tokener_free(tok);
+// Cleanup
+return 0;
+}
+Compilación y Ejecución:</p>
+<h1 id="compilar-harness-con-libfuzzer-y-sanitizers">Compilar harness con libFuzzer y sanitizers</h1>
+<p>clang-19 -g -fsanitize=address,fuzzer \
+-I./json-c \
+fuzz_json.c \
+json-c/libjson-c.a \
+-o fuzz_json</p>
+<h1 id="crear-corpus-de-semillas-con-archivos-json-validos">Crear corpus de semillas con archivos JSON válidos</h1>
+<p>mkdir -p corpus
+echo '{"name": "test", "value": 42}' &gt; corpus/valid1.json
+echo '[1, 2, 3, {"nested": "object"}]' &gt; corpus/valid2.json</p>
+<h1 id="ejecutar-fuzzer">Ejecutar fuzzer</h1>
+<hr />
+<h3 id="capitulo-3-fuzzing_1">CAPÍTULO 3. FUZZING</h3>
+<p>Bitácora Red Team
+./fuzz_json corpus/ -max_total_time=300 -print_final_stats=1</p>
+<h3 id="382">3.8.2.</h3>
+<h3 id="282-principios-de-diseno-de-harness">2.8.2 Principios de Diseño de Harness</h3>
+<p>Principio
+Descripción
+Impacto
+Ejecución In‐Process
+LLVMFuzzerTestOneInput ‐ sin
+overhead fork/exec
+10‐100x más rápido
+Target Directo de API
+Llamar funciones core, no CLI
+Evita parsing de
+argumentos
+Maximización de Cobertura
+Ejercitar múltiples caminos de
+código
+Encuentra más bugs
+Cleanup Apropiado
+Liberar memoria asignada
+Previene OOM
+Compatible con Sanitizers
+Funciona con ASAN/UBSAN
+Mejor detección de bugs
+Preguntas de Discusión del Capítulo:
+1. ¿Por qué un harness in‐process es órdenes de magnitud más rápido que un wrapper basado
+en archivos?
+2. ¿Cómo afecta la calidad del corpus de semillas a la penetración del fuzzer en la lógica profunda
+del target?
+3. ¿Cuáles son los riesgos de “over‐mocking” en un harness ﴾bypass de demasiada inicialización﴿?
+4. ¿Cómo determinar si una campaña de fuzzing ha llegado a rendimientos decrecientes?</p>
+<h3 id="383">3.8.3.</h3>
+<p>Conclusiones del Capítulo 2
+1. El fuzzing encuentra vulnerabilidades reales: No solo crashes teóricos, sino bugs explota‐
+bles en software de producción.
+2. El fuzzing guiado por cobertura es poderoso: AFL++, Honggfuzz y FuzzTest exploran inte‐
+ligentemente caminos de código en lugar de mutación aleatoria.
+3. Los sanitizers son esenciales: ASAN, UBSAN convierten bugs sutiles en crashes inmediatos.
+4. El tiempo importa: Muchos bugs requieren horas/días de fuzzing para ser descubiertos.
+5. La calidad del corpus de semillas afecta resultados: Comenzar con entradas válidas ayuda
+a alcanzar caminos de código más profundos.
+6. Los parsers son objetivos principales: Image parsers, protocol parsers, file format parsers
+son frecuentemente fuzzeados con gran éxito.</p>
+<hr />
+<p>Capítulo 4
+Patch Diffing
+El patch diffing es una técnica poderosa de investigación de vulnerabilidades que analiza las dife‐
+rencias entre versiones vulnerables y parcheadas de software. Este capítulo cubre los fundamentos,
+herramientas y metodologías para identificar vulnerabilidades mediante análisis de parches.</p>
+<h3 id="41">4.1.</h3>
+<h3 id="31-fundamentos-de-patch-diffing">3.1 Fundamentos de Patch Diffing</h3>
+<p>Qué es el Patch Diffing
+El patch diffing es la técnica de comparar una versión vulnerable de un binario con una versión
+parcheada para identificar cambios relacionados con seguridad. Al analizar qué corrigió el vendor,
+podemos:
+1. Identificar la ubicación de la vulnerabilidad: ¿Dónde en el código estaba el bug?
+2. Entender la causa raíz: ¿Qué error de programación llevó al bug?
+3. Desarrollar técnicas de explotación: ¿Cómo puede ser disparado y explotado el bug?
+4. Encontrar bugs variantes: ¿Hay bugs similares en código relacionado?
+Por Qué Importa el Patch Diffing
+Beneficio
+Descripción
+Única Fuente de Verdad
+Sin detalles de CVE o PoC, el parche revela qué
+estaba roto
+Descubrimiento de Variantes
+Mientras analizas una corrección, puedes encontrar
+bugs adicionales cercanos
+Desarrollo de Habilidades
+Provee práctica enfocada en reversing con targets
+conocidos
+Insight del Vendor
+Aprende cómo diferentes vendors abordan
+correcciones de seguridad
+Desafíos del Patch Diffing</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Desafío
+Descripción
+Asimetría
+Pequeños cambios en código fuente pueden afectar
+drásticamente binarios compilados
+Encontrar Cambios de Seguridad
+Los parches frecuentemente agrupan correcciones de
+seguridad con features y bugfixes
+Reducción de Ruido
+Debe distinguirse cambios relevantes para seguridad de
+actualizaciones benignas
+Limitaciones de Herramientas
+Ninguna herramienta automatiza perfectamente el
+proceso; el análisis humano es esencial</p>
+<h3 id="42">4.2.</h3>
+<h3 id="32-extraccion-de-parches-de-windows">3.2 Extracción de Parches de Windows</h3>
+<p>Estructura de Actualizaciones de Windows
+Las actualizaciones de Windows vienen en varios formatos:
+Tipo
+Descripción
+Consideración para Diffing
+Cumulative
+Update
+Contiene todas las
+correcciones anteriores
+Grande, muchos cambios a filtrar
+Security
+Update
+Solo correcciones de
+seguridad específicas
+Más pequeño, más enfocado
+Delta
+Update
+Solo cambios desde
+última actualización
+Requiere base + delta
+Servicing
+Stack
+Actualiza el instalador
+mismo
+Raramente relevante para seguridad
+Formato WIM+PSF ﴾Windows 11 24H2+﴿
+Las actualizaciones más recientes de Windows usan un nuevo formato:
+Componente
+Contenidos
+¿Se Pueden Extraer Binarios?
+.psf
+Parches delta binarios
+No ‐ requiere archivos base
+.wim
+Manifiestos, catálogos
+No ‐ sin binarios dentro
+SSU-<em>.cab
+Binarios de Servicing Stack
+Solo archivos SSU
+</em>.msix
+Paquetes de apps UWP
+Binarios de apps únicamente
+Fuentes para Obtener Binarios
+1. WinbIndex ﴾winbindex.m417z.com﴿: Base de datos de binarios de Windows indexados por
+versión y KB
+2. Microsoft Update Catalog: Descargar paquetes .msu directamente
+3. Microsoft Symbol Server: Descargar binarios específicos por timestamp/size
+4. Sistemas Parcheados: Copiar directamente de sistemas con parches instalados</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_1">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team</p>
+<h3 id="421">4.2.1.</h3>
+<h3 id="321-script-de-extraccion-powershell-extractpatchps1">3.2.1 Script de Extracción PowerShell ﴾Extract‐Patch.ps1﴿</h3>
+<p>Script completo para extraer binarios de actualizaciones de Windows:
+&lt;#</p>
+<h3 id="synopsis">.SYNOPSIS</h3>
+<p>Extrae binarios de parches de actualizaciones Windows.</p>
+<h3 id="description">.DESCRIPTION</h3>
+<p>Este script automatiza la extracción de binarios de archivos .msu o .cab,
+o puede descargar directamente desde WinbIndex para KBs específicos.
+.PARAMETER PatchPath
+Ruta a archivo .msu o .cab (o directorio con CABs extraídos)
+.PARAMETER UseWinbIndex
+Switch para descargar binarios directamente desde WinbIndex
+.PARAMETER KBNumber
+Número KB para WinbIndex (ej: "KB5041565")
+.PARAMETER TargetBinaries
+Lista de binarios específicos a extraer (ej: @("ntoskrnl.exe","tcpip.sys"))</p>
+<h3 id="example">.EXAMPLE</h3>
+<p>.\Extract-Patch.ps1 -PatchPath "C:\Updates\windows11-kb5041565.msu"</p>
+<h3 id="example_1">.EXAMPLE</h3>
+<p>.\Extract-Patch.ps1 -UseWinbIndex -KBNumber "KB5041565" `
+-TargetBinaries @("tcpip.sys","ntdll.dll")</p>
+<h1 id="_1">&gt;</h1>
+<p>param(
+[Parameter(Mandatory=$false)]
+[string]$PatchPath,
+[Parameter(Mandatory=$false)]
+[switch]$UseWinbIndex,
+[Parameter(Mandatory=$false)]
+[string]$KBNumber,
+[Parameter(Mandatory=$false)]
+[string[]]$TargetBinaries = @(
+"ntoskrnl.exe",
+"win32kfull.sys",
+"win32kbase.sys",
+"tcpip.sys",
+"ntdll.dll",</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_2">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+"afd.sys",
+"http.sys"
+)
+)
+$ErrorActionPreference = "Stop"
+$extractDir = ".\binaries"
+$tempDir = ".\temp_extract"
+function Extract-FromMSU {
+param([string]$MsuPath)
+Write-Host "[*] Extrayendo MSU: $MsuPath"</p>
+<h1 id="crear-directorio-temporal">Crear directorio temporal</h1>
+<p>New-Item -ItemType Directory -Force -Path $tempDir | Out-Null</p>
+<h1 id="expandir-msu">Expandir MSU</h1>
+<p>expand -F:* $MsuPath $tempDir</p>
+<h1 id="encontrar-y-expandir-cabs-anidados">Encontrar y expandir CABs anidados</h1>
+<p>$cabs = Get-ChildItem $tempDir -Filter "<em>.cab" -Recurse
+foreach ($cab in $cabs) {
+Write-Host "[</em>] Procesando CAB: $($cab.Name)"
+$cabExtract = Join-Path $tempDir $cab.BaseName
+New-Item -ItemType Directory -Force -Path $cabExtract | Out-Null
+expand -F:* $cab.FullName $cabExtract
+}</p>
+<h1 id="buscar-binarios-objetivo">Buscar binarios objetivo</h1>
+<p>foreach ($binary in $TargetBinaries) {
+$found = Get-ChildItem $tempDir -Filter $binary -Recurse | Select-Object -First 1
+if ($found) {
+$destPath = Join-Path $extractDir $binary
+Copy-Item $found.FullName $destPath -Force
+Write-Host "[+] Extraído: $binary -&gt; $destPath"
+} else {
+Write-Host "[-] No encontrado: $binary"
+}
+}
+}
+function Get-FromWinbIndex {
+param([string]$KB)
+Write-Host "[*] Consultando WinbIndex para $KB..."</p>
+<h1 id="nota-winbindex-no-tiene-api-formal-usar-scraping-o-descargas-directas">Nota: WinbIndex no tiene API formal; usar scraping o descargas directas</h1>
+<hr />
+<h3 id="capitulo-4-patch-diffing_3">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team</p>
+<h1 id="esta-es-una-implementacion-simplificada">Esta es una implementación simplificada</h1>
+<p>$baseUrl = "https://winbindex.m417z.com"
+foreach ($binary in $TargetBinaries) {
+Write-Host "[*] Buscando $binary..."</p>
+<h1 id="formato-esperado-del-url-de-descarga-de-winbindex">Formato esperado del URL de descarga de WinbIndex</h1>
+<h1 id="los-urls-reales-requieren-hash-del-archivo">Los URLs reales requieren hash del archivo</h1>
+<p>try {</p>
+<h1 id="buscar-en-el-sitio-web-ejemplo-simplificado">Buscar en el sitio web (ejemplo simplificado)</h1>
+<p>$searchUrl = "$baseUrl/?file=$binary"
+Write-Host "[<em>] Consultar manualmente: $searchUrl"
+Write-Host "[</em>] Descargar versión vulnerable y parcheada manualmente"
+} catch {
+Write-Host "[-] Error buscando $binary : $_"
+}
+}
+Write-Host ""
+Write-Host "=== INSTRUCCIONES MANUALES ==="
+Write-Host "1. Visitar https://winbindex.m417z.com/"
+Write-Host "2. Buscar cada binario: $($TargetBinaries -join ', ')"
+Write-Host "3. Filtrar por versión Windows y KB"
+Write-Host "4. Descargar versión vulnerable (pre-$KB) y parcheada ($KB)"
+Write-Host "5. Guardar en: $extractDir"
+}</p>
+<h1 id="crear-directorio-de-salida">Crear directorio de salida</h1>
+<p>New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
+if ($UseWinbIndex) {
+if (-not $KBNumber) {
+Write-Error "Debe especificar -KBNumber cuando usa -UseWinbIndex"
+}
+Get-FromWinbIndex -KB $KBNumber
+}
+elseif ($PatchPath) {
+if ($PatchPath -like "<em>.msu") {
+Extract-FromMSU -MsuPath $PatchPath
+}
+elseif ($PatchPath -like "</em>.cab") {</p>
+<h1 id="expandir-cab-directamente">Expandir CAB directamente</h1>
+<p>expand -F:* $PatchPath $tempDir</p>
+<h1 id="buscar-binarios">Buscar binarios</h1>
+<p>foreach ($binary in $TargetBinaries) {
+$found = Get-ChildItem $tempDir -Filter $binary -Recurse | Select-Object -First 1
+if ($found) {</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_4">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Copy-Item $found.FullName (Join-Path $extractDir $binary) -Force
+Write-Host "[+] Extraído: $binary"
+}
+}
+}
+else {
+Write-Error "Formato no soportado. Use .msu o .cab"
+}
+}
+else {
+Write-Host "Uso: .\Extract-Patch.ps1 -PatchPath <ruta.msu>"
+Write-Host "
+o: .\Extract-Patch.ps1 -UseWinbIndex -KBNumber KB5041565"
+}</p>
+<h1 id="limpiar">Limpiar</h1>
+<p>if (Test-Path $tempDir) {
+Remove-Item $tempDir -Recurse -Force
+}
+Write-Host ""
+Write-Host "[*] Binarios extraídos en: $extractDir"
+Get-ChildItem $extractDir | Format-Table Name, Length, LastWriteTime</p>
+<h3 id="422">4.2.2.</h3>
+<h3 id="322-descarga-de-simbolos-pdb">3.2.2 Descarga de Símbolos ﴾PDB﴿</h3>
+<p>Los símbolos son críticos para análisis de calidad:</p>
+<h1 id="configurar-symbol-server">Configurar Symbol Server</h1>
+<p>$env:_NT_SYMBOL_PATH = "SRV<em>C:\Symbols</em>https://msdl.microsoft.com/download/symbols"</p>
+<h1 id="usar-symchkexe-parte-del-sdk-de-windows">Usar symchk.exe (parte del SDK de Windows)</h1>
+<p>$symchk = "C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\symchk.exe"</p>
+<h1 id="descargar-simbolos-para-todos-los-binarios-en-un-directorio">Descargar símbolos para todos los binarios en un directorio</h1>
+<p>&amp; $symchk /r "C:\patch-analysis\binaries" /s $env:_NT_SYMBOL_PATH</p>
+<h1 id="o-para-un-archivo-especifico">O para un archivo específico</h1>
+<p>&amp; $symchk "C:\patch-analysis\binaries\tcpip.sys" /s $env:_NT_SYMBOL_PATH</p>
+<h1 id="verificar-simbolos-descargados">Verificar símbolos descargados</h1>
+<p>Get-ChildItem "C:\Symbols" -Recurse -Filter "*.pdb" |
+Select-Object Name, Length, FullName |
+Format-Table
+Impacto de los Símbolos en el Análisis:
+Con Símbolos
+Sin Símbolos
+IppValidatePacketLength
+sub_1400A2F40</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_5">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Con Símbolos
+Sin Símbolos
+TcpipNlProcessPacket
+sub_14003B120
+NdisGetDataBuffer
+sub_EXTERN_892
+Variables con nombres
+Offsets + registros
+Tipos de datos
+Tamaños genéricos</p>
+<h3 id="43">4.3.</h3>
+<h3 id="33-herramientas-de-diffing-binario">3.3 Herramientas de Diffing Binario</h3>
+<p>Opciones de Herramientas
+Herramienta
+Pros
+Contras
+Mejor Para
+Ghidra + Ghidriff
+Gratis,
+open‐source,
+automatiza‐
+ble
+Decompilador
+menos pulido que
+Hex‐Rays
+Investigadores con
+presupuesto limitado,
+automatización
+IDA Pro + Diaphora
+IDA estándar
+de la
+industria,
+Diaphora
+gratis
+IDA Pro es caro
+﴾$1,000+﴿
+Investigadores
+profesionales con licencia</p>
+<h3 id="ida">IDA</h3>
+<p>IDA Pro + BinDiff
+Diffing
+binario
+clásico
+BinDiff 8 solo
+soporta IDA 8.x
+Usuarios legacy de IDA
+Ghidriff
+Ghidriff es la herramienta recomendada para este curso debido a su accesibilidad:
+Completamente gratis y open‐source
+Excelente soporte multi‐arquitectura
+Reportes automatizados en Markdown/JSON
+Soporte Docker para análisis reproducible
+Análisis headless perfecto para CI/CD</p>
+<h3 id="431">4.3.1.</h3>
+<h3 id="331-instalacion-de-ghidra-y-ghidriff">3.3.1 Instalación de Ghidra y Ghidriff</h3>
+<p>Requisitos Previos: ‐ Ghidra 11.4+ ﴾requiere Java JDK 21+﴿‐ Python 3.10+
+Windows ‐ Instalación Paso a Paso:</p>
+<h1 id="1-instalar-java-jdk-21">1. Instalar Java JDK 21</h1>
+<h1 id="descargar-desde-httpsadoptiumnettemurinreleases">Descargar desde: https://adoptium.net/temurin/releases/</h1>
+<h1 id="o-usar-winget">O usar winget:</h1>
+<p>winget install EclipseAdoptium.Temurin.21.JDK</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_6">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team</p>
+<h1 id="verificar-instalacion">Verificar instalación</h1>
+<p>java -version</p>
+<h1 id="openjdk-version-2102">openjdk version "21.0.2" ...</h1>
+<h1 id="2-descargar-e-instalar-ghidra">2. Descargar e instalar Ghidra</h1>
+<p>$ghidraUrl = "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_11.4.2_build
+Invoke-WebRequest -Uri $ghidraUrl -OutFile "$env:USERPROFILE\Downloads\ghidra.zip"</p>
+<h1 id="extraer-a-directorio-permanente">Extraer a directorio permanente</h1>
+<p>Expand-Archive "$env:USERPROFILE\Downloads\ghidra.zip" -DestinationPath "C:\Tools\"
+Rename-Item "C:\Tools\ghidra_11.4.2_PUBLIC" "C:\Tools\Ghidra"</p>
+<h1 id="configurar-variable-de-entorno-requerida-para-ghidriff">Configurar variable de entorno (REQUERIDA para Ghidriff)</h1>
+<p>$env:GHIDRA_INSTALL_DIR = "C:\Tools\Ghidra"</p>
+<h1 id="3-instalar-ghidriff-via-pip">3. Instalar Ghidriff via pip</h1>
+<p>pip install ghidriff</p>
+<h1 id="4-verificar-instalacion">4. Verificar instalación</h1>
+<p>ghidriff --version</p>
+<h1 id="ghidriff-08x-version-puede-variar">ghidriff 0.8.x (versión puede variar)</h1>
+<h1 id="5-primer-analisis-inicializa-ghidra-puede-tardar-varios-minutos">5. Primer análisis (inicializa Ghidra - puede tardar varios minutos)</h1>
+<p>ghidriff C:\Windows\System32\notepad.exe C:\Windows\System32\write.exe -o test_diff</p>
+<h1 id="si-hay-errores-de-memoria-ajustar">Si hay errores de memoria, ajustar:</h1>
+<p>ghidriff ... --max-ram-percent 70
+Linux ‐ Instalación:</p>
+<h1 id="1-instalar-java">1. Instalar Java</h1>
+<p>sudo apt update
+sudo apt install -y openjdk-21-jdk
+export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+echo "export JAVA_HOME=$JAVA_HOME" &gt;&gt; ~/.bashrc</p>
+<h1 id="2-descargar-ghidra">2. Descargar Ghidra</h1>
+<p>mkdir -p ~/tools &amp;&amp; cd ~/tools
+wget https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_11.4.2_build/ghidra_1
+unzip ghidra_11.4.2_PUBLIC_20250826.zip
+export GHIDRA_INSTALL_DIR=~/tools/ghidra_11.4.2_PUBLIC
+echo "export GHIDRA_INSTALL_DIR=$GHIDRA_INSTALL_DIR" &gt;&gt; ~/.bashrc</p>
+<h1 id="3-instalar-ghidriff-en-entorno-virtual">3. Instalar Ghidriff en entorno virtual</h1>
+<p>sudo apt install -y python3 python3-pip python3-venv
+python3 -m venv ~/ghidriff-env
+source ~/ghidriff-env/bin/activate
+pip install ghidriff</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_7">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team</p>
+<h1 id="4-verificar">4. Verificar</h1>
+<p>ghidriff --help</p>
+<h3 id="432">4.3.2.</h3>
+<h3 id="332-flujo-de-trabajo-con-ghidriff">3.3.2 Flujo de Trabajo con Ghidriff</h3>
+<p>Proceso Completo de Diffing:
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="flujo-de-trabajo-ghidriff">FLUJO DE TRABAJO GHIDRIFF</h3>
+<p>│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="1-obtener-binarios">1. OBTENER BINARIOS</h3>
+<p>│
+│
+└─WinbIndex / Extract-Patch.ps1 / Microsoft Update Catalog │
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="2-descargar-simbolos-pdb">2. DESCARGAR SÍMBOLOS (PDB)</h3>
+<p>│
+│
+└─symchk.exe o Symbol Server directo
+│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="3-ejecutar-ghidriff">3. EJECUTAR GHIDRIFF</h3>
+<p>│
+│
+└─ghidriff old.sys new.sys -o diff_output
+│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="4-revisar-reporte-markdown">4. REVISAR REPORTE MARKDOWN</h3>
+<p>│
+│
+└─diff_output/*.ghidriff.md
+│
+│
+└─Funciones modificadas, añadidas, eliminadas
+│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="5-analisis-profundo">5. ANÁLISIS PROFUNDO</h3>
+<p>│
+│
+└─Funciones con ratio &lt; 0.95 = cambios significativos
+│
+│
+└─Buscar: bounds checks, NULL checks, validaciones
+│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_8">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+│</p>
+<h3 id="6-correlacionar-con-cve">6. CORRELACIONAR CON CVE</h3>
+<p>│
+│
+└─MSRC Advisory / NVD / Vendor Release Notes
+│
+└─────────────────────────────────────────────────────────────────┘
+Comandos Ghidriff Esenciales:</p>
+<h1 id="diff-basico">Diff básico</h1>
+<p>ghidriff old.sys new.sys -o diff_report</p>
+<h1 id="con-simbolos-recomendado-mejora-significativamente-los-nombres">Con símbolos (RECOMENDADO - mejora significativamente los nombres)</h1>
+<p>ghidriff old.sys new.sys -o diff_report --symbols-path C:\Symbols</p>
+<h1 id="para-binarios-grandes-ntoskrnlexe-tcpipsys">Para binarios grandes (ntoskrnl.exe, tcpip.sys)</h1>
+<p>ghidriff old.sys new.sys \
+--max-section-funcs 5000 \
+--max-ram-percent 80 \
+--output large_diff</p>
+<h1 id="solo-analizar-seccion-text-mas-rapido-menos-ruido">Solo analizar sección .text (más rápido, menos ruido)</h1>
+<p>ghidriff old.dll new.dll --section .text -o text_only_diff</p>
+<h1 id="modo-no-threaded-mas-estable-mas-lento">Modo no-threaded (más estable, más lento)</h1>
+<p>ghidriff old.sys new.sys --no-threaded -o stable_diff</p>
+<h1 id="salida-json-para-procesamiento-automatizado">Salida JSON para procesamiento automatizado</h1>
+<p>ghidriff old.sys new.sys -o diff_report --json-only
+Estructura de Salida de Ghidriff:
+diff_report/
+├──old.sys-new.sys.ghidriff.md</p>
+<h1 id="reporte-markdown-legible">Reporte Markdown legible</h1>
+<p>│
+├──Resumen de cambios
+│
+├──Funciones añadidas
+│
+├──Funciones eliminadas
+│
+└──Funciones modificadas (con snippets de código)
+├──json/
+│
+├──old.sys-new.sys.ghidriff.json</p>
+<h1 id="datos-estructurados-completos">Datos estructurados completos</h1>
+<p>│
+│
+├──functions.added[]
+│
+│
+├──functions.deleted[]
+│
+│
+├──functions.modified[]
+│
+│
+│
+├──name
+│
+│
+│
+├──ratio (similaridad)
+│
+│
+│
+├──old.address
+│
+│
+│
+└──new.address
+│
+│
+└──stats{}
+│
+└──old.sys-new.sys.matches.json</p>
+<h1 id="correspondencias-de-funciones">Correspondencias de funciones</h1>
+<p>└──ghidriffs/</p>
+<h1 id="directorio-legacy-algunas-versiones">Directorio legacy (algunas versiones)</h1>
+<hr />
+<h3 id="capitulo-4-patch-diffing_9">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team</p>
+<h3 id="433">4.3.3.</h3>
+<h3 id="333-version-tracking-de-ghidra-alternativa-gui">3.3.3 Version Tracking de Ghidra ﴾Alternativa GUI﴿</h3>
+<p>Para análisis interactivo lado a lado:
+Paso 0: Crear Proyectos Separados
+1. Crear proyecto "vulnerable" →importar old.sys
+2. Crear proyecto "patched" →importar new.sys
+3. Analizar ambos binarios completamente (Auto Analysis)
+Paso 1‐3: Crear Sesión de Version Tracking
+1. Menú: Tools →Version Tracking →Version Tracking
+2. Click "Create Session" (+)
+3. Source Program: old.sys (vulnerable)
+4. Destination Program: new.sys (parcheado)
+5. Seleccionar correladores (usar defaults para empezar)
+Paso 4‐5: Ejecutar y Filtrar Resultados
+1. Click "Run" para ejecutar correladores seleccionados
+2. Panel "Matches": Lista de funciones emparejadas
+3. Ordenar por "Similarity" (menor = más cambios)
+4. Doble-click para ver comparación lado a lado
+5. Filtrar: similarity &lt; 0.95 AND length &gt; 100 bytes
+Indicadores Clave en Version Tracking:
+Indicador
+Significado
+Similarity 1.0
+Funciones idénticas
+Similarity 0.95‐0.99
+Cambios menores ﴾nombres, comentarios﴿
+Similarity &lt; 0.95
+Cambios significativos de lógica
+Similarity &lt; 0.80
+Reescritura substancial
+“Added”
+Nueva función en versión parcheada
+“Deleted”
+Función eliminada en parche</p>
+<h3 id="44">4.4.</h3>
+<h3 id="34-caso-de-estudio-cve202234718-evilesp">3.4 Caso de Estudio: CVE‐2022‐34718 ﴾EvilESP﴿</h3>
+<p>Información del CVE:
+Atributo
+Valor</p>
+<h3 id="cve">CVE</h3>
+<h3 id="cve202234718">CVE‐2022‐34718</h3>
+<p>Nombre
+“EvilESP”
+Componente
+tcpip.sys ﴾Windows TCP/IP Driver﴿
+Tipo
+Remote Code Execution ﴾RCE﴿</p>
+<h3 id="cvss">CVSS</h3>
+<h3 id="98-critico">9.8 ﴾Crítico﴿</h3>
+<p>Vector
+Red, sin autenticación ﴾con IPsec habilitado﴿
+Versiones
+Windows Server 2012‐2022, Windows 10/11</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_10">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Atributo
+Valor
+Parche
+Septiembre 2022 ﴾KB5017308, KB5017305﴿
+Prerrequisitos para Explotación:
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="prerrequisitos-cve-2022-34718">PRERREQUISITOS CVE-2022-34718</h3>
+<p>│
+├─────────────────────────────────────────────────────────────────┤
+│
+✓IPv6 habilitado (default en Windows)
+│
+│
+✓IPsec habilitado y SA establecida
+│
+│
+✓Atacante conoce SPI + clave HMAC de la víctima
+│
+│
+✓Atacante puede enviar paquetes IPv6 a la víctima
+│
+└─────────────────────────────────────────────────────────────────┘</p>
+<h3 id="441">4.4.1.</h3>
+<h3 id="341-adquisicion-de-binarios-para-evilesp">3.4.1 Adquisición de Binarios para EvilESP</h3>
+<h1 id="crear-directorio-de-trabajo">Crear directorio de trabajo</h1>
+<p>mkdir C:\EvilESP-Analysis
+cd C:\EvilESP-Analysis</p>
+<h1 id="obtener-tcpipsys-vulnerable-pre-septiembre-2022">Obtener tcpip.sys vulnerable (pre-Septiembre 2022)</h1>
+<h1 id="opcion-1-winbindex">Opción 1: WinbIndex</h1>
+<h1 id="httpswinbindexm417zcom-buscar-tcpipsys-kb5016616-agosto-2022">https://winbindex.m417z.com/ →buscar tcpip.sys →KB5016616 (Agosto 2022)</h1>
+<h1 id="opcion-2-de-sistema-windows-sin-parche">Opción 2: De sistema Windows sin parche</h1>
+<h1 id="copy-desde-maquina-vulnerable">Copy desde máquina vulnerable:</h1>
+<h1 id="copy-victimpccwindowssystem32driverstcpipsys-tcpip_vulnerablesys">copy \victimPC\c$\Windows\System32\drivers\tcpip.sys .\tcpip_vulnerable.sys</h1>
+<h1 id="obtener-tcpipsys-parcheado-septiembre-2022">Obtener tcpip.sys parcheado (Septiembre 2022+)</h1>
+<h1 id="winbindex-tcpipsys-kb5017308-server-2022-o-kb5017305-win-1011">WinbIndex →tcpip.sys →KB5017308 (Server 2022) o KB5017305 (Win 10/11)</h1>
+<h1 id="renombrar-para-claridad">Renombrar para claridad</h1>
+<p>Rename-Item tcpip.sys tcpip_patched.sys</p>
+<h1 id="descargar-simbolos">Descargar símbolos</h1>
+<p>$symchk = "C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\symchk.exe"
+&amp; $symchk tcpip_vulnerable.sys /s "SRV<em>.\Symbols</em>https://msdl.microsoft.com/download/symbols"
+&amp; $symchk tcpip_patched.sys /s "SRV<em>.\Symbols</em>https://msdl.microsoft.com/download/symbols"</p>
+<h3 id="442">4.4.2.</h3>
+<h3 id="342-ejecutar-diff-y-analisis">3.4.2 Ejecutar Diff y Análisis</h3>
+<h1 id="ejecutar-ghidriff">Ejecutar ghidriff</h1>
+<p>ghidriff tcpip_vulnerable.sys tcpip_patched.sys \
+--symbols-path .\Symbols \
+--max-section-funcs 5000 \
+--max-ram-percent 80 \</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_11">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+--output tcpip_diff</p>
+<h1 id="revisar-resultados">Revisar resultados</h1>
+<p>Get-Content .\tcpip_diff*.ghidriff.md | Select-String "Modified Functions"</p>
+<h1 id="expected-solo-2-funciones-principales-cambiadas">Expected: Solo 2 funciones principales cambiadas</h1>
+<h1 id="_2"></h1>
+<ul>
+<li>IppReceiveEsp</li>
+</ul>
+<h1 id="_3"></h1>
+<ul>
+<li>Ipv6pReassembleDatagram</li>
+</ul>
+<h3 id="443">4.4.3.</h3>
+<h3 id="343-analisis-de-codigo-vulnerable-vs-parcheado">3.4.3 Análisis de Código Vulnerable vs Parcheado</h3>
+<p>Función 1: IppReceiveEsp
+Código Vulnerable:
+void IppReceiveEsp(longlong param_1) {
+// ... setup code ...
+iVar3 = IppReceiveEspNbl(...);
+// BUG: Solo verifica 0 (éxito) o 0x105 (pendiente)
+// Otros códigos de resultado pasan sin verificación
+if ((iVar3 == 0) || (iVar3 == 0x105)) {
+// Continuar procesamiento - pero iVar3 podría indicar error!
+<em>(undefined4 </em>)((longlong)param_1 + 0x2c) = 0x3b;
+return;
+}
+// ... error handling para solo estos dos casos ...
+}
+Código Parcheado:
+void IppReceiveEsp(longlong param_1) {
+// ... setup code ...
+iVar3 = IppReceiveEspNbl(...);
+// FIX 1: Verificación de rango completa
+// Acepta solo 0 (éxito), 0x2c-0x3b (rango válido), o 0x105 (pendiente)
+if ((iVar3 != 0) &amp;&amp; (1 &lt; (uint)(iVar3 - 0x2b))) {
+// FIX 2: Descartar paquetes inválidos y registrar error
+if ((iVar3 != 0x105) &amp;&amp; (puVar3 != NULL)) {
+IppDiscardReceivedPackets(
+(longlong)puVar3, 6, param_1, 0, 0, 0, 0xe0004148);
+<em>(undefined4 </em>)(piVar2 + 0x8c) = 0xc000021b;
+return;
+}
+}
+<em>(undefined4 </em>)((longlong)param_1 + 0x2c) = 0x3b;
+return;
+}</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_12">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Función 2: Ipv6pReassembleDatagram
+Código Vulnerable:
+void Ipv6pReassembleDatagram(...) {
+// Calcular tamaños
+uVar11 = <em>(int </em>)(param_2 + 0x8c) + (uint)<em>(ushort </em>)(param_2 + 0x88);
+// BUG 1: Sin verificación de overflow de 16 bits
+// IPv6 payload length es campo de 16 bits, pero uVar14 puede exceder 0xFFFF
+// BUG 2: Sin validación de nextheader_offset vs tamaño de buffer
+if (uVar1 &lt; uVar13) {
+// Procesar reensamblaje SIN validación de tamaño
+IppRemoveFromReassemblySet(lVar8 + 0x4f00, param_2, param_3);
+// BUG 3: memcpy sin verificación de límites
+memcpy(puVar5 + 5, <em>(void </em><em>)(param_2 + 0x80),
+(ulonglong)</em>(ushort <em>)(param_2 + 0x88));
+}
+}
+Código Parcheado:
+void Ipv6pReassembleDatagram(...) {
+uVar11 = </em>(int <em>)(param_2 + 0x8c) + (uint)</em>(ushort <em>)(param_2 + 0x88);
+// FIX 1: Verificar overflow de 16 bits
+if (uVar14 &lt; 0x10001) {
+// FIX 2: Validar nextheader_offset contra tamaño de buffer
+if (</em>(ushort <em>)(param_2 + 0xbc) &lt;= uVar13) {
+// ... operaciones seguras ...
+// FIX 3: Verificar tamaño final reensamblado
+if (uVar14 + 0x28 &lt; </em>(uint *)(lVar4 + 0x18)) {
+// Discrepancia de tamaño - registrar fallo
+if ((DAT_1c0222618 &amp; 0x20) != 0) {
+McTemplateK0qq_EtwWriteTransfer(
+&amp;MICROSOFT_TCPIP_PROVIDER_Context,</p>
+<h3 id="tcpip_ip_reassembly_failure_pkt_len">&amp;TCPIP_IP_REASSEMBLY_FAILURE_PKT_LEN, ...);</h3>
+<p>}
+}
+}
+} else {
+// FIX 4: Registrar overflow de longitud
+if ((DAT_1c0222618 &amp; 0x20) != 0) {
+McTemplateK0qq_EtwWriteTransfer(...TCPIP_IP_REASSEMBLY_FAILURE_PKT_LEN...);
+}</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_13">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+}
+// Cleanup seguro de paquetes inválidos
+IppDeleteFromReassemblySet(lVar8 + 0x4f00, param_2, param_3);
+}</p>
+<h3 id="444">4.4.4.</h3>
+<h3 id="344-flujo-de-ataque-visual">3.4.4 Flujo de Ataque Visual</h3>
+<p>┌─────────────────────────────────────────────────────────────────┐
+│
+ATACANTE (Remoto)
+│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│
+Crear paquetes IPv6 maliciosos con:
+│
+│
+• Header ESP (requiere SPI + HMAC válidos de SA establecida)
+│
+│
+• Fragmentos con offsets que causan overflow (&gt;= 0x10001)
+│
+│
+• nextheader_offset apuntando fuera del buffer
+│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│
+Paquete 1:
+│
+│
+[Ether][IPv6 nh=ESP][ESP hdr][Fragment(off=0,M=1)][Routing]... │
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│
+Paquete 2:
+│
+│
+[Ether][IPv6 nh=ESP][ESP hdr][Fragment(off=24,M=0)][Routing].. │
+│
+└─Dispara reensamblaje ────────┘│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│
+KERNEL VÍCTIMA (tcpip.sys)
+│
+├─────────────────────────────────────────────────────────────────┤
+│
+1. Recibir fragmentos IPv6
+│
+│
+2. IppReceiveEsp() - Sin validación de código de resultado</p>
+<h3 id="bug-1">◄──┤BUG 1</h3>
+<p>│
+└─Continúa con estado inválido
+│
+│
+3. Ipv6pReassembleDatagram() - Reensamblar fragmentos
+│
+│
+└─Sin check: uVar14 &lt; 0x10001</p>
+<h3 id="bug-2">◄──┤BUG 2</h3>
+<p>│
+└─Sin check: nextheader_offset &lt;= buffer_size</p>
+<h3 id="bug-3">◄──┤BUG 3</h3>
+<p>│
+4. memcpy / escritura de array va OOB
+│</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_14">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+│
+5. Corrupción de memoria kernel →RCE o BSOD
+│
+└─────────────────────────────────────────────────────────────────┘</p>
+<h3 id="445">4.4.5.</h3>
+<h3 id="345-estructura-de-paquetes-esp-e-ipv6">3.4.5 Estructura de Paquetes ESP e IPv6</h3>
+<p>ESP Packet Structure ﴾RFC 4303﴿:</p>
+<p>0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|
+Security Parameters Index (SPI)
+|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|
+Sequence Number
+|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|
+Payload Data (variable)
+|
+~
+~
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|
+Padding (0-255 bytes)
+| Pad Length | NH
+|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+IPv6 Fragment Header:</p>
+<p>0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|
+Next Header
+|
+Reserved
+|
+Fragment Offset
+|Res|M|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|
+Identification
+|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</p>
+<h3 id="446">4.4.6.</h3>
+<h3 id="346-primitiva-de-explotacion">3.4.6 Primitiva de Explotación</h3>
+<p>Aspecto
+Detalles
+Tipo
+Out‐of‐bounds write ﴾potencialmente lectura
+también﴿
+Tamaño
+Variable ﴾controlado via tamaños de fragmento﴿
+Control de Offset
+Via nextheader_offset en header de fragmento
+Trigger
+Remoto, requiere IPsec SA establecida
+Prerrequisito
+IPv6 enabled ﴾default﴿, servicio IPsec corriendo
+Enfoque de Explotación Teórico:
+1. PRERREQUISITO: Establecer Security Association IPsec con target
+└─Requiere SPI válido + clave HMAC (barrera crítica)
+2. HEAP GROOMING: Enviar tráfico ESP legítimo para crear estado
+predecible en NonPagedPoolNx</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_15">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+3. TRIGGER OOB: Enviar headers de fragmento anidados dentro de ESP
+para corromper estructuras NET_BUFFER_LIST adyacentes
+4. CORRUPCIÓN DE ESTRUCTURA: Sobrescribir punteros de función o
+enlaces de lista en allocación de pool adyacente
+5. EJECUCIÓN DE CÓDIGO: Redirigir ejecución cuando se procese
+estructura corrupta</p>
+<h3 id="447">4.4.7.</h3>
+<h3 id="347-resumen-del-parche">3.4.7 Resumen del Parche</h3>
+<p>Función
+Vulnerabilidad
+Fix Añadido
+IppReceiveEsp
+Validación de resultado faltante
+Verificación de rango: (iVar3
+!= 0) &amp;&amp; (1 &lt; (uint)(iVar3 -
+0x2b))
+IppReceiveEsp
+Ejecución continua en error
+Llamada a
+IppDiscardReceivedPackets
+con error 0xe0004148
+Ipv6pReassembleDatagramInteger overflow en tamaño ﴾16‐bit﴿
+Check: if (uVar14 &lt; 0x10001)
+Ipv6pReassembleDatagramOOB via nextheader_offset
+Check: if (<em>(ushort
+</em>)(param_2 + 0xbc) &lt;=
+uVar13)
+Ipv6pReassembleDatagramDiscrepancia de tamaño
+Check: if (uVar14 + 0x28 &lt;
+<em>(uint </em>)(lVar4 + 0x18))
+Ambas
+Sin telemetría
+Eventos ETW añadidos: TC-</p>
+<h3 id="pip_ip_reassembly_failure_pkt_len">PIP_IP_REASSEMBLY_FAILURE_PKT_LEN</h3>
+<h3 id="448">4.4.8.</h3>
+<h3 id="348-lecciones-del-caso-de-estudio">3.4.8 Lecciones del Caso de Estudio</h3>
+<ol>
+<li>El binary diffing es altamente efectivo: Solo 2 funciones cambiaron en tcpip.sys ‐ enfoque
+instantáneo de 10,000+ funciones a 2</li>
+<li>El conocimiento de protocolos es esencial: Entender ESP ﴾RFC 4303﴿y fragmentación IPv6
+﴾RFC 8200﴿fue crucial para comprender el ataque</li>
+<li>Bugs simples en código complejo son de alto impacto: Una verificación de límites faltante
+ganó CVSS 9.8</li>
+<li>Vulnerabilidades multi‐función son comunes: El fallo de validación de IppReceiveEsp habi‐
+litó el OOB write de Ipv6pReassembleDatagram</li>
+<li>Los prerrequisitos afectan el riesgo real: El requisito de IPsec SA limita la explotación a pesar
+del rating crítico</li>
+<li>Los parches revelan condiciones de trigger: Ver los bounds checks muestra exactamente
+qué inputs causan el bug</li>
+</ol>
+<hr />
+<h3 id="capitulo-4-patch-diffing_16">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team</p>
+<h3 id="45">4.5.</h3>
+<h3 id="35-pipeline-de-automatizacion-de-patch-diffing">3.5 Pipeline de Automatización de Patch Diffing</h3>
+<p>¿Por Qué Automatizar?
+Microsoft libera parches mensualmente ﴾Patch Tuesday ‐ 2do martes de cada mes﴿
+Analizar cada actualización manualmente consume mucho tiempo
+Detección temprana de vulnerabilidades provee ventaja competitiva
+La automatización permite monitoreo continuo
+Etapas del Pipeline:
+┌─────────────────────────────────────────────────────────────────┐
+│</p>
+<h3 id="pipeline-de-patch-diffing">PIPELINE DE PATCH DIFFING</h3>
+<p>│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────┐
+┌─────────────────┐
+┌─────────────────┐
+│</p>
+<h3 id="1-monitorear">1. MONITOREAR</h3>
+<p>│───►│</p>
+<h3 id="2-descargar">2. DESCARGAR</h3>
+<p>│───►│</p>
+<h3 id="3-extraer">3. EXTRAER</h3>
+<p>│
+│</p>
+<h3 id="-msrc-api">- MSRC API</h3>
+<p>│
+│
+- WinbIndex
+│
+│
+- Expand MSU
+│
+│
+- Patch Tuesday│
+│
+- Update Cat.
+│
+│
+- Extract CAB
+│
+└─────────────────┘
+└─────────────────┘
+└─────────────────┘
+│
+│
+└─────────────────────────────────────────────┘
+│
+▼
+┌─────────────────┐
+┌─────────────────┐
+┌─────────────────┐
+│</p>
+<h3 id="4-simbolos">4. SÍMBOLOS</h3>
+<p>│───►│</p>
+<h3 id="5-diff">5. DIFF</h3>
+<p>│───►│</p>
+<h3 id="6-reporte">6. REPORTE</h3>
+<p>│
+│
+- symchk.exe
+│
+│
+- Ghidriff
+│
+│</p>
+<h3 id="-htmlpdf">- HTML/PDF</h3>
+<p>│
+│
+- Symbol Server│
+│
+- BinDiff
+│
+│
+- JSON para CI │
+└─────────────────┘
+└─────────────────┘
+└─────────────────┘
+│
+▼
+┌─────────────────────────────────┐
+│</p>
+<h3 id="7-alerta">7. ALERTA</h3>
+<p>│
+│
+- Email a equipo
+│
+│
+- Ticket en sistema
+│
+│
+- Slack/Teams notification
+│
+└─────────────────────────────────┘</p>
+<h3 id="451">4.5.1.</h3>
+<h3 id="351-script-de-automatizacion-python-para-ghidriff">3.5.1 Script de Automatización Python para Ghidriff</h3>
+<h1 id="usrbinenv-python3">!/usr/bin/env python3</h1>
+<p>"""
+ghidriff_batch.py - Batch Diffing para Análisis de Parches de Windows
+Ejecuta ghidriff en múltiples binarios y genera reporte HTML consolidado.
+Diseñado para ghidriff 0.4.x+ output format.</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_17">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+"""
+import subprocess
+import json
+import os
+import glob
+from pathlib import Path
+from datetime import datetime
+class PatchDiffer:
+def <strong>init</strong>(self, work_dir, target_files):
+self.work_dir = Path(work_dir)
+self.target_files = target_files
+self.results = []
+def diff_binaries(self, old_dir, new_dir, output_dir):
+"""Ejecutar ghidriff en todos los binarios objetivo"""
+old_path = Path(old_dir)
+new_path = Path(new_dir)
+out_path = Path(output_dir)
+out_path.mkdir(parents=True, exist_ok=True)
+for target in self.target_files:
+old_file = self.find_file(old_path, target)
+new_file = self.find_file(new_path, target)
+if not old_file or not new_file:
+print(f"[-] Saltando {target}: archivos no encontrados")
+continue
+print(f"[+] Diffing {target}...")
+diff_name = f"{target.replace('.', '_')}_diff"
+diff_out = out_path / diff_name
+cmd = [
+"ghidriff",
+str(old_file),
+str(new_file),
+"--output", str(diff_out),
+"--symbols-path", "C:\patch-analysis\symbols\",
+"--max-section-funcs", "5000",
+"--max-ram-percent", "80"
+]
+try:
+result = subprocess.run(cmd, capture_output=True,</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_18">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+text=True, timeout=1800)
+if result.returncode == 0:
+print(f"[+] Éxito: {diff_name}")
+self.parse_results(diff_out, target)
+else:
+print(f"[-] Error diffing {target}: {result.stderr}")
+except subprocess.TimeoutExpired:
+print(f"[-] Timeout diffing {target}")
+except Exception as e:
+print(f"[-] Excepción diffing {target}: {e}")
+def find_file(self, directory, filename):
+"""Buscar archivo recursivamente en directorio"""
+for path in directory.rglob(filename):
+return path
+return None
+def parse_results(self, diff_dir, binary_name):
+"""Parsear salida JSON de ghidriff"""
+json_patterns = [
+diff_dir / "json" / "<em>.ghidriff.json",
+diff_dir / "</em>.ghidriff.json",
+diff_dir.parent / "ghidriffs" / "json" / "*.ghidriff.json",
+]
+json_file = None
+for pattern in json_patterns:
+matches = glob.glob(str(pattern))
+if matches:
+json_file = Path(matches[0])
+break
+if not json_file or not json_file.exists():
+print(f"[-] No se encontró salida JSON para {binary_name}")
+return
+with open(json_file) as f:
+data = json.load(f)
+functions = data.get("functions", {})
+added = functions.get("added", [])
+deleted = functions.get("deleted", [])
+modified = functions.get("modified", [])
+summary = {
+"binary": binary_name,</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_19">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+"total_funcs": data.get("stats", {}).get("total_functions",
+len(added) + len(deleted) + len(modified)),
+"matched": data.get("stats", {}).get("matched", 0),
+"changed": len(modified),
+"new": len(added),
+"deleted": len(deleted),
+"changed_details": []
+}</p>
+<h1 id="extraer-funciones-cambiadas-con-baja-similaridad">Extraer funciones cambiadas con baja similaridad</h1>
+<p>for func in modified:
+ratio = func.get("ratio", 1.0)
+if ratio &lt; 0.95:</p>
+<h1 id="solo-funciones-con-cambios-significativos">Solo funciones con cambios significativos</h1>
+<p>old_info = func.get("old", {})
+new_info = func.get("new", {})
+summary["changed_details"].append({
+"name": old_info.get("name") or new_info.get("name", "unknown"),
+"similarity": ratio,
+"address_old": old_info.get("address", ""),
+"address_new": new_info.get("address", "")
+})
+self.results.append(summary)
+def generate_report(self, output_file):
+"""Generar reporte HTML"""
+html = f"""</p>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reporte Patch Diff - {datetime.now().strftime(' %Y- %m- %d')}</title>
+<style>
+body {{ font-family: Arial, sans-serif; margin: 20px; }}
+table {{ border-collapse: collapse; width: 100 %; margin: 20px 0; }}
+th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
+th {{ background-color: #4CAF50; color: white; }}
+.changed {{ color: #FF5722; font-weight: bold; }}
+.highlight {{ background-color: #FFEB3B; }}
+.critical {{ background-color: #FFCDD2; }}
+</style>
+</head>
+<body>
+<h1>Análisis de Patch Diff de Windows</h1>
+<p>Generado: {datetime.now().strftime(' %Y- %m- %d %H: %M: %S')}</p>
+"""
+for result in self.results:
+html += f"""
+
+---
+
+### CAPÍTULO 4. PATCH DIFFING
+Bitácora Red Team
+<h2>{result['binary']}</h2>
+<table>
+<tr><th>Métrica</th><th>Cantidad</th></tr>
+<tr><td>Funciones Totales</td><td>{result['total_funcs']}</td></tr>
+<tr><td>Emparejadas</td><td>{result['matched']}</td></tr>
+<tr class="changed"><td>Cambiadas</td><td>{result['changed']}</td></tr>
+<tr><td>Nuevas</td><td>{result['new']}</td></tr>
+<tr><td>Eliminadas</td><td>{result['deleted']}</td></tr>
+</table>
+"""
+if result['changed_details']:
+html += """
+<h3>Funciones Cambiadas (Similaridad < 0.95)</h3>
+<table>
+<tr><th>Nombre de Función</th><th>Similaridad</th>
+<th>Dirección Vieja</th><th>Dirección Nueva</th></tr>
+"""
+for func in sorted(result['changed_details'],
+key=lambda x: x['similarity']):
+row_class = 'critical' if func['similarity'] < 0.80 else 'highlight'
+html += f"""
+<tr class="{row_class}">
+<td>{func['name']}</td>
+<td>{func['similarity']:.2f}</td>
+<td>{func['address_old']}</td>
+<td>{func['address_new']}</td>
+</tr>
+"""
+html += "
+</table>\n"
+html += """
+</body>
+</html>
+<p>"""
+with open(output_file, 'w', encoding='utf-8') as f:
+f.write(html)
+print(f"[+] Reporte generado: {output_file}")
+if <strong>name</strong> == "<strong>main</strong>":
+import sys
+if len(sys.argv) &lt; 4:
+print("Uso: python ghidriff_batch.py <dir_viejo_kb> <dir_nuevo_kb> <dir_salida>")
+print("")</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_20">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+print("Argumentos:")
+print("
+dir_viejo_kb
+Directorio con binarios vulnerables")
+print("
+dir_nuevo_kb
+Directorio con binarios parcheados")
+print("
+dir_salida
+Directorio para salida de diff y reportes")
+print("")
+print("Ejemplo:")
+print("
+python ghidriff_batch.py ./binarios/KB5041565 ./binarios/KB5041571 ./diffs/agosto20
+sys.exit(1)
+old_dir = sys.argv[1]
+new_dir = sys.argv[2]
+out_dir = sys.argv[3]</p>
+<h1 id="objetivos-de-alto-valor-por-defecto">Objetivos de alto valor por defecto</h1>
+<p>targets = ["ntdll.dll", "win32k.sys", "tcpip.sys", "ntoskrnl.exe",
+"afd.sys", "http.sys"]
+differ = PatchDiffer(out_dir, targets)
+differ.diff_binaries(old_dir, new_dir, out_dir)
+differ.generate_report(os.path.join(out_dir, "report.html"))</p>
+<h3 id="452">4.5.2.</h3>
+<h3 id="352-automatizacion-con-task-scheduler-windows">3.5.2 Automatización con Task Scheduler ﴾Windows﴿</h3>
+<h1 id="crear-tarea-mensual-para-patch-tuesday">Crear tarea mensual para Patch Tuesday</h1>
+<p>$action = New-ScheduledTaskAction -Execute "PowerShell.exe" `
+-Argument "-File C:\patch-analysis\monthly_diff.ps1"</p>
+<h1 id="trigger-segundo-miercoles-de-cada-mes-dia-despues-de-patch-tuesday">Trigger: Segundo miércoles de cada mes (día después de Patch Tuesday)</h1>
+<p>$trigger = New-ScheduledTaskTrigger -Weekly -WeeksInterval 4 -DaysOfWeek Wednesday</p>
+<h1 id="settings">Settings</h1>
+<p>$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries `
+-DontStopIfGoingOnBatteries -StartWhenAvailable</p>
+<h1 id="registrar-tarea">Registrar tarea</h1>
+<p>Register-ScheduledTask -TaskName "MonthlyPatchDiff" <code>-Action $action -Trigger $trigger -Settings $settings</code>
+-Description "Automated Windows patch diffing"</p>
+<h3 id="453">4.5.3.</h3>
+<h3 id="353-integracion-con-llms-para-resumen">3.5.3 Integración con LLMs para Resumen</h3>
+<p>Combinar salida de ghidriff con Large Language Models acelera el análisis:
+Template de Prompt para LLM:
+Eres un investigador de vulnerabilidades analizando un patch diff binario.
+Contexto:
+- Este diff compara un driver Windows vulnerable con su versión parcheada</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_21">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+- Enfócate en cambios relevantes para seguridad (bounds checks, validación, manejo de errores)
+- Ignora cambios cosméticos (renombrado de variables, movimiento de código sin cambio de lógica)
+Analiza este patch diff y proporciona:
+1. CLASE DE VULNERABILIDAD: ¿Qué tipo de bug se está corrigiendo?
+2. FUNCIONES AFECTADAS: Lista las funciones con cambios relevantes para seguridad
+3. CAUSA RAÍZ: ¿Cuál fue el error de programación subyacente?
+4. DESCRIPCIÓN DEL FIX: ¿Qué validación o checks se añadieron?
+5. VECTOR DE ATAQUE: ¿Cómo podría un atacante haber disparado esta vulnerabilidad?
+6. POTENCIAL DE BYPASS: ¿Hay formas obvias en que el fix podría ser incompleto?
+Patch Diff:
+[pegar salida markdown de ghidriff - enfocarse en funciones con similaridad &lt;0.95]
+Limitaciones de LLMs para Análisis de Parches:
+LLMs Ayudan Con
+LLMs Tienen Problemas Con
+Resumir diffs grandes
+Race conditions sutiles
+Hipótesis iniciales de clase de vuln
+Cálculos complejos de punteros
+Explicar patrones de código
+Internals del kernel Windows
+Redactar secciones de reporte
+Distinguir fixes de seguridad vs optimización</p>
+<h3 id="46">4.6.</h3>
+<h3 id="36-patch-diffing-en-linux-kernel">3.6 Patch Diffing en Linux Kernel</h3>
+<h3 id="461">4.6.1.</h3>
+<h3 id="361-diferencias-con-windows">3.6.1 Diferencias con Windows</h3>
+<p>Aspecto
+Windows
+Linux
+Código Fuente
+Cerrado ﴾solo binarios﴿
+Abierto ﴾git.kernel.org﴿
+Formato Binario</p>
+<h3 id="pecoff">PE/COFF</h3>
+<h3 id="elf">ELF</h3>
+<p>Símbolos Debug
+PDB via Symbol Server
+DWARF en paquetes
+‐dbgsym
+Distribución
+Windows Update
+apt/yum + distro‐specific
+Modificaciones Vendor
+Ninguna
+Backports, parches
+custom</p>
+<h3 id="462">4.6.2.</h3>
+<h3 id="362-flujo-de-trabajo-para-linux">3.6.2 Flujo de Trabajo para Linux</h3>
+<p>Paso 1: Identificar Versiones de Kernel</p>
+<h1 id="obtener-version-actual">Obtener versión actual</h1>
+<p>CURRENT_KERNEL=$(uname -r)
+echo "Kernel actual: $CURRENT_KERNEL"</p>
+<h1 id="ejemplo-680-87-generic">Ejemplo: 6.8.0-87-generic</h1>
+<h1 id="extraer-base-y-numero-de-parche">Extraer base y número de parche</h1>
+<hr />
+<h3 id="capitulo-4-patch-diffing_22">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+KERNEL_BASE=$(echo $CURRENT_KERNEL | sed 's/-[0-9]*-generic//')
+KERNEL_PATCH=$(echo $CURRENT_KERNEL | grep -oP '(?&lt;=-)[0-9]+(?=-generic)')</p>
+<h3 id="prev_patchkernel_patch-1">PREV_PATCH=$((KERNEL_PATCH - 1))</h3>
+<p>PREV_KERNEL="${KERNEL_BASE}-${PREV_PATCH}-generic"
+echo "Versión vulnerable: $PREV_KERNEL"
+echo "Versión parcheada: $CURRENT_KERNEL"</p>
+<h1 id="consultar-ubuntu-security-notices">Consultar Ubuntu Security Notices</h1>
+<p>curl -s 'https://ubuntu.com/security/notices.json?offset=50' | \
+jq '.notices[] | select(.title | ascii_downcase | contains("kernel")) | {id, title}'
+Paso 2: Descargar Imágenes de Kernel y Símbolos
+mkdir ~/kernel-diff &amp;&amp; cd ~/kernel-diff
+mkdir old new symbols</p>
+<h1 id="descargar-versiones">Descargar versiones</h1>
+<p>apt-get download linux-image-unsigned-${PREV_KERNEL}
+apt-get download linux-image-unsigned-${CURRENT_KERNEL}</p>
+<h1 id="extraer">Extraer</h1>
+<p>dpkg-deb -x linux-image-unsigned-${PREV_KERNEL}_<em>.deb old/
+dpkg-deb -x linux-image-unsigned-${CURRENT_KERNEL}_</em>.deb new/</p>
+<h1 id="simbolos-debug-anadir-repo-ddebs-primero">Símbolos debug (añadir repo ddebs primero)</h1>
+<p>sudo apt-key adv --keyserver keyserver.ubuntu.com \
+--recv-keys F2EDC64DC5AEE1F6B9C621F0C8CAB6595FDFF622
+echo "deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main" | \
+sudo tee /etc/apt/sources.list.d/ddebs.list
+sudo apt update
+apt-get download linux-image-unsigned-${PREV_KERNEL}-dbgsym
+apt-get download linux-image-unsigned-${CURRENT_KERNEL}-dbgsym
+dpkg-deb -x linux-image-unsigned-${PREV_KERNEL}-dbgsym_<em>.ddeb old/
+dpkg-deb -x linux-image-unsigned-${CURRENT_KERNEL}-dbgsym_</em>.ddeb new/
+Paso 3: Extraer vmlinux</p>
+<h1 id="desde-paquete-dbgsym-mejor-incluye-simbolos">Desde paquete dbgsym (MEJOR - incluye símbolos)</h1>
+<p>cp old/usr/lib/debug/boot/vmlinux-${PREV_KERNEL} old/vmlinux
+cp new/usr/lib/debug/boot/vmlinux-${CURRENT_KERNEL} new/vmlinux</p>
+<h1 id="verificar-simbolos">Verificar símbolos</h1>
+<p>file old/vmlinux</p>
+<h1 id="esperado-elf-64-bit-with-debug_info-not-stripped">Esperado: ELF 64-bit ... with debug_info, not stripped</h1>
+<p>nm old/vmlinux | head -5</p>
+<h1 id="deberia-mostrar-nombres-de-funciones">Debería mostrar nombres de funciones</h1>
+<hr />
+<h3 id="capitulo-4-patch-diffing_23">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Paso 4: Identificar Módulos Cambiados</p>
+<h1 id="comparar-arboles-de-modulos">Comparar árboles de módulos</h1>
+<p>diff -qr old/usr/lib/debug/lib/modules/${PREV_KERNEL}/kernel/ \
+new/usr/lib/debug/lib/modules/${CURRENT_KERNEL}/kernel/ | grep differ</p>
+<h1 id="enfocarse-en-subsistemas-especificos">Enfocarse en subsistemas específicos</h1>
+<p>diff -qr old/.../kernel/net new/.../kernel/net
+diff -qr old/.../kernel/fs/overlayfs/ new/.../kernel/fs/overlayfs/
+Paso 5: Diff con Ghidriff</p>
+<h1 id="activar-entorno-virtual-de-ghidriff">Activar entorno virtual de ghidriff</h1>
+<p>source ~/ghidriff-env/bin/activate</p>
+<h1 id="descomprimir-modulo-especifico-ubuntu-usa-kozst">Descomprimir módulo específico (Ubuntu usa .ko.zst)</h1>
+<p>zstd -d old/usr/lib/debug/lib/modules/${PREV_KERNEL}/kernel/net/netfilter/nf_tables.ko.zst \
+-o old/nf_tables.ko
+zstd -d new/usr/lib/debug/lib/modules/${CURRENT_KERNEL}/kernel/net/netfilter/nf_tables.ko.zst \
+-o new/nf_tables.ko</p>
+<h1 id="ejecutar-diff">Ejecutar diff</h1>
+<p>ghidriff old/nf_tables.ko new/nf_tables.ko \
+--max-ram-percent 80 \
+--max-section-funcs 3000 \
+--output nf_tables_diff \
+--no-threaded</p>
+<h3 id="463">4.6.3.</h3>
+<h3 id="363-diff-a-nivel-de-codigo-fuente">3.6.3 Diff a Nivel de Código Fuente</h3>
+<h1 id="clonar-fuente-del-kernel">Clonar fuente del kernel</h1>
+<p>git clone --branch v6.8 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+cd linux</p>
+<h1 id="buscar-commits-de-cve">Buscar commits de CVE</h1>
+<p>git log --all --grep="CVE" --oneline | head -20</p>
+<h1 id="ver-diff-de-commit-especifico">Ver diff de commit específico</h1>
+<p>git show f342de4e2f33e0e39165d8639387aa6c19dff660</p>
+<h1 id="buscar-fixes-en-subsistema-especifico">Buscar fixes en subsistema específico</h1>
+<p>git log --all --oneline --grep="netfilter" --grep="fix" | head -10</p>
+<h3 id="464">4.6.4.</h3>
+<h3 id="364-ejemplo-cve20241086-nf_tables-uaf">3.6.4 Ejemplo: CVE‐2024‐1086 ﴾nf_tables UAF﴿</h3>
+<p>Información del CVE:</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_24">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Atributo
+Valor</p>
+<h3 id="cve_1">CVE</h3>
+<h3 id="cve20241086">CVE‐2024‐1086</h3>
+<p>Componente
+nf_tables ﴾subsistema Netfilter﴿
+Tipo
+Use‐After‐Free →LPE</p>
+<h3 id="cvss_1">CVSS</h3>
+<h3 id="78-alto">7.8 ﴾Alto﴿</h3>
+<p>Afecta
+Linux 3.15 ‐ 6.8
+Exploit Público
+Sí ﴾~99 % success rate﴿
+Commit del Fix:
+git show f342de4e2f33e0e39165d8639387aa6c19dff660</p>
+<h1 id="diff-simplificado">Diff simplificado:</h1>
+<h1 id="-">-</h1>
+<p>default:</p>
+<h1 id="-_1">-</h1>
+<p>switch (data-&gt;verdict.code &amp; NF_VERDICT_MASK) {</p>
+<h1 id="-_2">-</h1>
+<p>case NF_ACCEPT:</p>
+<h1 id="-_3">-</h1>
+<p>case NF_DROP:</p>
+<h1 id="-_4">-</h1>
+<p>case NF_QUEUE:</p>
+<h1 id="-_5">-</h1>
+<p>break;</p>
+<h1 id="-_6">-</h1>
+<p>default:</p>
+<h1 id="-_7">-</h1>
+<p>return -EINVAL;</p>
+<h1 id="-_8">-</h1>
+<p>}</p>
+<h1 id="-_9">-</h1>
+<p>fallthrough;</p>
+<h1 id="_4">+</h1>
+<p>case NF_ACCEPT:</p>
+<h1 id="_5">+</h1>
+<p>case NF_DROP:</p>
+<h1 id="_6">+</h1>
+<p>case NF_QUEUE:</p>
+<h1 id="_7">+</h1>
+<p>break;</p>
+<h1 id="_8"></h1>
+<p>case NFT_CONTINUE:</p>
+<h1 id="_9"></h1>
+<p>case NFT_BREAK:</p>
+<h1 id="_10">...</h1>
+<h1 id="_11">+</h1>
+<p>default:</p>
+<h1 id="_12">+</h1>
+<p>return -EINVAL;
+Análisis:
+Bug: Validación basada en máscara permitía valores como NF_DROP | extra_bits
+Causa Raíz: &amp; NF_VERDICT_MASK dejaba pasar verdicts “decorados”
+Impacto: Type confusion en código posterior →UAF →LPE
+Fix: Cambiar de validación por máscara a coincidencia exacta</p>
+<h3 id="465">4.6.5.</h3>
+<h3 id="365-recursos-para-linux-kernel">3.6.5 Recursos para Linux Kernel</h3>
+<p>Recurso</p>
+<h3 id="url">URL</h3>
+<p>Utilidad
+syzbot
+syzkaller.appspot.comReproducers, bisección automática
+Ubuntu Security
+ubuntu.com/security/notices
+Advisories específicos de distro
+Debian Tracker
+security‐
+tracker.debian.org
+CVE tracking cross‐distro</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_25">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team
+Recurso</p>
+<h3 id="url_1">URL</h3>
+<p>Utilidad
+kernel.org
+git.kernel.org
+Código fuente oficial
+Linux CVE Announce
+lore.kernel.org/linux‐
+cve‐announce/
+Anuncios oficiales de CVE</p>
+<h3 id="47">4.7.</h3>
+<h3 id="37-caso-de-estudio-7zip-path-traversal">3.7 Caso de Estudio: 7‐Zip Path Traversal</h3>
+<h3 id="471">4.7.1.</h3>
+<h3 id="371-informacion-del-caso">3.7.1 Información del Caso</h3>
+<p>Atributo
+Valor
+Software
+7‐Zip File Archiver
+Versiones Afectadas</p>
+<h3 id="2409-y-anteriores">24.09 y anteriores</h3>
+<p>Versión Parcheada</p>
+<h3 id="2500">25.00+</h3>
+<p>Tipo
+Path Traversal via Symlink ﴾CWE‐22﴿
+Impacto
+Arbitrary File Write →RCE potencial
+CVSS Estimado</p>
+<h3 id="78-alto_1">7.8 ﴾Alto﴿</h3>
+<h3 id="472">4.7.2.</h3>
+<h3 id="372-analisis-del-parche">3.7.2 Análisis del Parche</h3>
+<p>Archivo Afectado: CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+Obtener Diff:
+git clone https://github.com/ip7z/7zip.git
+cd 7zip</p>
+<h1 id="comparar-versiones">Comparar versiones</h1>
+<p>git diff 24.09..25.00 -- CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+Cambio 1: IsSafePath con Parámetro WSL
+// ANTES (vulnerable):
+bool IsSafePath(const UString &amp;path) {
+CLinkLevelsInfo levelsInfo;
+levelsInfo.Parse(path);
+// Sin awareness de WSL
+return !levelsInfo.IsAbsolute &amp;&amp; levelsInfo.LowLevel &gt;= 0;
+}
+// DESPUÉS (parcheado):
+static bool IsSafePath(const UString &amp;path, bool isWSL) {
+CLinkLevelsInfo levelsInfo;
+levelsInfo.Parse(path, isWSL);
+// Ahora toma parámetro isWSL
+return !levelsInfo.IsAbsolute &amp;&amp; levelsInfo.LowLevel &gt;= 0;
+}
+Cambio 2: Detección de Path Absoluto WSL‐Aware</p>
+<hr />
+<h3 id="capitulo-4-patch-diffing_26">CAPÍTULO 4. PATCH DIFFING</h3>
+<p>Bitácora Red Team</p>
+<h3 id="antes">// ANTES:</h3>
+<p>void CLinkLevelsInfo::Parse(const UString &amp;path) {
+IsAbsolute = NName::IsAbsolutePath(path);
+// Solo semántica Windows
+// ...
+}</p>
+<h3 id="despues">// DESPUÉS:</h3>
+<p>void CLinkLevelsInfo::Parse(const UString &amp;path, bool isWSL) {
+// WSL usa '/' como indicador de path absoluto
+// Windows usa 'C:\', '\', etc.
+IsAbsolute = isWSL ? IS_PATH_SEPAR(path[0]) : NName::IsAbsolutePath(path);
+// ...
+}
+Cambio 3: Verificación de Link Peligroso para Todos los Tipos
+// ANTES: Solo directorios en Windows</p>
+<h1 id="ifdef-_win32">ifdef _WIN32</h1>
+<p>if (_item.IsDir)
+// BUG: Solo verifica dirs!</p>
+<h1 id="endif">endif</h1>
+<p>if (linkInfo.isRelative) { ... }
+// DESPUÉS: Todos los symlinks relativos
+if (!_ntOptions.SymLinks_AllowDangerous.Val &amp;&amp; link.isRelative) {
+CLinkLevelsInfo levelsInfo;
+levelsInfo.Parse(link.LinkPath, link.Is_WSL());
+// WSL-aware
+if (levelsInfo.FinalLevel &lt; 1 || levelsInfo.IsAbsolute)
+return SendMessageError2(...);
+}</p>
+<h3 id="473">4.7.3.</h3>
+<h3 id="373-escenario-de-ataque">3.7.3 Escenario de Ataque</h3>
+<p>┌─────────────────────────────────────────────────────────────────┐
+│
+ESTRUCTURA DEL ARCHIVO MALICIOSO (tar/rar5)
+│
+├─────────────────────────────────────────────────────────────────┤
+│
+safe_folder/
+│
+│
+safe_folder/link -&gt; C:\Users\Public\Desktop
+(symlink WSL)
+│
+│
+safe_folder/link/malware.exe
+(archivo payload)│
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│
+EXTRACCIÓN EN WINDOWS (7-Zip 24.09 vulnerable)
+│
+├─────────────────────────────────────────────────────────────────┤
+│
+1. ReadLink() lee target: "C:\Users\Public\Desktop"
+│
+│
+2. IsSafePath() llamado SIN isWSL=true
+│
+│
+3. NName::IsAbsolutePath() usa semántica Windows
+│</p></div>
+            </div>
+            
+            <div class="page-nav">
+                <a href="03-fuzzing.html"><i class="fas fa-arrow-left"></i>Capítulo 03: Fuzzing</a>
+                <a href="05-analisis-crashes.html">Capítulo 05: Análisis de Crashes<i class="fas fa-arrow-right"></i></a>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        
+        hljs.highlightAll();
+        
+        const currentPath = window.location.pathname;
+        const fileName = currentPath.split('/').pop().replace('.html', '');
+        
+        document.querySelectorAll('.nav-item').forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && href.replace('.html', '') === fileName) {
+                item.classList.add('active');
+            }
+        });
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
