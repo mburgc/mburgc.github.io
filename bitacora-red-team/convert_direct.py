@@ -60,14 +60,70 @@ def extract_chapters(pages_data):
     return chapters
 
 
+def add_spaces_between_words(text):
+    if not text:
+        return ""
+    
+    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    
+    text = re.sub(r'([a-zA-Z])([A-Z][a-z])', r'\1 \2', text)
+    
+    text = re.sub(r'([a-z])(\d+)', r'\1 \2', text)
+    text = re.sub(r'(\d+)([a-z])', r'\1 \2', text)
+    
+    text = re.sub(r'([.,;:!%)])([A-Za-z])', r'\1 \2', text)
+    text = re.sub(r'([A-Za-z])(\()', r'\1 \2', text)
+    text = re.sub(r'(\))([A-Za-z])', r'\1 \2', text)
+    
+    return text
+
+
+def format_urls_and_emails(text):
+    url_pattern = r'(?<!\[)(?<!\.])(https?://[^\s<>"]+)(?!\])'
+    text = re.sub(url_pattern, r'<a href="\1" target="_blank">\1</a>', text)
+    
+    email_pattern = r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})'
+    text = re.sub(email_pattern, r'<a href="mailto:\1">\1</a>', text)
+    
+    return text
+
+
+def add_cross_references(text):
+    chapters = {
+        "1": ("01-introduccion", "Capítulo 1"),
+        "2": ("02-clases-vulnerabilidades", "Capítulo 2"),
+        "3": ("03-fuzzing", "Capítulo 3"),
+        "4": ("04-patch-diffing", "Capítulo 4"),
+        "5": ("05-analisis-crashes", "Capítulo 5"),
+    }
+    
+    for num, (file, title) in chapters.items():
+        patterns = [
+            rf'(cap[ií]tulo\s+{num})\b',
+            rf'(cap\.?\s+{num})\b',
+        ]
+        for pattern in patterns:
+            text = re.sub(pattern, rf'<a href="{file}.html">{title}</a>', text, flags=re.IGNORECASE)
+    
+    text = re.sub(r'secc(i|í)on\s+(\d+\.\d+)', r'<a href="#\2">Sección \2</a>', text, flags=re.IGNORECASE)
+    
+    return text
+
+
 def clean_text(text):
     if not text:
         return ""
 
+    text = add_spaces_between_words(text)
+    
     text = re.sub(r"\s+", " ", text)
     text = re.sub(r"(\w)\.(\w)", r"\1. \2", text)
     text = text.replace("‐", "-").replace("‑", "-")
     text = text.replace("﴾", "(").replace("﴿", ")")
+    text = text.replace("•", " · ")
+    
+    text = format_urls_and_emails(text)
+    text = add_cross_references(text)
 
     return text.strip()
 

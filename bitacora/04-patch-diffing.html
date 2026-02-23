@@ -276,7 +276,7 @@
             </div>
             
             <div class="section">
-                <p>Capítulo 4</p>
+                <p><a href="04-patch-diffing.html">Capítulo 4</a></p>
 <p>Patch Diffing</p>
 <p>El patch diffing es una técnica poderosa de investigación de vulnerabilidades que analiza las dife-</p>
 <p>renciasentreversionesvulnerablesyparcheadasdesoftware. Estecapítulocubrelosfundamentos,</p>
@@ -296,16 +296,16 @@
 </ol>
 <p>Por Qué Importa el Patch Diffing</p>
 <p>Beneficio Descripción</p>
-<p>Única Fuente de Verdad SindetallesdeCVEoPoC,elparcherevelaqué</p>
+<p>Única Fuente de Verdad Sindetallesde CV Eo Po C, elparcherevelaqué</p>
 <p>estabaroto</p>
-<p>Descubrimientode Variantes Mientrasanalizasunacorrección,puedesencontrar</p>
+<p>Descubrimientode Variantes Mientrasanalizasunacorrección, puedesencontrar</p>
 <p>bugsadicionalescercanos</p>
 <p>Desarrollode Habilidades Proveeprácticaenfocadaenreversingcontargets</p>
 <p>conocidos</p>
 <p>Insight del Vendor Aprendecómodiferentesvendorsabordan</p>
 <p>correccionesdeseguridad</p>
 <p>Desafíos del Patch Diffing</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>Desafío Descripción</p>
 <p>Asimetría Pequeñoscambiosencódigofuentepuedenafectar</p>
 <p>drásticamentebinarioscompilados</p>
@@ -314,199 +314,199 @@
 <p>Reducciónde Ruido Debedistinguirsecambiosrelevantesparaseguridadde</p>
 <p>actualizacionesbenignas</p>
 <p>Limitaciones de Herramientas Ningunaherramientaautomatizaperfectamenteel</p>
-<p>proceso;elanálisishumanoesesencial</p>
+<p>proceso; elanálisishumanoesesencial</p>
 <ol>
   <li>2. 3. 2 Extracción de Parches de Windows</li>
 </ol>
 <p>Estructura de Actualizaciones de Windows</p>
-<p>LasactualizacionesdeWindowsvienenenvariosformatos:</p>
-<p>Tipo Descripción ConsideraciónparaDiffing</p>
-<p>Cumulative Contienetodaslas Grande,muchoscambiosafiltrar</p>
+<p>Lasactualizacionesde Windowsvienenenvariosformatos:</p>
+<p>Tipo Descripción Consideraciónpara Diffing</p>
+<p>Cumulative Contienetodaslas Grande, muchoscambiosafiltrar</p>
 <p>Update correccionesanteriores</p>
-<p>Security Solocorreccionesde Máspequeño,másenfocado</p>
+<p>Security Solocorreccionesde Máspequeño, másenfocado</p>
 <p>Update seguridadespecíficas</p>
 <p>Delta Solocambiosdesde Requierebase+delta</p>
 <p>Update últimaactualización</p>
 <p>Servicing Actualizaelinstalador Raramenterelevanteparaseguridad</p>
 <p>Stack mismo</p>
-<p>FormatoWIM+PSF (Windows 11 24H2+)</p>
-<p>LasactualizacionesmásrecientesdeWindowsusanunnuevoformato:</p>
-<p>Componente Contenidos ¿SePuedenExtraerBinarios?</p>
-<p>.psf Parchesdeltabinarios No-requierearchivosbase</p>
-<p>.wim Manifiestos,catálogos No-sinbinariosdentro</p>
-<p>SSU-*.cab BinariosdeServicingStack SoloarchivosSSU</p>
-<p>*.msix PaquetesdeappsUWP Binariosdeappsúnicamente</p>
+<p>Formato WIM+PSF (Windows 11 24H2+)</p>
+<p>Lasactualizacionesmásrecientesde Windowsusanunnuevoformato:</p>
+<p>Componente Contenidos ¿Se Pueden Extraer Binarios?</p>
+<p>. psf Parchesdeltabinarios No-requierearchivosbase</p>
+<p>. wim Manifiestos, catálogos No-sinbinariosdentro</p>
+<p>SSU-*. cab Binariosde Servicing Stack Soloarchivos SSU</p>
+<p>*. msix Paquetesdeapps UWP Binariosdeappsúnicamente</p>
 <p>Fuentespara Obtener Binarios</p>
 <ol>
-  <li>WinbIndex (winbindex. m417z. com): Base de datos de binarios de Windows indexados por</li>
+  <li>Winb Index (winbindex. m 417 z. com): Base de datos de binarios de Windows indexados por</li>
 </ol>
-<p>versiónyKB</p>
+<p>versióny KB</p>
 <ol>
-  <li>Microsoft Update Catalog:Descargarpaquetes. msudirectamente</li>
-  <li>Microsoft Symbol Server:Descargarbinariosespecíficosportimestamp/size</li>
-  <li>SistemasParcheados:Copiardirectamentedesistemasconparchesinstalados</li>
+  <li>Microsoft Update Catalog: Descargarpaquetes. msudirectamente</li>
+  <li>Microsoft Symbol Server: Descargarbinariosespecíficosportimestamp/size</li>
+  <li>Sistemas Parcheados: Copiardirectamentedesistemasconparchesinstalados</li>
 </ol>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <ol>
-  <li>2.1. 3. 2.1 Script de Extracción PowerShell (Extract-Patch. ps1)</li>
+  <li>2.1. 3. 2.1 Script de Extracción Power Shell (Extract-Patch. ps 1)</li>
 </ol>
-<p>ScriptcompletoparaextraerbinariosdeactualizacionesdeWindows:</p>
-<h2>.SYNOPSIS</h2>
+<p>Scriptcompletoparaextraerbinariosdeactualizacionesde Windows:</p>
+<h2>. SYNOPSIS</h2>
 <p>Extrae binarios de parches de actualizaciones Windows.</p>
-<h2>.DESCRIPTION</h2>
-<p>Este script automatiza la extracción de binarios de archivos .msu o .cab,</p>
-<p>o puede descargar directamente desde WinbIndex para KBs específicos.</p>
-<p>.PARAMETER PatchPath</p>
-<p>Ruta a archivo .msu o .cab (o directorio con CABs extraídos)</p>
-<p>.PARAMETER UseWinbIndex</p>
-<p>Switch para descargar binarios directamente desde WinbIndex</p>
-<p>.PARAMETER KBNumber</p>
-<p>Número KB para WinbIndex (ej: "KB5041565")</p>
-<p>.PARAMETER TargetBinaries</p>
+<h2>. DESCRIPTION</h2>
+<p>Este script automatiza la extracción de binarios de archivos . msu o . cab,</p>
+<p>o puede descargar directamente desde Winb Index para K Bs específicos.</p>
+<p>. PARAMETER Patch Path</p>
+<p>Ruta a archivo . msu o . cab (o directorio con CA Bs extraídos)</p>
+<p>. PARAMETER Use Winb Index</p>
+<p>Switch para descargar binarios directamente desde Winb Index</p>
+<p>. PARAMETER KB Number</p>
+<p>Número KB para Winb Index (ej: "KB5041565")</p>
+<p>. PARAMETER Target Binaries</p>
 <p>Lista de binarios específicos a extraer (ej: @("ntoskrnl. exe","tcpip. sys"))</p>
-<h2>.EXAMPLE</h2>
-<p>.\Extract-Patch. ps1 -PatchPath "C:\Updates\windows11-kb5041565. msu"</p>
-<h2>.EXAMPLE</h2>
-<p>.\Extract-Patch. ps1 -UseWinbIndex -KBNumber "KB5041565" `</p>
-<p>-TargetBinaries @("tcpip. sys","ntdll. dll")</p>
-<p>param(</p>
-<p>[Parameter(Mandatory=$false)]</p>
-<p>[string]$PatchPath,</p>
-<p>[Parameter(Mandatory=$false)]</p>
-<p>[switch]$UseWinbIndex,</p>
-<p>[Parameter(Mandatory=$false)]</p>
-<p>[string]$KBNumber,</p>
-<p>[Parameter(Mandatory=$false)]</p>
-<p>[string[]]$TargetBinaries = @(</p>
+<h2>. EXAMPLE</h2>
+<p>.\Extract-Patch. ps 1 -Patch Path "C:\Updates\windows 11-kb 5041565. msu"</p>
+<h2>. EXAMPLE</h2>
+<p>.\Extract-Patch. ps 1 -Use Winb Index -KB Number "KB5041565" `</p>
+<p>-Target Binaries @("tcpip. sys","ntdll. dll")</p>
+<p>param (</p>
+<p>[Parameter (Mandatory=$false)]</p>
+<p>[string]$Patch Path,</p>
+<p>[Parameter (Mandatory=$false)]</p>
+<p>[switch]$Use Winb Index,</p>
+<p>[Parameter (Mandatory=$false)]</p>
+<p>[string]$KB Number,</p>
+<p>[Parameter (Mandatory=$false)]</p>
+<p>[string[]]$Target Binaries = @(</p>
 <p>"ntoskrnl. exe",</p>
-<p>"win32kfull. sys",</p>
-<p>"win32kbase. sys",</p>
+<p>"win 32 kfull. sys",</p>
+<p>"win 32 kbase. sys",</p>
 <p>"tcpip. sys",</p>
 <p>"ntdll. dll",</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>"afd. sys",</p>
 <p>"http. sys"</p>
-<p>$ErrorActionPreference = "Stop"</p>
-<p>$extractDir = ".\binaries"</p>
-<p>$tempDir = ".\temp_extract"</p>
-<p>function Extract-FromMSU {</p>
-<p>param([string]$MsuPath)</p>
-<p>Write-Host "[*] Extrayendo MSU: $MsuPath"</p>
+<p>$Error Action Preference = "Stop"</p>
+<p>$extract Dir = ".\binaries"</p>
+<p>$temp Dir = ".\temp_extract"</p>
+<p>function Extract-From MSU {</p>
+<p>param ([string]$Msu Path)</p>
+<p>Write-Host "[*] Extrayendo MSU: $Msu Path"</p>
 <h1>Crear directorio temporal</h1>
-<p>New-Item -ItemType Directory -Force -Path $tempDir | Out-Null</p>
+<p>New-Item -Item Type Directory -Force -Path $temp Dir | Out-Null</p>
 <h1>Expandir MSU</h1>
-<p>expand -F:* $MsuPath $tempDir</p>
-<h1>Encontrar y expandir CABs anidados</h1>
-<p>$cabs = Get-ChildItem $tempDir -Filter "*.cab" -Recurse</p>
+<p>expand -F:* $Msu Path $temp Dir</p>
+<h1>Encontrar y expandir CA Bs anidados</h1>
+<p>$cabs = Get-Child Item $temp Dir -Filter "*. cab" -Recurse</p>
 <p>foreach ($cab in $cabs) {</p>
 <p>Write-Host "[*] Procesando CAB: $($cab. Name)"</p>
-<p>$cabExtract = Join-Path $tempDir $cab. BaseName</p>
-<p>New-Item -ItemType Directory -Force -Path $cabExtract | Out-Null</p>
-<p>expand -F:* $cab. FullName $cabExtract</p>
+<p>$cab Extract = Join-Path $temp Dir $cab. Base Name</p>
+<p>New-Item -Item Type Directory -Force -Path $cab Extract | Out-Null</p>
+<p>expand -F:* $cab. Full Name $cab Extract</p>
 <h1>Buscar binarios objetivo</h1>
-<p>foreach ($binary in $TargetBinaries) {</p>
-<p>$found = Get-ChildItem $tempDir -Filter $binary -Recurse | Select-Object -First 1</p>
+<p>foreach ($binary in $Target Binaries) {</p>
+<p>$found = Get-Child Item $temp Dir -Filter $binary -Recurse | Select-Object -First 1</p>
 <p>if ($found) {</p>
-<p>$destPath = Join-Path $extractDir $binary</p>
-<p>Copy-Item $found. FullName $destPath -Force</p>
-<p>Write-Host "[+] Extraído: $binary -> $destPath"</p>
+<p>$dest Path = Join-Path $extract Dir $binary</p>
+<p>Copy-Item $found. Full Name $dest Path -Force</p>
+<p>Write-Host "[+] Extraído: $binary -> $dest Path"</p>
 <p>} else {</p>
 <p>Write-Host "[-] No encontrado: $binary"</p>
-<p>function Get-FromWinbIndex {</p>
-<p>param([string]$KB)</p>
-<p>Write-Host "[*] Consultando WinbIndex para $KB..."</p>
-<h1>Nota: WinbIndex no tiene API formal; usar scraping o descargas directas</h1>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>function Get-From Winb Index {</p>
+<p>param ([string]$KB)</p>
+<p>Write-Host "[*] Consultando Winb Index para $KB..."</p>
+<h1>Nota: Winb Index no tiene API formal; usar scraping o descargas directas</h1>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <h1>Esta es una implementación simplificada</h1>
-<p>$baseUrl = "https://winbindex. m417z. com"</p>
-<p>foreach ($binary in $TargetBinaries) {</p>
+<p>$base Url = "<a href="https://winbindex." target="_blank">https://winbindex.</a> m 417 z. com"</p>
+<p>foreach ($binary in $Target Binaries) {</p>
 <p>Write-Host "[*] Buscando $binary..."</p>
-<h1>Formato esperado del URL de descarga de WinbIndex</h1>
-<h1>Los URLs reales requieren hash del archivo</h1>
+<h1>Formato esperado del URL de descarga de Winb Index</h1>
+<h1>Los UR Ls reales requieren hash del archivo</h1>
 <p>try {</p>
 <h1>Buscar en el sitio web (ejemplo simplificado)</h1>
-<p>$searchUrl = "$baseUrl/?file=$binary"</p>
-<p>Write-Host "[*] Consultar manualmente: $searchUrl"</p>
+<p>$search Url = "$base Url/?file=$binary"</p>
+<p>Write-Host "[*] Consultar manualmente: $search Url"</p>
 <p>Write-Host "[*] Descargar versión vulnerable y parcheada manualmente"</p>
 <p>} catch {</p>
 <p>Write-Host "[-] Error buscando $binary : $_"</p>
 <p>Write-Host ""</p>
 <p>Write-Host "=== INSTRUCCIONES MANUALES ==="</p>
-<p>Write-Host "1. Visitar https://winbindex. m417z. com/"</p>
-<p>Write-Host "2. Buscar cada binario: $($TargetBinaries -join ', ')"</p>
+<p>Write-Host "1. Visitar <a href="https://winbindex." target="_blank">https://winbindex.</a> m 417 z. com/"</p>
+<p>Write-Host "2. Buscar cada binario: $($Target Binaries -join ', ')"</p>
 <p>Write-Host "3. Filtrar por versión Windows y KB"</p>
 <p>Write-Host "4. Descargar versión vulnerable (pre-$KB) y parcheada ($KB)"</p>
-<p>Write-Host "5. Guardar en: $extractDir"</p>
+<p>Write-Host "5. Guardar en: $extract Dir"</p>
 <h1>Crear directorio de salida</h1>
-<p>New-Item -ItemType Directory -Force -Path $extractDir | Out-Null</p>
-<p>if ($UseWinbIndex) {</p>
-<p>if (-not $KBNumber) {</p>
-<p>Write-Error "Debe especificar -KBNumber cuando usa -UseWinbIndex"</p>
-<p>Get-FromWinbIndex -KB $KBNumber</p>
-<p>elseif ($PatchPath) {</p>
-<p>if ($PatchPath -like "*.msu") {</p>
-<p>Extract-FromMSU -MsuPath $PatchPath</p>
-<p>elseif ($PatchPath -like "*.cab") {</p>
+<p>New-Item -Item Type Directory -Force -Path $extract Dir | Out-Null</p>
+<p>if ($Use Winb Index) {</p>
+<p>if (-not $KB Number) {</p>
+<p>Write-Error "Debe especificar -KB Number cuando usa -Use Winb Index"</p>
+<p>Get-From Winb Index -KB $KB Number</p>
+<p>elseif ($Patch Path) {</p>
+<p>if ($Patch Path -like "*. msu") {</p>
+<p>Extract-From MSU -Msu Path $Patch Path</p>
+<p>elseif ($Patch Path -like "*. cab") {</p>
 <h1>Expandir CAB directamente</h1>
-<p>expand -F:* $PatchPath $tempDir</p>
+<p>expand -F:* $Patch Path $temp Dir</p>
 <h1>Buscar binarios</h1>
-<p>foreach ($binary in $TargetBinaries) {</p>
-<p>$found = Get-ChildItem $tempDir -Filter $binary -Recurse | Select-Object -First 1</p>
+<p>foreach ($binary in $Target Binaries) {</p>
+<p>$found = Get-Child Item $temp Dir -Filter $binary -Recurse | Select-Object -First 1</p>
 <p>if ($found) {</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
-<p>Copy-Item $found. FullName (Join-Path $extractDir $binary) -Force</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
+<p>Copy-Item $found. Full Name (Join-Path $extract Dir $binary) -Force</p>
 <p>Write-Host "[+] Extraído: $binary"</p>
 <p>else {</p>
-<p>Write-Error "Formato no soportado. Use .msu o .cab"</p>
+<p>Write-Error "Formato no soportado. Use . msu o . cab"</p>
 <p>else {</p>
-<p>Write-Host "Uso: .\Extract-Patch. ps1 -PatchPath <ruta. msu>"</p>
-<p>Write-Host " o: .\Extract-Patch. ps1 -UseWinbIndex -KBNumber KB5041565"</p>
+<p>Write-Host "Uso: .\Extract-Patch. ps 1 -Patch Path <ruta. msu>"</p>
+<p>Write-Host " o: .\Extract-Patch. ps 1 -Use Winb Index -KB Number KB5041565"</p>
 <h1>Limpiar</h1>
-<p>if (Test-Path $tempDir) {</p>
-<p>Remove-Item $tempDir -Recurse -Force</p>
+<p>if (Test-Path $temp Dir) {</p>
+<p>Remove-Item $temp Dir -Recurse -Force</p>
 <p>Write-Host ""</p>
-<p>Write-Host "[*] Binarios extraídos en: $extractDir"</p>
-<p>Get-ChildItem $extractDir | Format-Table Name, Length, LastWriteTime</p>
+<p>Write-Host "[*] Binarios extraídos en: $extract Dir"</p>
+<p>Get-Child Item $extract Dir | Format-Table Name, Length, Last Write Time</p>
 <ol>
   <li>2.2. 3. 2.2 Descarga de Símbolos (PDB)</li>
 </ol>
 <p>Lossímbolossoncríticosparaanálisisdecalidad:</p>
 <h1>Configurar Symbol Server</h1>
-<p>$env:_NT_SYMBOL_PATH = "SRV*C:\Symbols*https://msdl. microsoft. com/download/symbols"</p>
+<p>$env:_NT_SYMBOL_PATH = "SRV*C:\Symbols*<a href="https://msdl." target="_blank">https://msdl.</a> microsoft. com/download/symbols"</p>
 <h1>Usar symchk. exe (parte del SDK de Windows)</h1>
-<p>$symchk = "C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\symchk. exe"</p>
+<p>$symchk = "C:\Program Files (x 86)\Windows Kits\10\Debuggers\x 64\symchk. exe"</p>
 <h1>Descargar símbolos para todos los binarios en un directorio</h1>
 <p>& $symchk /r "C:\patch-analysis\binaries" /s $env:_NT_SYMBOL_PATH</p>
 <h1>O para un archivo específico</h1>
 <p>& $symchk "C:\patch-analysis\binaries\tcpip. sys" /s $env:_NT_SYMBOL_PATH</p>
 <h1>Verificar símbolos descargados</h1>
-<p>Get-ChildItem "C:\Symbols" -Recurse -Filter "*.pdb" |</p>
-<p>Select-Object Name, Length, FullName |</p>
+<p>Get-Child Item "C:\Symbols" -Recurse -Filter "*. pdb" |</p>
+<p>Select-Object Name, Length, Full Name |</p>
 <p>Format-Table</p>
 <p>Impacto de los Símbolos en el Análisis:</p>
-<p>ConSímbolos SinSímbolos</p>
-<p>IppValidatePacketLength sub_1400A2F40</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
-<p>ConSímbolos SinSímbolos</p>
-<p>TcpipNlProcessPacket sub_14003B120</p>
-<p>NdisGetDataBuffer sub_EXTERN_892</p>
+<p>Con Símbolos Sin Símbolos</p>
+<p>Ipp Validate Packet Length sub_1400A2F40</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
+<p>Con Símbolos Sin Símbolos</p>
+<p>Tcpip Nl Process Packet sub_14003B120</p>
+<p>Ndis Get Data Buffer sub_EXTERN_892</p>
 <p>Variablesconnombres Offsets+registros</p>
 <p>Tiposdedatos Tamañosgenéricos</p>
 <ol>
   <li>3. 3. 3 Herramientas de Diffing Binario</li>
 </ol>
 <p>Opciones de Herramientas</p>
-<p>Herramienta Pros Contras MejorPara</p>
+<p>Herramienta Pros Contras Mejor Para</p>
 <p>Ghidra + Ghidriff Gratis, Decompilador Investigadorescon</p>
 <p>open-source, menospulidoque presupuestolimitado,</p>
 <p>automatiza- Hex-Rays automatización</p>
-<p>IDA Pro + Diaphora IDAestándar IDAProescaro Investigadores</p>
+<p>IDA Pro + Diaphora ID Aestándar IDA Proescaro Investigadores</p>
 <p>dela ($1,000+) profesionalesconlicencia</p>
 <p>industria, IDA</p>
 <p>Diaphora</p>
 <p>gratis</p>
-<p>IDA Pro + BinDiff Diffing BinDiff8solo UsuarioslegacydeIDA</p>
-<p>binario soportaIDA8. x</p>
+<p>IDA Pro + Bin Diff Diffing Bin Diff 8 solo Usuarioslegacyde IDA</p>
+<p>binario soporta IDA8. x</p>
 <p>clásico</p>
 <p>Ghidriff</p>
 <p>Ghidriffeslaherramientarecomendadaparaestecursodebidoasuaccesibilidad:</p>
@@ -518,32 +518,32 @@
 <ol>
   <li>3.1. 3. 3.1 Instalación de Ghidra y Ghidriff</li>
 </ol>
-<p>Requisitos Previos:-Ghidra11. 4+(requiereJavaJDK21+)-Python3. 10+</p>
+<p>Requisitos Previos:-Ghidra 11. 4+(requiere Java JDK21+)-Python 3. 10+</p>
 <p>Windows - Instalación Paso a Paso:</p>
 <h1>1. Instalar Java JDK 21</h1>
-<h1>Descargar desde: https://adoptium. net/temurin/releases/</h1>
+<h1>Descargar desde: <a href="https://adoptium." target="_blank">https://adoptium.</a> net/temurin/releases/</h1>
 <h1>O usar winget:</h1>
-<p>winget install EclipseAdoptium. Temurin. 21. JDK</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>winget install Eclipse Adoptium. Temurin. 21. JDK</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <h1>Verificar instalación</h1>
 <p>java -version</p>
 <h1>openjdk version "21. 0.2" ...</h1>
 <h1>2. Descargar e instalar Ghidra</h1>
-<p>$ghidraUrl = "https://github. com/NationalSecurityAgency/ghidra/releases/download/Ghidra_11. 4.2_build/ghidra_11. 4.2_PUBLIC_20250826. zip"</p>
-<p>Invoke-WebRequest -Uri $ghidraUrl -OutFile "$env:USERPROFILE\Downloads\ghidra. zip"</p>
+<p>$ghidra Url = "<a href="https://github." target="_blank">https://github.</a> com/National Security Agency/ghidra/releases/download/Ghidra_11. 4.2_build/ghidra_11. 4.2_PUBLIC_20250826. zip"</p>
+<p>Invoke-Web Request -Uri $ghidra Url -Out File "$env: USERPROFILE\Downloads\ghidra. zip"</p>
 <h1>Extraer a directorio permanente</h1>
-<p>Expand-Archive "$env:USERPROFILE\Downloads\ghidra. zip" -DestinationPath "C:\Tools\"</p>
+<p>Expand-Archive "$env: USERPROFILE\Downloads\ghidra. zip" -Destination Path "C:\Tools\"</p>
 <p>Rename-Item "C:\Tools\ghidra_11. 4.2_PUBLIC" "C:\Tools\Ghidra"</p>
 <h1>Configurar variable de entorno (REQUERIDA para Ghidriff)</h1>
-<p>[Environment]::SetEnvironmentVariable("GHIDRA_INSTALL_DIR", "C:\Tools\Ghidra", "User")</p>
-<p>$env:GHIDRA_INSTALL_DIR = "C:\Tools\Ghidra"</p>
+<p>[Environment]:: Set Environment Variable ("GHIDRA_INSTALL_DIR", "C:\Tools\Ghidra", "User")</p>
+<p>$env: GHIDRA_INSTALL_DIR = "C:\Tools\Ghidra"</p>
 <h1>3. Instalar Ghidriff via pip</h1>
 <p>pip install ghidriff</p>
 <h1>4. Verificar instalación</h1>
 <p>ghidriff --version</p>
-<h1>ghidriff 0. 8.x (versión puede variar)</h1>
+<h1>ghidriff 0. 8. x (versión puede variar)</h1>
 <h1>5. Primer análisis (inicializa Ghidra - puede tardar varios minutos)</h1>
-<p>ghidriff C:\Windows\System32\notepad. exe C:\Windows\System32\write. exe -o test_diff</p>
+<p>ghidriff C:\Windows\System 32\notepad. exe C:\Windows\System 32\write. exe -o test_diff</p>
 <h1>Si hay errores de memoria, ajustar:</h1>
 <p>ghidriff ... --max-ram-percent 70</p>
 <p>Linux - Instalación:</p>
@@ -551,31 +551,31 @@
 <p>sudo apt update</p>
 <p>sudo apt install -y openjdk-21-jdk</p>
 <p>export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))</p>
-<p>echo "export JAVA_HOME=$JAVA_HOME" >> ~/.bashrc</p>
+<p>echo "export JAVA_HOME=$JAVA_HOME" >> ~/. bashrc</p>
 <h1>2. Descargar Ghidra</h1>
 <p>mkdir -p ~/tools && cd ~/tools</p>
-<p>wget https://github. com/NationalSecurityAgency/ghidra/releases/download/Ghidra_11. 4.2_build/ghidra_11. 4.2_PUBLIC_20250826. zip</p>
+<p>wget <a href="https://github." target="_blank">https://github.</a> com/National Security Agency/ghidra/releases/download/Ghidra_11. 4.2_build/ghidra_11. 4.2_PUBLIC_20250826. zip</p>
 <p>unzip ghidra_11. 4.2_PUBLIC_20250826. zip</p>
 <p>export GHIDRA_INSTALL_DIR=~/tools/ghidra_11. 4.2_PUBLIC</p>
-<p>echo "export GHIDRA_INSTALL_DIR=$GHIDRA_INSTALL_DIR" >> ~/.bashrc</p>
+<p>echo "export GHIDRA_INSTALL_DIR=$GHIDRA_INSTALL_DIR" >> ~/. bashrc</p>
 <h1>3. Instalar Ghidriff en entorno virtual</h1>
-<p>sudo apt install -y python3 python3-pip python3-venv</p>
-<p>python3 -m venv ~/ghidriff-env</p>
+<p>sudo apt install -y python 3 python 3-pip python 3-venv</p>
+<p>python 3 -m venv ~/ghidriff-env</p>
 <p>source ~/ghidriff-env/bin/activate</p>
 <p>pip install ghidriff</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <h1>4. Verificar</h1>
 <p>ghidriff --help</p>
 <ol>
   <li>3.2. 3. 3.2 Flujo de Trabajo con Ghidriff</li>
 </ol>
-<p>ProcesoCompletode Diffing:</p>
+<p>Proceso Completode Diffing:</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <h2>│ FLUJO DE TRABAJO GHIDRIFF │</h2>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <h2>│ 1. OBTENER BINARIOS │</h2>
-<p>│ └─ WinbIndex / Extract-Patch. ps1 / Microsoft Update Catalog │</p>
+<p>│ └─ Winb Index / Extract-Patch. ps 1 / Microsoft Update Catalog │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <h2>│ 2. DESCARGAR SÍMBOLOS (PDB) │</h2>
@@ -587,7 +587,7 @@
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <h2>│ 4. REVISAR REPORTE MARKDOWN │</h2>
-<p>│ └─ diff_output/*.ghidriff. md │</p>
+<p>│ └─ diff_output/*. ghidriff. md │</p>
 <p>│ └─ Funciones modificadas, añadidas, eliminadas │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
@@ -596,7 +596,7 @@
 <p>│ └─ Buscar: bounds checks, NULL checks, validaciones │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <h2>│ 6. CORRELACIONAR CON CVE │</h2>
 <p>│ └─ MSRC Advisory / NVD / Vendor Release Notes │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
@@ -610,8 +610,8 @@
 <p>--max-section-funcs 5000 \</p>
 <p>--max-ram-percent 80 \</p>
 <p>--output large_diff</p>
-<h1>Solo analizar sección .text (más rápido, menos ruido)</h1>
-<p>ghidriff old. dll new. dll --section .text -o text_only_diff</p>
+<h1>Solo analizar sección . text (más rápido, menos ruido)</h1>
+<p>ghidriff old. dll new. dll --section . text -o text_only_diff</p>
 <h1>Modo no-threaded (más estable, más lento)</h1>
 <p>ghidriff old. sys new. sys --no-threaded -o stable_diff</p>
 <h1>Salida JSON para procesamiento automatizado</h1>
@@ -635,18 +635,18 @@
 <p>│ │ └── stats{}</p>
 <p>│ └── old. sys-new. sys. matches. json # Correspondencias de funciones</p>
 <p>└── ghidriffs/ # Directorio legacy (algunas versiones)</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <ol>
   <li>3.3. 3. 3.3 Version Tracking de Ghidra (Alternativa GUI)</li>
 </ol>
 <p>Paraanálisisinteractivoladoalado:</p>
-<p>Paso0: Crear Proyectos Separados</p>
+<p>Paso 0: Crear Proyectos Separados</p>
 <ol>
   <li>Crear proyecto "vulnerable" → importar old. sys</li>
   <li>Crear proyecto "patched" → importar new. sys</li>
   <li>Analizar ambos binarios completamente (Auto Analysis)</li>
 </ol>
-<p>Paso1-3: Crear Sesión de Version Tracking</p>
+<p>Paso 1-3: Crear Sesión de Version Tracking</p>
 <ol>
   <li>Menú: Tools → Version Tracking → Version Tracking</li>
   <li>Click "Create Session" (+)</li>
@@ -654,7 +654,7 @@
   <li>Destination Program: new. sys (parcheado)</li>
   <li>Seleccionar correladores (usar defaults para empezar)</li>
 </ol>
-<p>Paso4-5: Ejecutar y Filtrar Resultados</p>
+<p>Paso 4-5: Ejecutar y Filtrar Resultados</p>
 <ol>
   <li>Click "Run" para ejecutar correladores seleccionados</li>
   <li>Panel "Matches": Lista de funciones emparejadas</li>
@@ -662,58 +662,58 @@
   <li>Doble-click para ver comparación lado a lado</li>
   <li>Filtrar: similarity < 0. 95 AND length > 100 bytes</li>
 </ol>
-<p>IndicadoresClave en Version Tracking:</p>
+<p>Indicadores Clave en Version Tracking:</p>
 <p>Indicador Significado</p>
-<p>Similarity1. 0 Funcionesidénticas</p>
-<p>Similarity0. 95-0. 99 Cambiosmenores(nombres,comentarios)</p>
+<p>Similarity 1. 0 Funcionesidénticas</p>
+<p>Similarity 0. 95-0. 99 Cambiosmenores(nombres, comentarios)</p>
 <p>Similarity<0. 95 Cambiossignificativosdelógica</p>
 <p>Similarity<0. 80 Reescriturasubstancial</p>
 <p>“Added” Nuevafunciónenversiónparcheada</p>
 <p>“Deleted” Funcióneliminadaenparche</p>
 <ol>
-  <li>4. 3. 4 Caso de Estudio: CVE-2022-34718 (EvilESP)</li>
+  <li>4. 3. 4 Caso de Estudio: CVE-2022-34718 (Evil ESP)</li>
 </ol>
 <p>Información del CVE:</p>
 <p>Atributo Valor</p>
 <h2>CVE CVE-2022-34718</h2>
-<p>Nombre “EvilESP”</p>
-<p>Componente tcpip. sys(WindowsTCP/IPDriver)</p>
-<p>Tipo RemoteCodeExecution(RCE)</p>
+<p>Nombre “Evil ESP”</p>
+<p>Componente tcpip. sys(Windows TCP/IP Driver)</p>
+<p>Tipo Remote Code Execution(RCE)</p>
 <p>CVSS 9. 8(Crítico)</p>
-<p>Vector Red,sinautenticación(conIPsechabilitado)</p>
-<p>Versiones WindowsServer2012-2022,Windows10/11</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>Vector Red, sinautenticación(con I Psechabilitado)</p>
+<p>Versiones Windows Server 2012-2022, Windows 10/11</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>Atributo Valor</p>
-<p>Parche Septiembre2022(KB5017308,KB5017305)</p>
+<p>Parche Septiembre 2022(KB5017308, KB5017305)</p>
 <p>Prerrequisitos para Explotación:</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <h2>│ PRERREQUISITOS CVE-2022-34718 │</h2>
 <p>├─────────────────────────────────────────────────────────────────┤</p>
-<p>│ ✓ IPv6 habilitado (default en Windows) │</p>
-<p>│ ✓ IPsec habilitado y SA establecida │</p>
+<p>│ ✓ I Pv 6 habilitado (default en Windows) │</p>
+<p>│ ✓ I Psec habilitado y SA establecida │</p>
 <p>│ ✓ Atacante conoce SPI + clave HMAC de la víctima │</p>
-<p>│ ✓ Atacante puede enviar paquetes IPv6 a la víctima │</p>
+<p>│ ✓ Atacante puede enviar paquetes I Pv 6 a la víctima │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <ol>
-  <li>4.1. 3. 4.1 Adquisición de Binarios para EvilESP</li>
+  <li>4.1. 3. 4.1 Adquisición de Binarios para Evil ESP</li>
 </ol>
 <h1>Crear directorio de trabajo</h1>
-<p>mkdir C:\EvilESP-Analysis</p>
-<p>cd C:\EvilESP-Analysis</p>
+<p>mkdir C:\Evil ESP-Analysis</p>
+<p>cd C:\Evil ESP-Analysis</p>
 <h1>Obtener tcpip. sys vulnerable (pre-Septiembre 2022)</h1>
-<h1>Opción 1: WinbIndex</h1>
-<h1>https://winbindex. m417z. com/ → buscar tcpip. sys → KB5016616 (Agosto 2022)</h1>
+<h1>Opción 1: Winb Index</h1>
+<h1><a href="https://winbindex." target="_blank">https://winbindex.</a> m 417 z. com/ → buscar tcpip. sys → KB5016616 (Agosto 2022)</h1>
 <h1>Opción 2: De sistema Windows sin parche</h1>
 <h1>Copy desde máquina vulnerable:</h1>
-<h1>copy \\victimPC\c$\Windows\System32\drivers\tcpip. sys .\tcpip_vulnerable. sys</h1>
+<h1>copy \\victim PC\c$\Windows\System 32\drivers\tcpip. sys .\tcpip_vulnerable. sys</h1>
 <h1>Obtener tcpip. sys parcheado (Septiembre 2022+)</h1>
-<h1>WinbIndex → tcpip. sys → KB5017308 (Server 2022) o KB5017305 (Win 10/11)</h1>
+<h1>Winb Index → tcpip. sys → KB5017308 (Server 2022) o KB5017305 (Win 10/11)</h1>
 <h1>Renombrar para claridad</h1>
 <p>Rename-Item tcpip. sys tcpip_patched. sys</p>
 <h1>Descargar símbolos</h1>
-<p>$symchk = "C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\symchk. exe"</p>
-<p>& $symchk tcpip_vulnerable. sys /s "SRV*.\Symbols*https://msdl. microsoft. com/download/symbols"</p>
-<p>& $symchk tcpip_patched. sys /s "SRV*.\Symbols*https://msdl. microsoft. com/download/symbols"</p>
+<p>$symchk = "C:\Program Files (x 86)\Windows Kits\10\Debuggers\x 64\symchk. exe"</p>
+<p>& $symchk tcpip_vulnerable. sys /s "SRV*.\Symbols*<a href="https://msdl." target="_blank">https://msdl.</a> microsoft. com/download/symbols"</p>
+<p>& $symchk tcpip_patched. sys /s "SRV*.\Symbols*<a href="https://msdl." target="_blank">https://msdl.</a> microsoft. com/download/symbols"</p>
 <ol>
   <li>4.2. 3. 4.2 Ejecutar Diff y Análisis</li>
 </ol>
@@ -722,80 +722,80 @@
 <p>--symbols-path .\Symbols \</p>
 <p>--max-section-funcs 5000 \</p>
 <p>--max-ram-percent 80 \</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>--output tcpip_diff</p>
 <h1>Revisar resultados</h1>
-<p>Get-Content .\tcpip_diff\*.ghidriff. md | Select-String "Modified Functions"</p>
+<p>Get-Content .\tcpip_diff\*. ghidriff. md | Select-String "Modified Functions"</p>
 <h1>Expected: Solo 2 funciones principales cambiadas</h1>
-<h1>- IppReceiveEsp</h1>
-<h1>- Ipv6pReassembleDatagram</h1>
+<h1>- Ipp Receive Esp</h1>
+<h1>- Ipv 6 p Reassemble Datagram</h1>
 <ol>
   <li>4.3. 3. 4.3 Análisis de Código Vulnerable vs Parcheado</li>
 </ol>
-<p>Función 1: IppReceiveEsp</p>
+<p>Función 1: Ipp Receive Esp</p>
 <p>Código Vulnerable:</p>
-<p>void IppReceiveEsp(longlong param_1) {</p>
+<p>void Ipp Receive Esp (longlong param_1) {</p>
 <p>// ... setup code ...</p>
-<p>iVar3 = IppReceiveEspNbl(...);</p>
-<p>// BUG: Solo verifica 0 (éxito) o 0x105 (pendiente)</p>
+<p>i Var 3 = Ipp Receive Esp Nbl (...);</p>
+<p>// BUG: Solo verifica 0 (éxito) o 0 x 105 (pendiente)</p>
 <p>// Otros códigos de resultado pasan sin verificación</p>
-<p>if ((iVar3 == 0) || (iVar3 == 0x105)) {</p>
-<p>// Continuar procesamiento - pero iVar3 podría indicar error!</p>
-<p>*(undefined4 *)((longlong)param_1 + 0x2c) = 0x3b;</p>
+<p>if ((i Var 3 == 0) || (i Var 3 == 0 x 105)) {</p>
+<p>// Continuar procesamiento - pero i Var 3 podría indicar error!</p>
+<p>*(undefined 4 *)((longlong) param_1 + 0 x 2 c) = 0 x 3 b;</p>
 <p>return;</p>
 <p>// ... error handling para solo estos dos casos ...</p>
 <p>Código Parcheado:</p>
-<p>void IppReceiveEsp(longlong param_1) {</p>
+<p>void Ipp Receive Esp (longlong param_1) {</p>
 <p>// ... setup code ...</p>
-<p>iVar3 = IppReceiveEspNbl(...);</p>
+<p>i Var 3 = Ipp Receive Esp Nbl (...);</p>
 <p>// FIX 1: Verificación de rango completa</p>
-<p>// Acepta solo 0 (éxito), 0x2c-0x3b (rango válido), o 0x105 (pendiente)</p>
-<p>if ((iVar3 != 0) && (1 < (uint)(iVar3 - 0x2b))) {</p>
+<p>// Acepta solo 0 (éxito), 0 x 2 c-0 x 3 b (rango válido), o 0 x 105 (pendiente)</p>
+<p>if ((i Var 3 != 0) && (1 < (uint)(i Var 3 - 0 x 2 b))) {</p>
 <p>// FIX 2: Descartar paquetes inválidos y registrar error</p>
-<p>if ((iVar3 != 0x105) && (puVar3 != NULL)) {</p>
-<p>IppDiscardReceivedPackets(</p>
-<p>(longlong)puVar3, 6, param_1, 0, 0, 0, 0xe0004148);</p>
-<p>*(undefined4 *)(piVar2 + 0x8c) = 0xc000021b;</p>
+<p>if ((i Var 3 != 0 x 105) && (pu Var 3 != NULL)) {</p>
+<p>Ipp Discard Received Packets (</p>
+<p>(longlong) pu Var 3, 6, param_1, 0, 0, 0, 0 xe 0004148);</p>
+<p>*(undefined 4 *)(pi Var 2 + 0 x 8 c) = 0 xc 000021 b;</p>
 <p>return;</p>
-<p>*(undefined4 *)((longlong)param_1 + 0x2c) = 0x3b;</p>
+<p>*(undefined 4 *)((longlong) param_1 + 0 x 2 c) = 0 x 3 b;</p>
 <p>return;</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
-<p>Función 2: Ipv6pReassembleDatagram</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
+<p>Función 2: Ipv 6 p Reassemble Datagram</p>
 <p>Código Vulnerable:</p>
-<p>void Ipv6pReassembleDatagram(...) {</p>
+<p>void Ipv 6 p Reassemble Datagram (...) {</p>
 <p>// Calcular tamaños</p>
-<p>uVar11 = *(int *)(param_2 + 0x8c) + (uint)*(ushort *)(param_2 + 0x88);</p>
+<p>u Var 11 = *(int *)(param_2 + 0 x 8 c) + (uint)*(ushort *)(param_2 + 0 x 88);</p>
 <p>// BUG 1: Sin verificación de overflow de 16 bits</p>
-<p>// IPv6 payload length es campo de 16 bits, pero uVar14 puede exceder 0xFFFF</p>
+<p>// I Pv 6 payload length es campo de 16 bits, pero u Var 14 puede exceder 0 x FFFF</p>
 <p>// BUG 2: Sin validación de nextheader_offset vs tamaño de buffer</p>
-<p>if (uVar1 < uVar13) {</p>
+<p>if (u Var 1 < u Var 13) {</p>
 <p>// Procesar reensamblaje SIN validación de tamaño</p>
-<p>IppRemoveFromReassemblySet(lVar8 + 0x4f00, param_2, param_3);</p>
+<p>Ipp Remove From Reassembly Set (l Var 8 + 0 x 4 f 00, param_2, param_3);</p>
 <p>// BUG 3: memcpy sin verificación de límites</p>
-<p>memcpy(puVar5 + 5, *(void **)(param_2 + 0x80),</p>
-<p>(ulonglong)*(ushort *)(param_2 + 0x88));</p>
+<p>memcpy (pu Var 5 + 5, *(void **)(param_2 + 0 x 80),</p>
+<p>(ulonglong)*(ushort *)(param_2 + 0 x 88));</p>
 <p>Código Parcheado:</p>
-<p>void Ipv6pReassembleDatagram(...) {</p>
-<p>uVar11 = *(int *)(param_2 + 0x8c) + (uint)*(ushort *)(param_2 + 0x88);</p>
+<p>void Ipv 6 p Reassemble Datagram (...) {</p>
+<p>u Var 11 = *(int *)(param_2 + 0 x 8 c) + (uint)*(ushort *)(param_2 + 0 x 88);</p>
 <p>// FIX 1: Verificar overflow de 16 bits</p>
-<p>if (uVar14 < 0x10001) {</p>
+<p>if (u Var 14 < 0 x 10001) {</p>
 <p>// FIX 2: Validar nextheader_offset contra tamaño de buffer</p>
-<p>if (*(ushort *)(param_2 + 0xbc) <= uVar13) {</p>
+<p>if (*(ushort *)(param_2 + 0 xbc) <= u Var 13) {</p>
 <p>// ... operaciones seguras ...</p>
 <p>// FIX 3: Verificar tamaño final reensamblado</p>
-<p>if (uVar14 + 0x28 < *(uint *)(lVar4 + 0x18)) {</p>
+<p>if (u Var 14 + 0 x 28 < *(uint *)(l Var 4 + 0 x 18)) {</p>
 <p>// Discrepancia de tamaño - registrar fallo</p>
-<p>if ((DAT_1c0222618 & 0x20) != 0) {</p>
-<p>McTemplateK0qq_EtwWriteTransfer(</p>
+<p>if ((DAT_1 c 0222618 & 0 x 20) != 0) {</p>
+<p>Mc Template K0 qq_Etw Write Transfer (</p>
 <p>&MICROSOFT_TCPIP_PROVIDER_Context,</p>
 <h2>&TCPIP_IP_REASSEMBLY_FAILURE_PKT_LEN, ...);</h2>
 <p>} else {</p>
 <p>// FIX 4: Registrar overflow de longitud</p>
-<p>if ((DAT_1c0222618 & 0x20) != 0) {</p>
-<p>McTemplateK0qq_EtwWriteTransfer(...TCPIP_IP_REASSEMBLY_FAILURE_PKT_LEN...);</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>if ((DAT_1 c 0222618 & 0 x 20) != 0) {</p>
+<p>Mc Template K0 qq_Etw Write Transfer (... TCPIP_IP_REASSEMBLY_FAILURE_PKT_LEN...);</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>// Cleanup seguro de paquetes inválidos</p>
-<p>IppDeleteFromReassemblySet(lVar8 + 0x4f00, param_2, param_3);</p>
+<p>Ipp Delete From Reassembly Set (l Var 8 + 0 x 4 f 00, param_2, param_3);</p>
 <ol>
   <li>4.4. 3. 4.4 Flujo de Ataque Visual</li>
 </ol>
@@ -803,35 +803,35 @@
 <p>│ ATACANTE (Remoto) │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
-<p>│ Crear paquetes IPv6 maliciosos con: │</p>
-<p>│ • Header ESP (requiere SPI + HMAC válidos de SA establecida) │</p>
-<p>│ • Fragmentos con offsets que causan overflow (>= 0x10001) │</p>
-<p>│ • nextheader_offset apuntando fuera del buffer │</p>
+<p>│ Crear paquetes I Pv 6 maliciosos con: │</p>
+<p>│  ·  Header ESP (requiere SPI + HMAC válidos de SA establecida) │</p>
+<p>│  ·  Fragmentos con offsets que causan overflow (>= 0 x 10001) │</p>
+<p>│  ·  nextheader_offset apuntando fuera del buffer │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <p>│ Paquete 1: │</p>
-<p>│ [Ether][IPv6 nh=ESP][ESP hdr][Fragment(off=0,M=1)][Routing]... │</p>
+<p>│ [Ether][I Pv 6 nh=ESP][ESP hdr][Fragment (off=0, M=1)][Routing]... │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <p>│ Paquete 2: │</p>
-<p>│ [Ether][IPv6 nh=ESP][ESP hdr][Fragment(off=24,M=0)][Routing].. │</p>
+<p>│ [Ether][I Pv 6 nh=ESP][ESP hdr][Fragment (off=24, M=0)][Routing].. │</p>
 <p>│ └─ Dispara reensamblaje ────────┘ │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <p>│ KERNEL VÍCTIMA (tcpip. sys) │</p>
 <p>├─────────────────────────────────────────────────────────────────┤</p>
-<p>│ 1. Recibir fragmentos IPv6 │</p>
-<p>│ 2. IppReceiveEsp() - Sin validación de código de resultado ◄──┤ BUG 1</p>
+<p>│ 1. Recibir fragmentos I Pv 6 │</p>
+<p>│ 2. Ipp Receive Esp () - Sin validación de código de resultado ◄──┤ BUG 1</p>
 <p>│ └─ Continúa con estado inválido │</p>
-<p>│ 3. Ipv6pReassembleDatagram() - Reensamblar fragmentos │</p>
-<p>│ └─ Sin check: uVar14 < 0x10001 ◄──┤ BUG 2</p>
+<p>│ 3. Ipv 6 p Reassemble Datagram () - Reensamblar fragmentos │</p>
+<p>│ └─ Sin check: u Var 14 < 0 x 10001 ◄──┤ BUG 2</p>
 <p>│ └─ Sin check: nextheader_offset <= buffer_size ◄──┤ BUG 3</p>
 <p>│ 4. memcpy / escritura de array va OOB │</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>│ 5. Corrupción de memoria kernel → RCE o BSOD │</p>
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <ol>
-  <li>4.5. 3. 4.5 Estructura de Paquetes ESP e IPv6</li>
+  <li>4.5. 3. 4.5 Estructura de Paquetes ESP e I Pv 6</li>
 </ol>
 <p>ESP Packet Structure (RFC 4303):</p>
 <p>0 1 2 3</p>
@@ -845,7 +845,7 @@
 <p>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</p>
 <p>| Padding (0-255 bytes) | Pad Length | NH |</p>
 <p>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</p>
-<p>IPv6 Fragment Header:</p>
+<p>I Pv 6 Fragment Header:</p>
 <p>0 1 2 3</p>
 <p>0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1</p>
 <p>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</p>
@@ -861,18 +861,18 @@
 <p>también)</p>
 <p>Tamaño Variable(controladoviatamañosdefragmento)</p>
 <p>Controlde Offset Vianextheader_offsetenheaderdefragmento</p>
-<p>Trigger Remoto,requiereIPsecSAestablecida</p>
-<p>Prerrequisito IPv6enabled(default),servicioIPseccorriendo</p>
+<p>Trigger Remoto, requiere I Psec S Aestablecida</p>
+<p>Prerrequisito I Pv 6 enabled(default), servicio I Pseccorriendo</p>
 <p>Enfoque de Explotación Teórico:</p>
 <ol>
-  <li>PRERREQUISITO: Establecer Security Association IPsec con target</li>
+  <li>PRERREQUISITO: Establecer Security Association I Psec con target</li>
 </ol>
 <p>└─ Requiere SPI válido + clave HMAC (barrera crítica)</p>
 <ol>
   <li>HEAP GROOMING: Enviar tráfico ESP legítimo para crear estado</li>
 </ol>
-<p>predecible en NonPagedPoolNx</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>predecible en Non Paged Pool Nx</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <ol>
   <li>TRIGGER OOB: Enviar headers de fragmento anidados dentro de ESP</li>
 </ol>
@@ -888,52 +888,52 @@
 <ol>
   <li>4.7. 3. 4.7 Resumen del Parche</li>
 </ol>
-<p>Función Vulnerabilidad FixAñadido</p>
-<p>IppReceiveEsp Validaciónderesultadofaltante Verificaciónderango:(iVar3</p>
-<p>!= 0) && (1 < (uint)(iVar3 -</p>
-<p>0x2b))</p>
-<p>IppReceiveEsp Ejecucióncontinuaenerror Llamadaa</p>
-<p>IppDiscardReceivedPackets</p>
-<p>conerror0xe0004148</p>
-<p>Ipv6pReassembleDatagraImntegeroverflowentamaño(16-bit) Check:if (uVar14 < 0x10001)</p>
-<p>Ipv6pReassembleDatagraOmOBvianextheader_offset Check:if (*(ushort</p>
-<p>*)(param_2 + 0xbc) <=</p>
-<p>uVar13)</p>
-<p>Ipv6pReassembleDatagraDmiscrepanciadetamaño Check:if (uVar14 + 0x28 <</p>
-<p>*(uint *)(lVar4 + 0x18))</p>
-<p>Ambas Sintelemetría EventosETWañadidos:TC-</p>
+<p>Función Vulnerabilidad Fix Añadido</p>
+<p>Ipp Receive Esp Validaciónderesultadofaltante Verificaciónderango:(i Var 3</p>
+<p>!= 0) && (1 < (uint)(i Var 3 -</p>
+<p>0 x 2 b))</p>
+<p>Ipp Receive Esp Ejecucióncontinuaenerror Llamadaa</p>
+<p>Ipp Discard Received Packets</p>
+<p>conerror 0 xe 0004148</p>
+<p>Ipv 6 p Reassemble Datagra Imntegeroverflowentamaño(16-bit) Check: if (u Var 14 < 0 x 10001)</p>
+<p>Ipv 6 p Reassemble Datagra Om O Bvianextheader_offset Check: if (*(ushort</p>
+<p>*)(param_2 + 0 xbc) <=</p>
+<p>u Var 13)</p>
+<p>Ipv 6 p Reassemble Datagra Dmiscrepanciadetamaño Check: if (u Var 14 + 0 x 28 <</p>
+<p>*(uint *)(l Var 4 + 0 x 18))</p>
+<p>Ambas Sintelemetría Eventos ET Wañadidos: TC-</p>
 <h2>PIP_IP_REASSEMBLY_FAILURE_PKT_LEN</h2>
 <ol>
   <li>4.8. 3. 4.8 Lecciones del Caso de Estudio</li>
-  <li>El binary diffing es altamente efectivo:Solo2funcionescambiaronentcpip. sys-enfoque</li>
+  <li>El binary diffing es altamente efectivo: Solo 2 funcionescambiaronentcpip. sys-enfoque</li>
 </ol>
-<p>instantáneode10,000+funcionesa2</p>
+<p>instantáneode 10,000+funcionesa 2</p>
 <ol>
-  <li>El conocimiento de protocolos es esencial: Entender ESP (RFC 4303) y fragmentación IPv6</li>
+  <li>El conocimiento de protocolos es esencial: Entender ESP (RFC 4303) y fragmentación I Pv 6</li>
 </ol>
 <p>(RFC8200)fuecrucialparacomprenderelataque</p>
 <ol>
-  <li>Bugssimplesencódigocomplejosondealtoimpacto:Unaverificacióndelímitesfaltante</li>
+  <li>Bugssimplesencódigocomplejosondealtoimpacto: Unaverificacióndelímitesfaltante</li>
 </ol>
 <p>ganóCVSS9. 8</p>
 <ol>
-  <li>Vulnerabilidadesmulti-funciónsoncomunes:ElfallodevalidacióndeIppReceiveEsphabi-</li>
+  <li>Vulnerabilidadesmulti-funciónsoncomunes: Elfallodevalidaciónde Ipp Receive Esphabi-</li>
 </ol>
-<p>litóelOOBwritedeIpv6pReassembleDatagram</p>
+<p>litóel OO Bwritede Ipv 6 p Reassemble Datagram</p>
 <ol>
-  <li>Losprerrequisitosafectanelriesgoreal:ElrequisitodeIPsecSAlimitalaexplotaciónapesar</li>
+  <li>Losprerrequisitosafectanelriesgoreal: Elrequisitode I Psec S Alimitalaexplotaciónapesar</li>
 </ol>
 <p>delratingcrítico</p>
 <ol>
   <li>Los parches revelan condiciones de trigger: Ver los bounds checks muestra exactamente</li>
 </ol>
 <p>quéinputscausanelbug</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <ol>
   <li>5. 3. 5 Pipeline de Automatización de Patch Diffing</li>
 </ol>
 <p>¿Por Qué Automatizar?</p>
-<p>Microsoftliberaparchesmensualmente(PatchTuesday-2domartesdecadames)</p>
+<p>Microsoftliberaparchesmensualmente(Patch Tuesday-2 domartesdecadames)</p>
 <p>Analizarcadaactualizaciónmanualmenteconsumemuchotiempo</p>
 <p>Deteccióntempranadevulnerabilidadesproveeventajacompetitiva</p>
 <p>Laautomatizaciónpermitemonitoreocontinuo</p>
@@ -943,14 +943,14 @@
 <p>└─────────────────────────────────────────────────────────────────┘</p>
 <p>┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐</p>
 <h2>│ 1. MONITOREAR │───►│ 2. DESCARGAR │───►│ 3. EXTRAER │</h2>
-<p>│ - MSRC API │ │ - WinbIndex │ │ - Expand MSU │</p>
+<p>│ - MSRC API │ │ - Winb Index │ │ - Expand MSU │</p>
 <p>│ - Patch Tuesday│ │ - Update Cat. │ │ - Extract CAB │</p>
 <p>└─────────────────┘ └─────────────────┘ └─────────────────┘</p>
 <p>└─────────────────────────────────────────────┘</p>
 <p>┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐</p>
 <h2>│ 4. SÍMBOLOS │───►│ 5. DIFF │───►│ 6. REPORTE │</h2>
 <p>│ - symchk. exe │ │ - Ghidriff │ │ - HTML/PDF │</p>
-<p>│ - Symbol Server│ │ - BinDiff │ │ - JSON para CI │</p>
+<p>│ - Symbol Server│ │ - Bin Diff │ │ - JSON para CI │</p>
 <p>└─────────────────┘ └─────────────────┘ └─────────────────┘</p>
 <p>┌─────────────────────────────────┐</p>
 <h2>│ 7. ALERTA │</h2>
@@ -961,130 +961,130 @@
 <ol>
   <li>5.1. 3. 5.1 Script de Automatización Python para Ghidriff</li>
 </ol>
-<p>#!/usr/bin/env python3</p>
+<p>#!/usr/bin/env python 3</p>
 <p>ghidriff_batch. py - Batch Diffing para Análisis de Parches de Windows</p>
 <p>Ejecuta ghidriff en múltiples binarios y genera reporte HTML consolidado.</p>
-<p>Diseñado para ghidriff 0. 4.x+ output format.</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>Diseñado para ghidriff 0. 4. x+ output format.</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>import subprocess</p>
 <p>import json</p>
 <p>import os</p>
 <p>import glob</p>
 <p>from pathlib import Path</p>
 <p>from datetime import datetime</p>
-<p>class PatchDiffer:</p>
+<p>class Patch Differ:</p>
 <p>def __init__(self, work_dir, target_files):</p>
-<p>self. work_dir = Path(work_dir)</p>
+<p>self. work_dir = Path (work_dir)</p>
 <p>self. target_files = target_files</p>
 <p>self. results = []</p>
-<p>def diff_binaries(self, old_dir, new_dir, output_dir):</p>
+<p>def diff_binaries (self, old_dir, new_dir, output_dir):</p>
 <p>"""Ejecutar ghidriff en todos los binarios objetivo"""</p>
-<p>old_path = Path(old_dir)</p>
-<p>new_path = Path(new_dir)</p>
-<p>out_path = Path(output_dir)</p>
-<p>out_path. mkdir(parents=True, exist_ok=True)</p>
+<p>old_path = Path (old_dir)</p>
+<p>new_path = Path (new_dir)</p>
+<p>out_path = Path (output_dir)</p>
+<p>out_path. mkdir (parents=True, exist_ok=True)</p>
 <p>for target in self. target_files:</p>
-<p>old_file = self. find_file(old_path, target)</p>
-<p>new_file = self. find_file(new_path, target)</p>
+<p>old_file = self. find_file (old_path, target)</p>
+<p>new_file = self. find_file (new_path, target)</p>
 <p>if not old_file or not new_file:</p>
-<p>print(f"[-] Saltando {target}: archivos no encontrados")</p>
+<p>print (f"[-] Saltando {target}: archivos no encontrados")</p>
 <p>continue</p>
-<p>print(f"[+] Diffing {target}...")</p>
-<p>diff_name = f"{target. replace('.', '_')}_diff"</p>
+<p>print (f"[+] Diffing {target}...")</p>
+<p>diff_name = f"{target. replace ('.', '_')}_diff"</p>
 <p>diff_out = out_path / diff_name</p>
 <p>cmd = [</p>
 <p>"ghidriff",</p>
-<p>str(old_file),</p>
-<p>str(new_file),</p>
-<p>"--output", str(diff_out),</p>
+<p>str (old_file),</p>
+<p>str (new_file),</p>
+<p>"--output", str (diff_out),</p>
 <p>"--symbols-path", "C:\\patch-analysis\\symbols\\",</p>
 <p>"--max-section-funcs", "5000",</p>
 <p>"--max-ram-percent", "80"</p>
 <p>try:</p>
-<p>result = subprocess. run(cmd, capture_output=True,</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>result = subprocess. run (cmd, capture_output=True,</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>text=True, timeout=1800)</p>
 <p>if result. returncode == 0:</p>
-<p>print(f"[+] Éxito: {diff_name}")</p>
-<p>self. parse_results(diff_out, target)</p>
+<p>print (f"[+] Éxito: {diff_name}")</p>
+<p>self. parse_results (diff_out, target)</p>
 <p>else:</p>
-<p>print(f"[-] Error diffing {target}: {result. stderr}")</p>
-<p>except subprocess. TimeoutExpired:</p>
-<p>print(f"[-] Timeout diffing {target}")</p>
+<p>print (f"[-] Error diffing {target}: {result. stderr}")</p>
+<p>except subprocess. Timeout Expired:</p>
+<p>print (f"[-] Timeout diffing {target}")</p>
 <p>except Exception as e:</p>
-<p>print(f"[-] Excepción diffing {target}: {e}")</p>
-<p>def find_file(self, directory, filename):</p>
+<p>print (f"[-] Excepción diffing {target}: {e}")</p>
+<p>def find_file (self, directory, filename):</p>
 <p>"""Buscar archivo recursivamente en directorio"""</p>
-<p>for path in directory. rglob(filename):</p>
+<p>for path in directory. rglob (filename):</p>
 <p>return path</p>
 <p>return None</p>
-<p>def parse_results(self, diff_dir, binary_name):</p>
+<p>def parse_results (self, diff_dir, binary_name):</p>
 <p>"""Parsear salida JSON de ghidriff"""</p>
 <p>json_patterns = [</p>
-<p>diff_dir / "json" / "*.ghidriff. json",</p>
-<p>diff_dir / "*.ghidriff. json",</p>
-<p>diff_dir. parent / "ghidriffs" / "json" / "*.ghidriff. json",</p>
+<p>diff_dir / "json" / "*. ghidriff. json",</p>
+<p>diff_dir / "*. ghidriff. json",</p>
+<p>diff_dir. parent / "ghidriffs" / "json" / "*. ghidriff. json",</p>
 <p>json_file = None</p>
 <p>for pattern in json_patterns:</p>
-<p>matches = glob. glob(str(pattern))</p>
+<p>matches = glob. glob (str (pattern))</p>
 <p>if matches:</p>
-<p>json_file = Path(matches[0])</p>
+<p>json_file = Path (matches[0])</p>
 <p>break</p>
-<p>if not json_file or not json_file. exists():</p>
-<p>print(f"[-] No se encontró salida JSON para {binary_name}")</p>
+<p>if not json_file or not json_file. exists ():</p>
+<p>print (f"[-] No se encontró salida JSON para {binary_name}")</p>
 <p>return</p>
-<p>with open(json_file) as f:</p>
-<p>data = json. load(f)</p>
-<p>functions = data. get("functions", {})</p>
-<p>added = functions. get("added", [])</p>
-<p>deleted = functions. get("deleted", [])</p>
-<p>modified = functions. get("modified", [])</p>
+<p>with open (json_file) as f:</p>
+<p>data = json. load (f)</p>
+<p>functions = data. get ("functions", {})</p>
+<p>added = functions. get ("added", [])</p>
+<p>deleted = functions. get ("deleted", [])</p>
+<p>modified = functions. get ("modified", [])</p>
 <p>summary = {</p>
 <p>"binary": binary_name,</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
-<p>"total_funcs": data. get("stats", {}).get("total_functions",</p>
-<p>len(added) + len(deleted) + len(modified)),</p>
-<p>"matched": data. get("stats", {}).get("matched", 0),</p>
-<p>"changed": len(modified),</p>
-<p>"new": len(added),</p>
-<p>"deleted": len(deleted),</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
+<p>"total_funcs": data. get ("stats", {}). get ("total_functions",</p>
+<p>len (added) + len (deleted) + len (modified)),</p>
+<p>"matched": data. get ("stats", {}). get ("matched", 0),</p>
+<p>"changed": len (modified),</p>
+<p>"new": len (added),</p>
+<p>"deleted": len (deleted),</p>
 <p>"changed_details": []</p>
 <h1>Extraer funciones cambiadas con baja similaridad</h1>
 <p>for func in modified:</p>
-<p>ratio = func. get("ratio", 1. 0)</p>
+<p>ratio = func. get ("ratio", 1. 0)</p>
 <p>if ratio < 0. 95: # Solo funciones con cambios significativos</p>
-<p>old_info = func. get("old", {})</p>
-<p>new_info = func. get("new", {})</p>
-<p>summary["changed_details"].append({</p>
-<p>"name": old_info. get("name") or new_info. get("name", "unknown"),</p>
+<p>old_info = func. get ("old", {})</p>
+<p>new_info = func. get ("new", {})</p>
+<p>summary["changed_details"]. append ({</p>
+<p>"name": old_info. get ("name") or new_info. get ("name", "unknown"),</p>
 <p>"similarity": ratio,</p>
-<p>"address_old": old_info. get("address", ""),</p>
-<p>"address_new": new_info. get("address", "")</p>
-<p>self. results. append(summary)</p>
-<p>def generate_report(self, output_file):</p>
+<p>"address_old": old_info. get ("address", ""),</p>
+<p>"address_new": new_info. get ("address", "")</p>
+<p>self. results. append (summary)</p>
+<p>def generate_report (self, output_file):</p>
 <p>"""Generar reporte HTML"""</p>
 <p>html = f"""</p>
-<p><!DOCTYPE html></p>
+<p><! DOCTYPE html></p>
 <p><html></p>
 <p><head></p>
-<p><title>Reporte Patch Diff - {datetime. now().strftime('%Y-%m-%d')}</title></p>
+<p><title>Reporte Patch Diff - {datetime. now (). strftime ('% Y-% m-% d')}</title></p>
 <p><style></p>
-<p>body {{ font-family: Arial, sans-serif; margin: 20px; }}</p>
-<p>table {{ border-collapse: collapse; width: 100%; margin: 20px 0; }}</p>
-<p>th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}</p>
+<p>body {{ font-family: Arial, sans-serif; margin: 20 px; }}</p>
+<p>table {{ border-collapse: collapse; width: 100%; margin: 20 px 0; }}</p>
+<p>th, td {{ border: 1 px solid #ddd; padding: 8 px; text-align: left; }}</p>
 <p>th {{ background-color: #4CAF50; color: white; }}</p>
-<p>.changed {{ color: #FF5722; font-weight: bold; }}</p>
-<p>.highlight {{ background-color: #FFEB3B; }}</p>
-<p>.critical {{ background-color: #FFCDD2; }}</p>
+<p>. changed {{ color: #FF5722; font-weight: bold; }}</p>
+<p>. highlight {{ background-color: #FFEB3B; }}</p>
+<p>. critical {{ background-color: #FFCDD2; }}</p>
 <p></style></p>
 <p></head></p>
 <p><body></p>
-<p><h1>Análisis de Patch Diff de Windows</h1></p>
-<p><p>Generado: {datetime. now().strftime('%Y-%m-%d%H:%M:%S')}</p></p>
+<p><h 1>Análisis de Patch Diff de Windows</h 1></p>
+<p><p>Generado: {datetime. now (). strftime ('% Y-% m-% d% H:% M:% S')}</p></p>
 <p>for result in self. results:</p>
 <p>html += f"""</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
-<p><h2>{result['binary']}</h2></p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
+<p><h 2>{result['binary']}</h 2></p>
 <p><table></p>
 <p><tr><th>Métrica</th><th>Cantidad</th></tr></p>
 <p><tr><td>Funciones Totales</td><td>{result['total_funcs']}</td></tr></p>
@@ -1095,17 +1095,17 @@
 <p></table></p>
 <p>if result['changed_details']:</p>
 <p>html += """</p>
-<p><h3>Funciones Cambiadas (Similaridad < 0. 95)</h3></p>
+<p><h 3>Funciones Cambiadas (Similaridad < 0. 95)</h 3></p>
 <p><table></p>
 <p><tr><th>Nombre de Función</th><th>Similaridad</th></p>
 <p><th>Dirección Vieja</th><th>Dirección Nueva</th></tr></p>
-<p>for func in sorted(result['changed_details'],</p>
+<p>for func in sorted (result['changed_details'],</p>
 <p>key=lambda x: x['similarity']):</p>
 <p>row_class = 'critical' if func['similarity'] < 0. 80 else 'highlight'</p>
 <p>html += f"""</p>
 <p><tr class="{row_class}"></p>
 <p><td>{func['name']}</td></p>
-<p><td>{func['similarity']:.2f}</td></p>
+<p><td>{func['similarity']:.2 f}</td></p>
 <p><td>{func['address_old']}</td></p>
 <p><td>{func['address_new']}</td></p>
 <p></tr></p>
@@ -1113,56 +1113,56 @@
 <p>html += """</p>
 <p></body></p>
 <p></html></p>
-<p>with open(output_file, 'w', encoding='utf-8') as f:</p>
-<p>f. write(html)</p>
-<p>print(f"[+] Reporte generado: {output_file}")</p>
+<p>with open (output_file, 'w', encoding='utf-8') as f:</p>
+<p>f. write (html)</p>
+<p>print (f"[+] Reporte generado: {output_file}")</p>
 <p>if __name__ == "__main__":</p>
 <p>import sys</p>
-<p>if len(sys. argv) < 4:</p>
-<p>print("Uso: python ghidriff_batch. py <dir_viejo_kb> <dir_nuevo_kb> <dir_salida>")</p>
-<p>print("")</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
-<p>print("Argumentos:")</p>
-<p>print(" dir_viejo_kb Directorio con binarios vulnerables")</p>
-<p>print(" dir_nuevo_kb Directorio con binarios parcheados")</p>
-<p>print(" dir_salida Directorio para salida de diff y reportes")</p>
-<p>print("")</p>
-<p>print("Ejemplo:")</p>
-<p>print(" python ghidriff_batch. py ./binarios/KB5041565 ./binarios/KB5041571 ./diffs/agosto2024")</p>
-<p>sys. exit(1)</p>
+<p>if len (sys. argv) < 4:</p>
+<p>print ("Uso: python ghidriff_batch. py <dir_viejo_kb> <dir_nuevo_kb> <dir_salida>")</p>
+<p>print ("")</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
+<p>print ("Argumentos:")</p>
+<p>print (" dir_viejo_kb Directorio con binarios vulnerables")</p>
+<p>print (" dir_nuevo_kb Directorio con binarios parcheados")</p>
+<p>print (" dir_salida Directorio para salida de diff y reportes")</p>
+<p>print ("")</p>
+<p>print ("Ejemplo:")</p>
+<p>print (" python ghidriff_batch. py ./binarios/KB5041565 ./binarios/KB5041571 ./diffs/agosto 2024")</p>
+<p>sys. exit (1)</p>
 <p>old_dir = sys. argv[1]</p>
 <p>new_dir = sys. argv[2]</p>
 <p>out_dir = sys. argv[3]</p>
 <h1>Objetivos de alto valor por defecto</h1>
-<p>targets = ["ntdll. dll", "win32k. sys", "tcpip. sys", "ntoskrnl. exe",</p>
+<p>targets = ["ntdll. dll", "win 32 k. sys", "tcpip. sys", "ntoskrnl. exe",</p>
 <p>"afd. sys", "http. sys"]</p>
-<p>differ = PatchDiffer(out_dir, targets)</p>
-<p>differ. diff_binaries(old_dir, new_dir, out_dir)</p>
-<p>differ. generate_report(os. path. join(out_dir, "report. html"))</p>
+<p>differ = Patch Differ (out_dir, targets)</p>
+<p>differ. diff_binaries (old_dir, new_dir, out_dir)</p>
+<p>differ. generate_report (os. path. join (out_dir, "report. html"))</p>
 <ol>
   <li>5.2. 3. 5.2 Automatización con Task Scheduler (Windows)</li>
 </ol>
 <h1>Crear tarea mensual para Patch Tuesday</h1>
-<p>$action = New-ScheduledTaskAction -Execute "PowerShell. exe" `</p>
-<p>-Argument "-File C:\patch-analysis\monthly_diff. ps1"</p>
+<p>$action = New-Scheduled Task Action -Execute "Power Shell. exe" `</p>
+<p>-Argument "-File C:\patch-analysis\monthly_diff. ps 1"</p>
 <h1>Trigger: Segundo miércoles de cada mes (día después de Patch Tuesday)</h1>
-<p>$trigger = New-ScheduledTaskTrigger -Weekly -WeeksInterval 4 -DaysOfWeek Wednesday</p>
+<p>$trigger = New-Scheduled Task Trigger -Weekly -Weeks Interval 4 -Days Of Week Wednesday</p>
 <h1>Settings</h1>
-<p>$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries `</p>
-<p>-DontStopIfGoingOnBatteries -StartWhenAvailable</p>
+<p>$settings = New-Scheduled Task Settings Set -Allow Start If On Batteries `</p>
+<p>-Dont Stop If Going On Batteries -Start When Available</p>
 <h1>Registrar tarea</h1>
-<p>Register-ScheduledTask -TaskName "MonthlyPatchDiff" `</p>
+<p>Register-Scheduled Task -Task Name "Monthly Patch Diff" `</p>
 <p>-Action $action -Trigger $trigger -Settings $settings `</p>
 <p>-Description "Automated Windows patch diffing"</p>
 <ol>
-  <li>5.3. 3. 5.3 Integración con LLMs para Resumen</li>
+  <li>5.3. 3. 5.3 Integración con LL Ms para Resumen</li>
 </ol>
-<p>CombinarsalidadeghidriffconLargeLanguageModelsaceleraelanálisis:</p>
+<p>Combinarsalidadeghidriffcon Large Language Modelsaceleraelanálisis:</p>
 <p>Template de Prompt para LLM:</p>
 <p>Eres un investigador de vulnerabilidades analizando un patch diff binario.</p>
 <p>Contexto:</p>
 <p>- Este diff compara un driver Windows vulnerable con su versión parcheada</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>- Enfócate en cambios relevantes para seguridad (bounds checks, validación, manejo de errores)</p>
 <p>- Ignora cambios cosméticos (renombrado de variables, movimiento de código sin cambio de lógica)</p>
 <p>Analiza este patch diff y proporciona:</p>
@@ -1176,11 +1176,11 @@
 </ol>
 <p>Patch Diff:</p>
 <p>[pegar salida markdown de ghidriff - enfocarse en funciones con similaridad <0. 95]</p>
-<p>Limitaciones de LLMs para Análisis de Parches:</p>
-<p>LLMsAyudanCon LLMsTienenProblemasCon</p>
+<p>Limitaciones de LL Ms para Análisis de Parches:</p>
+<p>LL Ms Ayudan Con LL Ms Tienen Problemas Con</p>
 <p>Resumirdiffsgrandes Raceconditionssutiles</p>
 <p>Hipótesisinicialesdeclasedevuln Cálculoscomplejosdepunteros</p>
-<p>Explicarpatronesdecódigo InternalsdelkernelWindows</p>
+<p>Explicarpatronesdecódigo Internalsdelkernel Windows</p>
 <p>Redactarseccionesdereporte Distinguirfixesdeseguridadvsoptimización</p>
 <ol>
   <li>6. 3. 6 Patch Diffing en Linux Kernel</li>
@@ -1188,51 +1188,51 @@
 </ol>
 <p>Aspecto Windows Linux</p>
 <p>Código Fuente Cerrado(solobinarios) Abierto(git. kernel. org)</p>
-<p>FormatoBinario PE/COFF ELF</p>
-<p>Símbolos Debug PDBviaSymbolServer DWARFenpaquetes</p>
+<p>Formato Binario PE/COFF ELF</p>
+<p>Símbolos Debug PD Bvia Symbol Server DWAR Fenpaquetes</p>
 <p>-dbgsym</p>
-<p>Distribución WindowsUpdate apt/yum+distro-specific</p>
-<p>Modificaciones Vendor Ninguna Backports,parches</p>
+<p>Distribución Windows Update apt/yum+distro-specific</p>
+<p>Modificaciones Vendor Ninguna Backports, parches</p>
 <p>custom</p>
 <ol>
   <li>6.2. 3. 6.2 Flujo de Trabajo para Linux</li>
 </ol>
-<p>Paso1: Identificar Versiones de Kernel</p>
+<p>Paso 1: Identificar Versiones de Kernel</p>
 <h1>Obtener versión actual</h1>
 <p>CURRENT_KERNEL=$(uname -r)</p>
 <p>echo "Kernel actual: $CURRENT_KERNEL"</p>
 <h1>Ejemplo: 6. 8.0-87-generic</h1>
 <h1>Extraer base y número de parche</h1>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>KERNEL_BASE=$(echo $CURRENT_KERNEL | sed 's/-[0-9]*-generic//')</p>
-<p>KERNEL_PATCH=$(echo $CURRENT_KERNEL | grep -oP '(?<=-)[0-9]+(?=-generic)')</p>
+<p>KERNEL_PATCH=$(echo $CURRENT_KERNEL | grep -o P '(?<=-)[0-9]+(?=-generic)')</p>
 <h2>PREV_PATCH=$((KERNEL_PATCH - 1))</h2>
 <p>PREV_KERNEL="${KERNEL_BASE}-${PREV_PATCH}-generic"</p>
 <p>echo "Versión vulnerable: $PREV_KERNEL"</p>
 <p>echo "Versión parcheada: $CURRENT_KERNEL"</p>
 <h1>Consultar Ubuntu Security Notices</h1>
-<p>curl -s 'https://ubuntu. com/security/notices. json?offset=50' | \</p>
-<p>jq '.notices[] | select(.title | ascii_downcase | contains("kernel")) | {id, title}'</p>
-<p>Paso2: Descargar Imágenes de Kernel y Símbolos</p>
+<p>curl -s '<a href="https://ubuntu." target="_blank">https://ubuntu.</a> com/security/notices. json?offset=50' | \</p>
+<p>jq '. notices[] | select (. title | ascii_downcase | contains ("kernel")) | {id, title}'</p>
+<p>Paso 2: Descargar Imágenes de Kernel y Símbolos</p>
 <p>mkdir ~/kernel-diff && cd ~/kernel-diff</p>
 <p>mkdir old new symbols</p>
 <h1>Descargar versiones</h1>
 <p>apt-get download linux-image-unsigned-${PREV_KERNEL}</p>
 <p>apt-get download linux-image-unsigned-${CURRENT_KERNEL}</p>
 <h1>Extraer</h1>
-<p>dpkg-deb -x linux-image-unsigned-${PREV_KERNEL}_*.deb old/</p>
-<p>dpkg-deb -x linux-image-unsigned-${CURRENT_KERNEL}_*.deb new/</p>
+<p>dpkg-deb -x linux-image-unsigned-${PREV_KERNEL}_*. deb old/</p>
+<p>dpkg-deb -x linux-image-unsigned-${CURRENT_KERNEL}_*. deb new/</p>
 <h1>Símbolos debug (añadir repo ddebs primero)</h1>
 <p>sudo apt-key adv --keyserver keyserver. ubuntu. com \</p>
 <p>--recv-keys F2EDC64DC5AEE1F6B9C621F0C8CAB6595FDFF622</p>
-<p>echo "deb http://ddebs. ubuntu. com $(lsb_release -cs)-updates main" | \</p>
+<p>echo "deb <a href="http://ddebs." target="_blank">http://ddebs.</a> ubuntu. com $(lsb_release -cs)-updates main" | \</p>
 <p>sudo tee /etc/apt/sources. list. d/ddebs. list</p>
 <p>sudo apt update</p>
 <p>apt-get download linux-image-unsigned-${PREV_KERNEL}-dbgsym</p>
 <p>apt-get download linux-image-unsigned-${CURRENT_KERNEL}-dbgsym</p>
-<p>dpkg-deb -x linux-image-unsigned-${PREV_KERNEL}-dbgsym_*.ddeb old/</p>
-<p>dpkg-deb -x linux-image-unsigned-${CURRENT_KERNEL}-dbgsym_*.ddeb new/</p>
-<p>Paso3: Extraer vmlinux</p>
+<p>dpkg-deb -x linux-image-unsigned-${PREV_KERNEL}-dbgsym_*. ddeb old/</p>
+<p>dpkg-deb -x linux-image-unsigned-${CURRENT_KERNEL}-dbgsym_*. ddeb new/</p>
+<p>Paso 3: Extraer vmlinux</p>
 <h1>Desde paquete dbgsym (MEJOR - incluye símbolos)</h1>
 <p>cp old/usr/lib/debug/boot/vmlinux-${PREV_KERNEL} old/vmlinux</p>
 <p>cp new/usr/lib/debug/boot/vmlinux-${CURRENT_KERNEL} new/vmlinux</p>
@@ -1241,18 +1241,18 @@
 <h1>Esperado: ELF 64-bit ... with debug_info, not stripped</h1>
 <p>nm old/vmlinux | head -5</p>
 <h1>Debería mostrar nombres de funciones</h1>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
-<p>Paso4: Identificar Módulos Cambiados</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
+<p>Paso 4: Identificar Módulos Cambiados</p>
 <h1>Comparar árboles de módulos</h1>
 <p>diff -qr old/usr/lib/debug/lib/modules/${PREV_KERNEL}/kernel/ \</p>
 <p>new/usr/lib/debug/lib/modules/${CURRENT_KERNEL}/kernel/ | grep differ</p>
 <h1>Enfocarse en subsistemas específicos</h1>
 <p>diff -qr old/.../kernel/net new/.../kernel/net</p>
 <p>diff -qr old/.../kernel/fs/overlayfs/ new/.../kernel/fs/overlayfs/</p>
-<p>Paso5: Diff con Ghidriff</p>
+<p>Paso 5: Diff con Ghidriff</p>
 <h1>Activar entorno virtual de ghidriff</h1>
 <p>source ~/ghidriff-env/bin/activate</p>
-<h1>Descomprimir módulo específico (Ubuntu usa .ko. zst)</h1>
+<h1>Descomprimir módulo específico (Ubuntu usa . ko. zst)</h1>
 <p>zstd -d old/usr/lib/debug/lib/modules/${PREV_KERNEL}/kernel/net/netfilter/nf_tables. ko. zst \</p>
 <p>-o old/nf_tables. ko</p>
 <p>zstd -d new/usr/lib/debug/lib/modules/${CURRENT_KERNEL}/kernel/net/netfilter/nf_tables. ko. zst \</p>
@@ -1267,28 +1267,28 @@
   <li>6.3. 3. 6.3 Diff a Nivel de Código Fuente</li>
 </ol>
 <h1>Clonar fuente del kernel</h1>
-<p>git clone --branch v6. 8 https://git. kernel. org/pub/scm/linux/kernel/git/torvalds/linux. git</p>
+<p>git clone --branch v 6. 8 <a href="https://git." target="_blank">https://git.</a> kernel. org/pub/scm/linux/kernel/git/torvalds/linux. git</p>
 <p>cd linux</p>
 <h1>Buscar commits de CVE</h1>
 <p>git log --all --grep="CVE" --oneline | head -20</p>
 <h1>Ver diff de commit específico</h1>
-<p>git show f342de4e2f33e0e39165d8639387aa6c19dff660</p>
+<p>git show f 342 de 4 e 2 f 33 e 0 e 39165 d 8639387 aa 6 c 19 dff 660</p>
 <h1>Buscar fixes en subsistema específico</h1>
 <p>git log --all --oneline --grep="netfilter" --grep="fix" | head -10</p>
 <ol>
   <li>6.4. 3. 6.4 Ejemplo: CVE-2024-1086 (nf_tables UAF)</li>
 </ol>
 <p>Información del CVE:</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>Atributo Valor</p>
 <h2>CVE CVE-2024-1086</h2>
-<p>Componente nf_tables(subsistemaNetfilter)</p>
+<p>Componente nf_tables(subsistema Netfilter)</p>
 <p>Tipo Use-After-Free→LPE</p>
 <p>CVSS 7. 8(Alto)</p>
-<p>Afecta Linux3. 15-6. 8</p>
-<p>Exploit Público Sí(~99%successrate)</p>
+<p>Afecta Linux 3. 15-6. 8</p>
+<p>Exploit Público Sí(~99% successrate)</p>
 <p>Commit del Fix:</p>
-<p>git show f342de4e2f33e0e39165d8639387aa6c19dff660</p>
+<p>git show f 342 de 4 e 2 f 33 e 0 e 39165 d 8639387 aa 6 c 19 dff 660</p>
 <h1>Diff simplificado:</h1>
 <h1>- default:</h1>
 <h1>- switch (data->verdict. code & NF_VERDICT_MASK) {</h1>
@@ -1310,83 +1310,83 @@
 <h1>+ default:</h1>
 <h1>+ return -EINVAL;</h1>
 <p>Análisis:</p>
-<p>Bug:ValidaciónbasadaenmáscarapermitíavalorescomoNF_DROP | extra_bits</p>
-<p>Causa Raíz:& NF_VERDICT_MASKdejabapasarverdicts“decorados”</p>
-<p>Impacto:Typeconfusionencódigoposterior→UAF→LPE</p>
-<p>Fix:Cambiardevalidaciónpormáscaraacoincidenciaexacta</p>
+<p>Bug: Validaciónbasadaenmáscarapermitíavalorescomo NF_DROP | extra_bits</p>
+<p>Causa Raíz:& NF_VERDICT_MAS Kdejabapasarverdicts“decorados”</p>
+<p>Impacto: Typeconfusionencódigoposterior→UAF→LPE</p>
+<p>Fix: Cambiardevalidaciónpormáscaraacoincidenciaexacta</p>
 <ol>
   <li>6.5. 3. 6.5 Recursos para Linux Kernel</li>
 </ol>
 <p>Recurso URL Utilidad</p>
-<p>syzbot syzkaller. appspot. comReproducers,bisecciónautomática</p>
-<p>Ubuntu Security ubuntu. com/security/nAodtviciseosriesespecíficosdedistro</p>
-<p>Debian Tracker security- CVEtrackingcross-distro</p>
+<p>syzbot syzkaller. appspot. com Reproducers, bisecciónautomática</p>
+<p>Ubuntu Security ubuntu. com/security/n Aodtviciseosriesespecíficosdedistro</p>
+<p>Debian Tracker security- CV Etrackingcross-distro</p>
 <p>tracker. debian. org</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>Recurso URL Utilidad</p>
 <p>kernel. org git. kernel. org Códigofuenteoficial</p>
-<p>Linux CVE Announce lore. kernel. org/linux- AnunciosoficialesdeCVE</p>
+<p>Linux CVE Announce lore. kernel. org/linux- Anunciosoficialesde CVE</p>
 <p>cve-announce/</p>
 <ol>
   <li>7. 3. 7 Caso de Estudio: 7-Zip Path Traversal</li>
   <li>7.1. 3. 7.1 Información del Caso</li>
 </ol>
 <p>Atributo Valor</p>
-<p>Software 7-ZipFileArchiver</p>
-<p>Versiones Afectadas 24. 09yanteriores</p>
+<p>Software 7-Zip File Archiver</p>
+<p>Versiones Afectadas 24. 09 yanteriores</p>
 <p>Versión Parcheada 25. 00+</p>
-<p>Tipo PathTraversalviaSymlink(CWE-22)</p>
-<p>Impacto ArbitraryFileWrite→RCEpotencial</p>
+<p>Tipo Path Traversalvia Symlink(CWE-22)</p>
+<p>Impacto Arbitrary File Write→RC Epotencial</p>
 <p>CVSS Estimado 7. 8(Alto)</p>
 <ol>
   <li>7.2. 3. 7.2 Análisis del Parche</li>
 </ol>
-<p>Archivo Afectado:CPP/7zip/UI/Common/ArchiveExtractCallback. cpp</p>
-<p>ObtenerDiff:</p>
-<p>git clone https://github. com/ip7z/7zip. git</p>
-<p>cd 7zip</p>
+<p>Archivo Afectado: CPP/7 zip/UI/Common/Archive Extract Callback. cpp</p>
+<p>Obtener Diff:</p>
+<p>git clone <a href="https://github." target="_blank">https://github.</a> com/ip 7 z/7 zip. git</p>
+<p>cd 7 zip</p>
 <h1>Comparar versiones</h1>
-<p>git diff 24. 09..25. 00 -- CPP/7zip/UI/Common/ArchiveExtractCallback. cpp</p>
-<p>Cambio 1: IsSafePath con Parámetro WSL</p>
+<p>git diff 24. 09..25. 00 -- CPP/7 zip/UI/Common/Archive Extract Callback. cpp</p>
+<p>Cambio 1: Is Safe Path con Parámetro WSL</p>
 <p>// ANTES (vulnerable):</p>
-<p>bool IsSafePath(const UString &path) {</p>
-<p>CLinkLevelsInfo levelsInfo;</p>
-<p>levelsInfo. Parse(path); // Sin awareness de WSL</p>
-<p>return !levelsInfo. IsAbsolute && levelsInfo. LowLevel >= 0;</p>
+<p>bool Is Safe Path (const U String &path) {</p>
+<p>C Link Levels Info levels Info;</p>
+<p>levels Info. Parse (path); // Sin awareness de WSL</p>
+<p>return ! levels Info. Is Absolute && levels Info. Low Level >= 0;</p>
 <p>// DESPUÉS (parcheado):</p>
-<p>static bool IsSafePath(const UString &path, bool isWSL) {</p>
-<p>CLinkLevelsInfo levelsInfo;</p>
-<p>levelsInfo. Parse(path, isWSL); // Ahora toma parámetro isWSL</p>
-<p>return !levelsInfo. IsAbsolute && levelsInfo. LowLevel >= 0;</p>
+<p>static bool Is Safe Path (const U String &path, bool is WSL) {</p>
+<p>C Link Levels Info levels Info;</p>
+<p>levels Info. Parse (path, is WSL); // Ahora toma parámetro is WSL</p>
+<p>return ! levels Info. Is Absolute && levels Info. Low Level >= 0;</p>
 <p>Cambio 2: Detección de Path Absoluto WSL-Aware</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <h2>// ANTES:</h2>
-<p>void CLinkLevelsInfo::Parse(const UString &path) {</p>
-<p>IsAbsolute = NName::IsAbsolutePath(path); // Solo semántica Windows</p>
+<p>void C Link Levels Info:: Parse (const U String &path) {</p>
+<p>Is Absolute = N Name:: Is Absolute Path (path); // Solo semántica Windows</p>
 <p>// ...</p>
 <h2>// DESPUÉS:</h2>
-<p>void CLinkLevelsInfo::Parse(const UString &path, bool isWSL) {</p>
+<p>void C Link Levels Info:: Parse (const U String &path, bool is WSL) {</p>
 <p>// WSL usa '/' como indicador de path absoluto</p>
 <p>// Windows usa 'C:\', '\\', etc.</p>
-<p>IsAbsolute = isWSL ? IS_PATH_SEPAR(path[0]) : NName::IsAbsolutePath(path);</p>
+<p>Is Absolute = is WSL ? IS_PATH_SEPAR (path[0]) : N Name:: Is Absolute Path (path);</p>
 <p>// ...</p>
 <p>Cambio 3: Verificación de Link Peligroso para Todos los Tipos</p>
 <p>// ANTES: Solo directorios en Windows</p>
 <p>#ifdef _WIN32</p>
-<p>if (_item. IsDir) // BUG: Solo verifica dirs!</p>
+<p>if (_item. Is Dir) // BUG: Solo verifica dirs!</p>
 <p>#endif</p>
-<p>if (linkInfo. isRelative) { ... }</p>
+<p>if (link Info. is Relative) { ... }</p>
 <p>// DESPUÉS: Todos los symlinks relativos</p>
-<p>if (!_ntOptions. SymLinks_AllowDangerous. Val && link. isRelative) {</p>
-<p>CLinkLevelsInfo levelsInfo;</p>
-<p>levelsInfo. Parse(link. LinkPath, link. Is_WSL()); // WSL-aware</p>
-<p>if (levelsInfo. FinalLevel < 1 || levelsInfo. IsAbsolute)</p>
-<p>return SendMessageError2(...);</p>
+<p>if (!_nt Options. Sym Links_Allow Dangerous. Val && link. is Relative) {</p>
+<p>C Link Levels Info levels Info;</p>
+<p>levels Info. Parse (link. Link Path, link. Is_WSL ()); // WSL-aware</p>
+<p>if (levels Info. Final Level < 1 || levels Info. Is Absolute)</p>
+<p>return Send Message Error 2(...);</p>
 <ol>
   <li>7.3. 3. 7.3 Escenario de Ataque</li>
 </ol>
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
-<p>│ ESTRUCTURA DEL ARCHIVO MALICIOSO (tar/rar5) │</p>
+<p>│ ESTRUCTURA DEL ARCHIVO MALICIOSO (tar/rar 5) │</p>
 <p>├─────────────────────────────────────────────────────────────────┤</p>
 <p>│ safe_folder/ │</p>
 <p>│ safe_folder/link -> C:\Users\Public\Desktop (symlink WSL) │</p>
@@ -1395,10 +1395,10 @@
 <p>┌─────────────────────────────────────────────────────────────────┐</p>
 <p>│ EXTRACCIÓN EN WINDOWS (7-Zip 24. 09 vulnerable) │</p>
 <p>├─────────────────────────────────────────────────────────────────┤</p>
-<p>│ 1. ReadLink() lee target: "C:\Users\Public\Desktop" │</p>
-<p>│ 2. IsSafePath() llamado SIN isWSL=true │</p>
-<p>│ 3. NName::IsAbsolutePath() usa semántica Windows │</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>│ 1. Read Link () lee target: "C:\Users\Public\Desktop" │</p>
+<p>│ 2. Is Safe Path () llamado SIN is WSL=true │</p>
+<p>│ 3. N Name:: Is Absolute Path () usa semántica Windows │</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <p>│ PERO symlink WSL espera '/' como absoluto │</p>
 <p>│ 4. Path clasificado como "relativo" - check bypassed │</p>
 <p>│ 5. Symlink creado: safe_folder\link -> C:\Users\Public\Desktop │</p>
@@ -1412,27 +1412,27 @@
 <ol>
   <li>7.4. 3. 7.4 Checklist de Triage para Código de Validación de Paths</li>
 </ol>
-<p>Buscar: - Funciones: IsSafePath, ValidatePath, CheckPath, Normalize - Detección de absoluto:</p>
-<p>IsAbsolute,IsRelative,GetRootPrefixSize-Concatenacióndepaths:JoinPath,CombinePath,ope-</p>
-<p>rator/ - Manejo de symlinks: CreateSymbolicLink, SetReparseData - Conversión de separadores:</p>
-<p>Replace('/', '\\')</p>
+<p>Buscar: - Funciones: Is Safe Path, Validate Path, Check Path, Normalize - Detección de absoluto:</p>
+<p>Is Absolute, Is Relative, Get Root Prefix Size-Concatenacióndepaths: Join Path, Combine Path, ope-</p>
+<p>rator/ - Manejo de symlinks: Create Symbolic Link, Set Reparse Data - Conversión de separadores:</p>
+<p>Replace ('/', '\\')</p>
 <p>Verificar: - ¿Detección de path absoluto funciona cross-plataforma? - ¿Symlinks WSL/Linux mane-</p>
-<p>jadosconsemánticacorrecta?-¿NormalizaciónocurreANTESdevalidación?-¿Checksde“dange-</p>
-<p>rouslink”correnparaTODOSlostiposdesymlink?-¿Nohayguards#ifdefquesaltenverificaciones</p>
+<p>jadosconsemánticacorrecta?-¿Normalizaciónocurre ANTE Sdevalidación?-¿Checksde“dange-</p>
+<p>rouslink”correnpara TODO Slostiposdesymlink?-¿Nohayguards#ifdefquesaltenverificaciones</p>
 <p>deseguridad?</p>
 <ol>
-  <li>7.5. Conclusiones del Capítulo 3</li>
+  <li>7.5. Conclusiones del <a href="03-fuzzing.html">Capítulo 3</a></li>
   <li>El parche es frecuentemente la única fuente de verdad cuando los detalles del CVE son</li>
 </ol>
 <p>limitados.</p>
 <ol>
   <li>Lasherramientasautomatizanperonoreemplazanelanálisishumano-Ghidriffencuen-</li>
 </ol>
-<p>trafuncionescambiadas,túentiendesporqué.</p>
+<p>trafuncionescambiadas, túentiendesporqué.</p>
 <ol>
-  <li>Lossímbolosson multiplicadoresde fuerza -ConPDBsvesIppValidatePacketLength;sin</li>
+  <li>Lossímbolosson multiplicadoresde fuerza -Con PD Bsves Ipp Validate Packet Length; sin</li>
 </ol>
-<p>ellos,ves sub_1400A2F40.</p>
+<p>ellos, ves sub_1400A2F40.</p>
 <ol>
   <li>Patrones de correcciónrevelan clases de vulnerabilidad:</li>
 </ol>
@@ -1441,50 +1441,50 @@
 <p>Locksañadidos→racecondition</p>
 <p>Validacióndeinput→inputvalidationflaw</p>
 <ol>
-  <li>Elpatchdiffingencuentravariantes-Alanalizarunfix,frecuentementesedescubrenbugs</li>
+  <li>Elpatchdiffingencuentravariantes-Alanalizarunfix, frecuentementesedescubrenbugs</li>
 </ol>
 <p>similaresencódigocercano.</p>
 <ol>
   <li>El análisis cross-plataforma requiere conocimiento de ambas semánticas - Como se vio</li>
 </ol>
-<p>en7-Zip,pathsWSLenWindowsnecesitantratamientoespecial.</p>
-<p>CAPÍTULO4. PATCHDIFFING BitácoraRedTeam</p>
+<p>en 7-Zip, paths WS Len Windowsnecesitantratamientoespecial.</p>
+<p>CAPÍTULO4. PATCHDIFFING Bitácora Red Team</p>
 <ol>
   <li>Laautomatizacióntransformaelanálisisdereactivoaproactivo-Puedesanalizarparches</li>
 </ol>
 <p>horasdespuésdesuliberación.</p>
 <p>Preguntasde Discusión:</p>
 <ol>
-  <li>CVE-2022-34718 requiere IPsec SA establecida pero recibió CVSS 9. 8. ¿Cómo deberían los</li>
+  <li>CVE-2022-34718 requiere I Psec SA establecida pero recibió CVSS 9. 8. ¿Cómo deberían los</li>
 </ol>
 <p>prerrequisitosafectarelratingdeseveridad?</p>
 <ol>
-  <li>ElbugdeEvilESPabarcódosfunciones(IppReceiveEspyIpv6pReassembleDatagram).¿Cómo</li>
+  <li>Elbugde Evil ES Pabarcódosfunciones(Ipp Receive Espy Ipv 6 p Reassemble Datagram).¿Cómo</li>
 </ol>
 <p>podríanelanálisisestáticoorevisióndecódigodetectarvulnerabilidadescross-función?</p>
 <ol>
-  <li>La fragmentación IPv6 es fuente recurrente de vulnerabilidades. ¿Qué hace que la lógica de</li>
+  <li>La fragmentación I Pv 6 es fuente recurrente de vulnerabilidades. ¿Qué hace que la lógica de</li>
 </ol>
 <p>reensamblajeseapropensaaerrores?</p>
 <ol>
   <li>El fix de 7-Zip añadió 6+ cambios distintos. ¿Cómo determinas cuál corrige la vulnerabilidad</li>
 </ol>
 <p>corevsañadedefensaenprofundidad?</p>
-<p>Capítulo 5</p>
+<p><a href="05-analisis-crashes.html">Capítulo 5</a></p>
 <p>Análisis de Crashes</p>
 <p>Después de encontrar vulnerabilidades potenciales mediante fuzzing o patch diffing, el siguiente</p>
 <p>paso crítico es analizar crashes para determinar si son explotables. Este capítulo cubre triage de</p>
-<p>crashes,dominiodedepuradores,sanitizersdememoriaytécnicasavanzadasdeanálisisdecausa</p>
+<p>crashes, dominiodedepuradores, sanitizersdememoriaytécnicasavanzadasdeanálisisdecausa</p>
 <p>raíz.</p>
-<p>Objetivos del Capítulo: - Configurar entornos de depuración profesionales (WinDbg, Pwndbg) -</p>
-<p>Dominarsanitizersdememoria(ASAN,UBSAN,MSAN,TSAN)-Implementarpipelinesautomatiza-</p>
-<p>dosdetriageconCASR-DesarrollarPoCsconfiablesconpwntools-Construircadenasdeexplota-</p>
+<p>Objetivos del Capítulo: - Configurar entornos de depuración profesionales (Win Dbg, Pwndbg) -</p>
+<p>Dominarsanitizersdememoria(ASAN, UBSAN, MSAN, TSAN)-Implementarpipelinesautomatiza-</p>
+<p>dosdetriagecon CASR-Desarrollar Po Csconfiablesconpwntools-Construircadenasdeexplota-</p>
 <p>cióncompletas</p>
 <ol>
   <li>1. 4. 1 Fundamentos del Análisis de Crashes</li>
 </ol>
 <p>Elanálisisdecrasheseselprocesodetransformaruncrashdescubiertoporunfuzzerenconocimien-</p>
-<p>toaccionablesobreunavulnerabilidad. Estoincluyedeterminarlacausaraíz,evaluarexplotabilidad,</p>
+<p>toaccionablesobreunavulnerabilidad. Estoincluyedeterminarlacausaraíz, evaluarexplotabilidad,</p>
 <p>ydesarrollarpruebasdeconcepto.</p>
 <ol>
   <li>1.1. 4. 1.1 Árbol de Decisión para Análisis de Crashes</li>

@@ -276,153 +276,153 @@
             </div>
             
             <div class="section">
-                <p>Capítulo 3</p>
+                <p><a href="03-fuzzing.html">Capítulo 3</a></p>
 <p>Fuzzing</p>
 <p>El fuzzing es una técnica automatizada de descubrimiento de vulnerabilidades que ha encontrado</p>
 <p>milesdebugsdeseguridadcríticosensoftwaredeproducción. Estecapítulocubrelosfundamentos</p>
-<p>delfuzzing,herramientasclaveymetodologíasparaencontrarvulnerabilidades.</p>
+<p>delfuzzing, herramientasclaveymetodologíasparaencontrarvulnerabilidades.</p>
 <ol>
   <li>1. 2. 1 Fundamentos de Fuzzing</li>
 </ol>
 <p>Qué es el Fuzzing</p>
-<p>Elfuzzingesunatécnicadepruebadesoftwarequeinvolucraproporcionardatosinválidos,inespe-</p>
-<p>radosoaleatorioscomoentradaaunprograma. Elobjetivoesencontrarcrashes,assertionsfallidos,</p>
+<p>Elfuzzingesunatécnicadepruebadesoftwarequeinvolucraproporcionardatosinválidos, inespe-</p>
+<p>radosoaleatorioscomoentradaaunprograma. Elobjetivoesencontrarcrashes, assertionsfallidos,</p>
 <p>fugas de memoria y otros comportamientos anómalos que puedan indicar vulnerabilidades de se-</p>
 <p>guridad.</p>
 <p>Por Qué el Fuzzing es Efectivo</p>
-<p>Automatización:Puedeprobarmillonesdeentradasporhora</p>
-<p>Cobertura:Exploracasosextremosquelaspruebasmanualesnuncaalcanzarían</p>
-<p>Reproducibilidad:Lasentradasquecausancrashesseguardanparaanálisis</p>
-<p>Escalabilidad:Puedeejecutarsecontinuamentedurantedías/semanas</p>
+<p>Automatización: Puedeprobarmillonesdeentradasporhora</p>
+<p>Cobertura: Exploracasosextremosquelaspruebasmanualesnuncaalcanzarían</p>
+<p>Reproducibilidad: Lasentradasquecausancrashesseguardanparaanálisis</p>
+<p>Escalabilidad: Puedeejecutarsecontinuamentedurantedías/semanas</p>
 <p>Tipos de Fuzzing</p>
 <p>Tipo Descripción Ejemplo</p>
 <p>Caja Negra Sinconocimientodelcódigointerno Mutaciónaleatoriade</p>
 <p>entradas</p>
 <p>Caja Blanca Conocimientocompletodelcódigo Ejecuciónsimbólica</p>
-<p>Caja Gris Instrumentacióndecobertura AFL++,libFuzzer</p>
-<p>Guiado por Midequécódigoseejecuta AFL++,Honggfuzz</p>
+<p>Caja Gris Instrumentacióndecobertura AFL++, lib Fuzzer</p>
+<p>Guiado por Midequécódigoseejecuta AFL++, Honggfuzz</p>
 <p>Cobertura</p>
 <p>Guiado por Conocelaestructuradelformato Syzkaller(syscalls)</p>
 <p>Gramática</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <ol>
   <li>2. 2. 2 AFL++ y Fuzzing Guiado por Cobertura</li>
 </ol>
 <p>Descripción General</p>
-<p>AFL++(AmericanFuzzyLopPlusPlus)esunodelosfuzzersmásefectivosyampliamenteutilizados.</p>
+<p>AFL++(American Fuzzy Lop Plus Plus)esunodelosfuzzersmásefectivosyampliamenteutilizados.</p>
 <p>Usa instrumentación de cobertura para guiar la mutación de entradas hacia nuevos caminos de</p>
 <p>código.</p>
-<p>ComponentesClave de AFL++</p>
+<p>Componentes Clave de AFL++</p>
 <ol>
-  <li>InstrumentacióndeCobertura:Compiladormodificadoqueinsertacódigopararastrearqué</li>
+  <li>Instrumentaciónde Cobertura: Compiladormodificadoqueinsertacódigopararastrearqué</li>
 </ol>
 <p>bloquesbásicosseejecutan</p>
 <ol>
-  <li>Motorde Mutación:Aplicatransformacionesinteligentesalasentradas</li>
-  <li>Gestión de Corpus:Mantieneconjuntomínimodeentradasquemaximizancobertura</li>
-  <li>Detecciónde Crashes:Identificayguardaentradasquecausanfallos</li>
+  <li>Motorde Mutación: Aplicatransformacionesinteligentesalasentradas</li>
+  <li>Gestión de Corpus: Mantieneconjuntomínimodeentradasquemaximizancobertura</li>
+  <li>Detecciónde Crashes: Identificayguardaentradasquecausanfallos</li>
 </ol>
-<p>Caso de Estudio: AFL++ Encontrando CVE-2024-47606 (GStreamer)</p>
+<p>Caso de Estudio: AFL++ Encontrando CVE-2024-47606 (G Streamer)</p>
 <p>Campo Detalle</p>
-<p>Métodode Descubrimiento CampañasdefuzzingcontinuasconAFL++</p>
-<p>Objetivo DemuxerQuickTimedeGStreamer(qtdemux)</p>
-<p>Superficie de Ataque ArchivosMP4/MOVprocesadospornavegadores,</p>
-<p>reproductores,appsdemensajería</p>
+<p>Métodode Descubrimiento Campañasdefuzzingcontinuascon AFL++</p>
+<p>Objetivo Demuxer Quick Timede G Streamer(qtdemux)</p>
+<p>Superficie de Ataque Archivos MP4/MO Vprocesadospornavegadores,</p>
+<p>reproductores, appsdemensajería</p>
 <p>El Proceso de Descubrimiento</p>
 <ol>
-  <li>Corpus de Semillas:ArchivosMP4válidosdedatasetspúblicos</li>
-  <li>Instrumentación:CompiladoconAFL++yAddressSanitizer</li>
-  <li>Estrategiade Mutación:Structure-aware(entendiendoátomosMP4)</li>
-  <li>Resultado:Crashdeheapbufferoverflowdespuésde~48horasdefuzzing</li>
+  <li>Corpus de Semillas: Archivos MP4 válidosdedatasetspúblicos</li>
+  <li>Instrumentación: Compiladocon AFL++y Address Sanitizer</li>
+  <li>Estrategiade Mutación: Structure-aware(entendiendoátomos MP4)</li>
+  <li>Resultado: Crashdeheapbufferoverflowdespuésde~48 horasdefuzzing</li>
 </ol>
 <p>Por Qué el Fuzzing lo Encontró</p>
-<p>CombinacióndeEntradaRara:RequeríavaloresespecíficosdetamañodeextensiónTheora</p>
+<p>Combinaciónde Entrada Rara: Requeríavaloresespecíficosdetamañodeextensión Theora</p>
 <p>quesubdesbordaran</p>
-<p>LimitacióndeAnálisisEstático:Conversiónsigned-to-unsignedenterradaenlógicadepar-</p>
+<p>Limitaciónde Análisis Estático: Conversiónsigned-to-unsignedenterradaenlógicadepar-</p>
 <p>singcompleja</p>
-<p>FalladeCodeReview:Aritméticadeenterosparecíacorrectasinconsiderarvaloresnegativos</p>
+<p>Fallade Code Review: Aritméticadeenterosparecíacorrectasinconsiderarvaloresnegativos</p>
 <p>Brecha de Testing Automatizado: Pruebas unitarias no cubrían extensiones Theora malfor-</p>
 <p>madas</p>
 <p>Insight Clave</p>
 <p>El fuzzing sobresale en encontrar casos extremos en parsers complejos que los humanos nunca</p>
 <p>probaríanmanualmente. Lacombinaciónde:-Mutaciónguiadaporcobertura(AFL++explorando</p>
-<p>nuevoscaminosdecódigo)-AddressSanitizer(detectandocorrupcióndememoriainmediatamen-</p>
+<p>nuevoscaminosdecódigo)-Address Sanitizer(detectandocorrupcióndememoriainmediatamen-</p>
 <p>te)-Fuzzingpersistente(ejecutándosepordías/semanas)</p>
 <p>…lohacemásefectivoquelaspruebasmanualesparaestaclasedevulnerabilidad.</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <ol>
-  <li>3. 2. 3 FuzzTest y Fuzzing In-Process</li>
+  <li>3. 2. 3 Fuzz Test y Fuzzing In-Process</li>
 </ol>
 <p>Descripción General</p>
-<p>FuzzTestesunframeworkdefuzzingin-processestilounit-testdeGooglequeintegrafuzzingcon</p>
-<p>GoogleTest. EsidealparafuzzearfuncionesC++individualesdirectamente.</p>
-<p>CaracterísticasClave</p>
-<p>Integracióncon GoogleTest:SeescribeTESTyFUZZ_TESTladoaladoenelmismoarchivo</p>
-<p>Fuzzing guiado por cobertura bajo el capó: Estilo libFuzzer pero oculta código boilerplate</p>
+<p>Fuzz Testesunframeworkdefuzzingin-processestilounit-testde Googlequeintegrafuzzingcon</p>
+<p>Google Test. Esidealparafuzzearfunciones C++individualesdirectamente.</p>
+<p>Características Clave</p>
+<p>Integracióncon Google Test: Seescribe TES Ty FUZZ_TES Tladoaladoenelmismoarchivo</p>
+<p>Fuzzing guiado por cobertura bajo el capó: Estilo lib Fuzzer pero oculta código boilerplate</p>
 <p>deharness</p>
-<p>Ideal parabibliotecasy lógica core:Parsers,decoders,helpersdecrypto</p>
-<p>PerfectoparaCI:Elmismobinariopuedeejecutartestsdeterminísticosrápidosocampañas</p>
+<p>Ideal parabibliotecasy lógica core: Parsers, decoders, helpersdecrypto</p>
+<p>Perfectopara CI: Elmismobinariopuedeejecutartestsdeterminísticosrápidosocampañas</p>
 <p>defuzzlargas</p>
-<p>Ventajasde FuzzTest</p>
-<p>Aspecto FuzzTest AFL++/Honggfuzz</p>
+<p>Ventajasde Fuzz Test</p>
+<p>Aspecto Fuzz Test AFL++/Honggfuzz</p>
 <p>Target Funcionesindividuales Programascompletos</p>
-<p>Integración GoogleTestnativo Harnessseparado</p>
+<p>Integración Google Testnativo Harnessseparado</p>
 <p>Uso Unittests→fuzztests Binariosstandalone</p>
 <p>CI/CD Excelente Requieresetupadicional</p>
 <p>Observaciones</p>
-<p>FuzzTest es particularmente útil para equipos que ya tienen suites de unit tests y quieren añadir</p>
+<p>Fuzz Test es particularmente útil para equipos que ya tienen suites de unit tests y quieren añadir</p>
 <p>fuzzingdemaneraincrementalasusflujosdetrabajoexistentes.</p>
 <ol>
   <li>4. 2. 4 Honggfuzz y Fuzzing de Protocolos</li>
 </ol>
 <p>Descripción General</p>
-<p>HonggfuzzesunfuzzerdesarrolladoporGoogleconsoporteexcelenteparafuzzingdeprotocolos</p>
-<p>deredyaplicacionesmulti-hilo. OfrececoberturaasistidaporhardwareusandoIntelPT.</p>
-<p>CaracterísticasDistintivas</p>
-<p>Multi-hilo nativo:Manejatargetsmulti-hilosinproblemas</p>
-<p>Cobertura Hardware:UsaIntelProcessorTraceparacoberturadebajooverhead</p>
-<p>Modo Persistente:Mantieneelprocesovivoentreiteraciones</p>
-<p>Detecciónde Feedback:Detectacrashes,timeouts,memoryerrors</p>
+<p>Honggfuzzesunfuzzerdesarrolladopor Googleconsoporteexcelenteparafuzzingdeprotocolos</p>
+<p>deredyaplicacionesmulti-hilo. Ofrececoberturaasistidaporhardwareusando Intel PT.</p>
+<p>Características Distintivas</p>
+<p>Multi-hilo nativo: Manejatargetsmulti-hilosinproblemas</p>
+<p>Cobertura Hardware: Usa Intel Processor Traceparacoberturadebajooverhead</p>
+<p>Modo Persistente: Mantieneelprocesovivoentreiteraciones</p>
+<p>Detecciónde Feedback: Detectacrashes, timeouts, memoryerrors</p>
 <p>Caso de Estudio: Fuzzing de Implementaciones TLS</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>Aspecto Desafío Solución</p>
 <p>Protocolo Stateful Debecompletarhandshake Harnessquesimulaestadode</p>
 <p>antesdellegaralógica conexión</p>
 <p>profunda</p>
-<p>Operaciones Criptográficas Valoresaleatorios,firmas, Seedscondatoscriptográficos</p>
-<p>MACs válidos</p>
+<p>Operaciones Criptográficas Valoresaleatorios, firmas, Seedscondatoscriptográficos</p>
+<p>MA Cs válidos</p>
 <p>Múltiples Versiones TLS1. 0,1. 1,1. 2,1. 3 Configurartargetparaversión</p>
 <p>específica</p>
-<p>Extensiones ALPN,SNI,sessiontickets Corpusconvariedadde</p>
+<p>Extensiones ALPN, SNI, sessiontickets Corpusconvariedadde</p>
 <p>extensiones</p>
 <p>Bugs Reales Encontrados por Fuzzing de Protocolos</p>
-<p>DeOpenSSLyotrasimplementacionesTLS:-Bufferoverflowsenparsingdecertificados:Manejo</p>
+<p>De Open SS Lyotrasimplementaciones TLS:-Bufferoverflowsenparsingdecertificados: Manejo</p>
 <p>de extensiones X. 509 - Use-after-free en reanudación de sesión: Gestión de lifetime de tickets</p>
 <p>- Integer overflows en capa de registro: Cálculos de longitud - Bugs de confusión de estado:</p>
 <p>Ordenamientoinesperadodemensajes</p>
 <p>Observaciones</p>
 <p>Elfuzzingdeprotocolosesmásdesafiantequeelfuzzingdeformatosdearchivodebidoalanatura-</p>
-<p>lezastatefuldelosprotocolos,peroesaltamenteefectivoparaencontrarbugsenimplementaciones</p>
+<p>lezastatefuldelosprotocolos, peroesaltamenteefectivoparaencontrarbugsenimplementaciones</p>
 <p>dered.</p>
 <ol>
   <li>5. 2. 5 Syzkaller y Fuzzing de Kernel</li>
 </ol>
 <p>Descripción General</p>
 <p>Syzkaller es un fuzzer de syscalls del kernel desarrollado por Google. Es responsable de encontrar</p>
-<p>milesdebugsdelkernelLinuxyseusaactivamenteeneldesarrollodelkernel.</p>
-<p>CaracterísticasClave</p>
-<p>Conocimientode Syscalls:Entiendelassignaturesdesyscallsysusargumentos</p>
-<p>Generación de Programas:Creasecuenciasdesyscallsválidasysemi-válidas</p>
-<p>Gestión de VMs:EjecutatargetsenVMsparaaislamiento</p>
-<p>Reproducción:GeneraprogramasCreproduciblesparacrashesencontrados</p>
+<p>milesdebugsdelkernel Linuxyseusaactivamenteeneldesarrollodelkernel.</p>
+<p>Características Clave</p>
+<p>Conocimientode Syscalls: Entiendelassignaturesdesyscallsysusargumentos</p>
+<p>Generación de Programas: Creasecuenciasdesyscallsválidasysemi-válidas</p>
+<p>Gestión de V Ms: Ejecutatargetsen V Msparaaislamiento</p>
+<p>Reproducción: Generaprogramas Creproduciblesparacrashesencontrados</p>
 <p>Arquitectura de Syzkaller</p>
 <p>┌─────────────────────────────────────────────────────────────┐</p>
 <p>│ Manager (syz-manager) │</p>
-<p>│ - Coordina múltiples VMs │</p>
+<p>│ - Coordina múltiples V Ms │</p>
 <p>│ - Gestiona corpus de programas │</p>
 <p>│ - Rastrea cobertura de código │</p>
 <p>└─────────────────────────────────────────────────────────────┘</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>┌────────────────────┼────────────────────┐</p>
 <p>▼ ▼ ▼</p>
 <p>┌─────────┐ ┌─────────┐ ┌─────────┐</p>
@@ -431,38 +431,38 @@
 <p>│ executor│ │ executor│ │ executor│</p>
 <p>└─────────┘ └─────────┘ └─────────┘</p>
 <p>Subsistemasdel Kernel Frecuentemente Fuzzeados</p>
-<p>Subsistema SuperficiedeAtaque BugsComunes</p>
-<p>Netfilter Reglasdefirewall,NAT UAF,raceconditions</p>
-<p>io_uring AsyncI/O Raceconditions,memoryleaks</p>
-<p>USB Descriptoresdedispositivo OOBreads,tipoconfusions</p>
-<p>Filesystems Imágenesdedisco Integeroverflows,NULLderefs</p>
-<p>Network Paquetes,sockets Bufferoverflows,stateconfusion</p>
+<p>Subsistema Superficiede Ataque Bugs Comunes</p>
+<p>Netfilter Reglasdefirewall, NAT UAF, raceconditions</p>
+<p>io_uring Async I/O Raceconditions, memoryleaks</p>
+<p>USB Descriptoresdedispositivo OO Breads, tipoconfusions</p>
+<p>Filesystems Imágenesdedisco Integeroverflows, NUL Lderefs</p>
+<p>Network Paquetes, sockets Bufferoverflows, stateconfusion</p>
 <p>Caso de Estudio: Syzkaller y CVE-2022-32250 (Netfilter UAF)</p>
 <p>Campo Detalle</p>
 <p>Target net/netfilter/nf_tables_api. c</p>
-<p>Tiempo de Descubrimiento ~72horasdesdeintroduccióndelcódigo</p>
+<p>Tiempo de Descubrimiento ~72 horasdesdeintroduccióndelcódigo</p>
 <p>Causa Raíz Errordeconteodereferenciasenexpresionesstateful</p>
 <p>Impacto Escaladadeprivilegioslocalaroot</p>
 <p>Cómo Syzkaller Encontró el Bug:</p>
 <p>Syzkallergenerasecuenciasdesyscallsqueinteractúanconelsubsistemanetfilter:</p>
-<p>socket(AF_NETLINK, SOCK_RAW, NETLINK_NETFILTER) → fd</p>
-<p>sendmsg(fd, { type: NFT_MSG_NEWTABLE, ... })</p>
-<p>sendmsg(fd, { type: NFT_MSG_NEWCHAIN, data: [chain_with_stateful_expr] })</p>
-<p>sendmsg(fd, { type: NFT_MSG_NEWRULE, data: [rule_that_frees_expr] })</p>
+<p>socket (AF_NETLINK, SOCK_RAW, NETLINK_NETFILTER) → fd</p>
+<p>sendmsg (fd, { type: NFT_MSG_NEWTABLE, ... })</p>
+<p>sendmsg (fd, { type: NFT_MSG_NEWCHAIN, data: [chain_with_stateful_expr] })</p>
+<p>sendmsg (fd, { type: NFT_MSG_NEWRULE, data: [rule_that_frees_expr] })</p>
 <p>// Resultado: Uso de expresión liberada → Crash UAF</p>
 <p>Por Qué Syzkallerlo Encontró:</p>
 <ol>
-  <li>Cobertura de Syscalls:Pruebatodaslasoperacionesnetfiltersistemáticamente</li>
-  <li>Exploración de Secuencias:Pruebamillonesdeordenamientosdesyscalls</li>
-  <li>Rastreode Estado:Mantieneestadodelkernelatravésdeoperaciones</li>
-  <li>IntegraciónKASAN:Deteccióninmediatadecorrupcióndememoria</li>
-  <li>Reproducibilidad:GenerareproducersCmínimosparadesarrolladores</li>
+  <li>Cobertura de Syscalls: Pruebatodaslasoperacionesnetfiltersistemáticamente</li>
+  <li>Exploración de Secuencias: Pruebamillonesdeordenamientosdesyscalls</li>
+  <li>Rastreode Estado: Mantieneestadodelkernelatravésdeoperaciones</li>
+  <li>Integración KASAN: Deteccióninmediatadecorrupcióndememoria</li>
+  <li>Reproducibilidad: Generareproducers Cmínimosparadesarrolladores</li>
 </ol>
-<p>ImpactoReal:Elbugpermitíaescaladadeprivilegioslocaldesdecualquierusuarioarootensiste-</p>
-<p>masconusernamespacesnoprivilegiados(defaultenUbuntu,Debian).Exploitpúblicodisponible</p>
+<p>Impacto Real: Elbugpermitíaescaladadeprivilegioslocaldesdecualquierusuarioarootensiste-</p>
+<p>masconusernamespacesnoprivilegiados(defaulten Ubuntu, Debian). Exploitpúblicodisponible</p>
 <p>ensemanas.</p>
 <p>Observaciones</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>Syzkaller ha transformado la seguridad del kernel Linux al encontrar bugs de manera sistemática</p>
 <p>antesdequeseanexplotados. Esunaherramientaesencialparacualquierinvestigadordeseguridad</p>
 <p>dekernel.</p>
@@ -472,23 +472,23 @@
 <p>Instalación Paso a Paso</p>
 <h1>Instalar dependencias de compilación</h1>
 <p>sudo apt update</p>
-<p>sudo apt install -y build-essential gcc-13-plugin-dev cpio python3-dev \</p>
-<p>libcapstone-dev pkg-config libglib2. 0-dev libpixman-1-dev \</p>
-<p>automake autoconf python3-pip ninja-build cmake git wget meson</p>
-<h1>Instalar LLVM 19 (verificar última versión en https://apt. llvm. org/)</h1>
-<p>wget https://apt. llvm. org/llvm. sh</p>
+<p>sudo apt install -y build-essential gcc-13-plugin-dev cpio python 3-dev \</p>
+<p>libcapstone-dev pkg-config libglib 2. 0-dev libpixman-1-dev \</p>
+<p>automake autoconf python 3-pip ninja-build cmake git wget meson</p>
+<h1>Instalar LLVM 19 (verificar última versión en <a href="https://apt." target="_blank">https://apt.</a> llvm. org/)</h1>
+<p>wget <a href="https://apt." target="_blank">https://apt.</a> llvm. org/llvm. sh</p>
 <p>chmod +x llvm. sh</p>
 <p>sudo ./llvm. sh 19 all</p>
 <h1>Verificar instalación de LLVM</h1>
 <p>clang-19 --version</p>
 <p>llvm-config-19 --version</p>
 <h1>Instalar Rust (requerido para algunos componentes de AFL++)</h1>
-<p>curl --proto '=https' --tlsv1. 2 -sSf "https://sh. rustup. rs" | sh</p>
-<p>source ~/.cargo/env</p>
+<p>curl --proto '=https' --tlsv 1. 2 -s Sf "<a href="https://sh." target="_blank">https://sh.</a> rustup. rs" | sh</p>
+<p>source ~/. cargo/env</p>
 <h1>Compilar e instalar AFL++</h1>
 <p>mkdir -p ~/soft && cd ~/soft</p>
-<p>git clone --depth 1 https://github. com/AFLplusplus/AFLplusplus. git</p>
-<p>cd AFLplusplus</p>
+<p>git clone --depth 1 <a href="https://github." target="_blank">https://github.</a> com/AF Lplusplus/AF Lplusplus. git</p>
+<p>cd AF Lplusplus</p>
 <p>make distrib</p>
 <p>sudo make install</p>
 <h1>Verificar instalación</h1>
@@ -501,10 +501,10 @@
 <p>cmake ..</p>
 <p>make -j$(nproc)</p>
 <h1>Habilitar sanitizers para mejor detección de bugs</h1>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>export AFL_USE_ASAN=1</p>
 <p>export AFL_USE_UBSAN=1</p>
-<p>export ASAN_OPTIONS="detect_leaks=1:abort_on_error=1:symbolize=1"</p>
+<p>export ASAN_OPTIONS="detect_leaks=1: abort_on_error=1: symbolize=1"</p>
 <p>Ejecución del Fuzzer</p>
 <h1>Configurar sistema para fuzzing óptimo</h1>
 <p>echo core | sudo tee /proc/sys/kernel/core_pattern</p>
@@ -520,8 +520,8 @@
 <h1>Terminal 1: Instancia Master</h1>
 <p>afl-fuzz -i seeds/ -o findings/ -M Master -- ./target @@</p>
 <h1>Terminal 2+: Instancias Slave</h1>
-<p>afl-fuzz -i seeds/ -o findings/ -S Slave1 -- ./target @@</p>
-<p>afl-fuzz -i seeds/ -o findings/ -S Slave2 -- ./target @@</p>
+<p>afl-fuzz -i seeds/ -o findings/ -S Slave 1 -- ./target @@</p>
+<p>afl-fuzz -i seeds/ -o findings/ -S Slave 2 -- ./target @@</p>
 <h1>Verificar estado</h1>
 <p>afl-whatsup findings/</p>
 <ol>
@@ -538,11 +538,11 @@
 <p>│ ¿Código fuente │</p>
 <p>│ disponible? │</p>
 <p>└───────────────────────┘</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>Sí No</p>
 <p>┌─────────────────────┐ ┌─────────────────────┐</p>
 <p>│ Recompilar con │ │ Usar depurador │</p>
-<p>│ ASAN + UBSAN │ │ (GDB/WinDbg) │</p>
+<p>│ ASAN + UBSAN │ │ (GDB/Win Dbg) │</p>
 <p>└─────────────────────┘ └─────────────────────┘</p>
 <p>┌─────────────────────┐ ┌─────────────────────┐</p>
 <p>│ Ejecutar crash │ │ Analizar registros │</p>
@@ -556,66 +556,66 @@
 <ol>
   <li>7.1. 2. 7.1 Caso de Estudio: Análisis de Heap Buffer Overflow</li>
 </ol>
-<p>Escenario:Elfuzzingdescubrióuncrashenunparserdeimágenes. Analicemospasoapaso.</p>
+<p>Escenario: Elfuzzingdescubrióuncrashenunparserdeimágenes. Analicemospasoapaso.</p>
 <p>Código Vulnerable:</p>
 <p>// vuln_parser. c - Parser de imágenes vulnerable</p>
 <p>#include <stdio. h></p>
 <p>#include <stdlib. h></p>
 <p>#include <string. h></p>
 <p>#include <stdint. h></p>
-<p>void build_huffman_table(uint8_t *input, size_t size) {</p>
+<p>void build_huffman_table (uint 8_t *input, size_t size) {</p>
 <p>if (size < 8) return;</p>
-<p>uint32_t table_size = *(uint32_t*)input; // Controlado por atacante</p>
-<p>uint8_t *codes = input + 4;</p>
-<p>uint8_t *table = malloc(256); // Asignación fija de 256 bytes</p>
+<p>uint 32_t table_size = *(uint 32_t*) input; // Controlado por atacante</p>
+<p>uint 8_t *codes = input + 4;</p>
+<p>uint 8_t *table = malloc (256); // Asignación fija de 256 bytes</p>
 <p>// VULNERABILIDAD: Sin verificación de límites en table_size</p>
 <p>// Puede escribir más allá del búfer de 256 bytes</p>
-<p>memcpy(table, codes, table_size); // ¡Heap buffer overflow!</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
-<p>printf("Built Huffman table with %u codes\n", table_size);</p>
-<p>free(table);</p>
+<p>memcpy (table, codes, table_size); // ¡Heap buffer overflow!</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
+<p>printf ("Built Huffman table with % u codes\n", table_size);</p>
+<p>free (table);</p>
 <p>Compilación con ASAN:</p>
 <p>clang-19 -g -O0 -fsanitize=address -o vuln_parser_asan vuln_parser. c</p>
 <p>Creaciónde Input Malicioso:</p>
-<p>#!/usr/bin/env python3</p>
+<p>#!/usr/bin/env python 3</p>
 <p>import struct</p>
 <h1>table_size = 512 (causa overflow de 256 bytes)</h1>
-<p>payload = struct. pack('<I', 512) # Tamaño: 512 bytes</p>
+<p>payload = struct. pack ('<I', 512) # Tamaño: 512 bytes</p>
 <p>payload += b'A' * 512 # Datos de overflow</p>
-<p>with open('crash_heap_overflow. bin', 'wb') as f:</p>
-<p>f. write(payload)</p>
+<p>with open ('crash_heap_overflow. bin', 'wb') as f:</p>
+<p>f. write (payload)</p>
 <p>Salida de ASAN:</p>
-<p>==37160==ERROR: AddressSanitizer: heap-buffer-overflow on address</p>
-<p>0x511000000140 at pc 0x56d6a37d0f62 bp 0x7ffd9f024440 sp 0x7ffd9f023c00</p>
-<p>WRITE of size 512 at 0x511000000140 thread T0</p>
-<p>#0 0x56d6a37d0f61 in __asan_memcpy</p>
-<p>#1 0x56d6a38147f5 in build_huffman_table vuln_parser. c:16:5</p>
-<p>#2 0x56d6a38148fe in main vuln_parser. c:37:5</p>
-<p>0x511000000140 is located 0 bytes after 256-byte region</p>
-<p>[0x511000000040,0x511000000140) allocated by thread T0 here:</p>
-<p>#1 0x56d6a38147df in build_huffman_table vuln_parser. c:12:22</p>
+<p>==37160==ERROR: Address Sanitizer: heap-buffer-overflow on address</p>
+<p>0 x 511000000140 at pc 0 x 56 d 6 a 37 d 0 f 62 bp 0 x 7 ffd 9 f 024440 sp 0 x 7 ffd 9 f 023 c 00</p>
+<p>WRITE of size 512 at 0 x 511000000140 thread T0</p>
+<p>#0 0 x 56 d 6 a 37 d 0 f 61 in __asan_memcpy</p>
+<p>#1 0 x 56 d 6 a 38147 f 5 in build_huffman_table vuln_parser. c:16:5</p>
+<p>#2 0 x 56 d 6 a 38148 fe in main vuln_parser. c:37:5</p>
+<p>0 x 511000000140 is located 0 bytes after 256-byte region</p>
+<p>[0 x 511000000040,0 x 511000000140) allocated by thread T0 here:</p>
+<p>#1 0 x 56 d 6 a 38147 df in build_huffman_table vuln_parser. c:12:22</p>
 <p>Interpretación del Reporte ASAN:</p>
 <p>Campo Valor Significado</p>
 <p>Tipo de Bug heap-buffer-overflow Desbordamientodeheap</p>
-<p>Operación WRITEofsize512 Escribiendo512bytes</p>
+<p>Operación WRIT Eofsize 512 Escribiendo 512 bytes</p>
 <p>Ubicación vuln_parser. c:16 Líneadelbug</p>
-<p>Asignación 256-bytebufferatline12 Búferasignado</p>
-<p>Overflow 512-256=256bytes Cantidaddeoverflow</p>
+<p>Asignación 256-bytebufferatline 12 Búferasignado</p>
+<p>Overflow 512-256=256 bytes Cantidaddeoverflow</p>
 <p>Clasificación de Explotabilidad:</p>
 <h1>Usar CASR para clasificación automática</h1>
 <p>casr-san --stdout -- ./vuln_parser_asan crash_heap_overflow. bin</p>
 <h1>Resultado esperado:</h1>
 <h1>"Type": "EXPLOITABLE",</h1>
-<h1>"ShortDescription": "heap-buffer-overflow(write)",</h1>
+<h1>"Short Description": "heap-buffer-overflow (write)",</h1>
 <p>Evaluación de Explotabilidad: EXPLOITABLE</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>Razonamiento: 1. Atacante controla tamaño: table_size viene del input 2. Atacante controla</p>
-<p>datos:codesarraycontent3. Corrupcióndeheapposible:Puedesobrescribirobjetosadyacentes</p>
+<p>datos: codesarraycontent 3. Corrupcióndeheapposible: Puedesobrescribirobjetosadyacentes</p>
 <ol>
   <li>Ruta de explotación: Overflow → Corromper puntero de función o vtable → Hijack de control</li>
 </ol>
 <p>flow→RCE</p>
-<p>Ejemplo Real Similar:CVE-2023-4863(libWebPHeapBufferOverflow)</p>
+<p>Ejemplo Real Similar: CVE-2023-4863(lib Web P Heap Buffer Overflow)</p>
 <ol>
   <li>7.2. 2. 7.2 Caso de Estudio: Análisis de Use-After-Free</li>
 </ol>
@@ -626,46 +626,46 @@
 <p>void (*process)(void); // Puntero de función</p>
 <p>} Handler;</p>
 <p>Handler *handler = NULL;</p>
-<p>void register_handler(char *name) {</p>
-<p>handler = malloc(sizeof(Handler));</p>
-<p>handler->name = strdup(name);</p>
+<p>void register_handler (char *name) {</p>
+<p>handler = malloc (sizeof (Handler));</p>
+<p>handler->name = strdup (name);</p>
 <p>handler->process = default_handler;</p>
-<p>void unregister_handler(void) {</p>
+<p>void unregister_handler (void) {</p>
 <p>if (handler) {</p>
-<p>free(handler->name);</p>
-<p>free(handler);</p>
+<p>free (handler->name);</p>
+<p>free (handler);</p>
 <p>// BUG: ¡Debería establecer handler = NULL aquí!</p>
-<p>void call_handler(void) {</p>
+<p>void call_handler (void) {</p>
 <p>if (handler) {</p>
-<p>handler->process(); // UAF: handler ya fue liberado</p>
+<p>handler->process (); // UAF: handler ya fue liberado</p>
 <p>Salida de ASAN:</p>
-<p>==38664==ERROR: AddressSanitizer: heap-use-after-free on address</p>
-<p>0x502000000010 at pc 0x617b2245a953 bp 0x7ffe92f7c160 sp 0x7ffe92f7c158</p>
-<p>READ of size 8 at 0x502000000010 thread T0</p>
-<p>#0 0x617b2245a952 in call_handler vuln_uaf. c:44:50</p>
-<p>0x502000000010 freed by thread T0 here:</p>
-<p>#1 0x617b2245a86a in unregister_handler vuln_uaf. c:29:9</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>==38664==ERROR: Address Sanitizer: heap-use-after-free on address</p>
+<p>0 x 502000000010 at pc 0 x 617 b 2245 a 953 bp 0 x 7 ffe 92 f 7 c 160 sp 0 x 7 ffe 92 f 7 c 158</p>
+<p>READ of size 8 at 0 x 502000000010 thread T0</p>
+<p>#0 0 x 617 b 2245 a 952 in call_handler vuln_uaf. c:44:50</p>
+<p>0 x 502000000010 freed by thread T0 here:</p>
+<p>#1 0 x 617 b 2245 a 86 a in unregister_handler vuln_uaf. c:29:9</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>previously allocated by thread T0 here:</p>
-<p>#1 0x617b2245a7a5 in register_handler vuln_uaf. c:21:15</p>
+<p>#1 0 x 617 b 2245 a 7 a 5 in register_handler vuln_uaf. c:21:15</p>
 <p>Estrategiade Explotación:</p>
 <p>┌─────────────────────────────────────────────────────────────┐</p>
 <h2>│ EXPLOTACIÓN UAF │</h2>
 <p>├─────────────────────────────────────────────────────────────┤</p>
 <h2>│ 1. LIBERACIÓN │</h2>
-<p>│ unregister_handler() libera handler │</p>
+<p>│ unregister_handler () libera handler │</p>
 <p>│ pero handler sigue apuntando a memoria liberada │</p>
 <h2>│ 2. HEAP GROOMING │</h2>
 <p>│ Atacante realiza asignaciones del mismo tamaño │</p>
 <p>│ for (i = 0; i < 1000; i++) { │</p>
-<p>│ Handler *fake = malloc(sizeof(Handler)); │</p>
+<p>│ Handler *fake = malloc (sizeof (Handler)); │</p>
 <p>│ fake->process = evil_handler; │</p>
 <p>│ } │</p>
 <h2>│ 3. RECLAMAR MEMORIA │</h2>
 <p>│ Una de las nuevas asignaciones ocupa la memoria │</p>
 <p>│ liberada, sobrescribiendo handler->process │</p>
 <h2>│ 4. DISPARAR UAF │</h2>
-<p>│ call_handler() → handler->process() │</p>
+<p>│ call_handler () → handler->process () │</p>
 <p>│ Ejecuta evil_handler en lugar de default_handler │</p>
 <p>│ 5. RESULTADO: Ejecución de código arbitrario │</p>
 <p>└─────────────────────────────────────────────────────────────┘</p>
@@ -678,45 +678,45 @@
 </ol>
 <p>Código Vulnerable:</p>
 <p>// vuln_intoverflow. c - Integer overflow leading to heap corruption</p>
-<p>void process_image(uint32_t width, uint32_t height, uint8_t *data) {</p>
+<p>void process_image (uint 32_t width, uint 32_t height, uint 8_t *data) {</p>
 <p>// Integer overflow: 65536 * 65536 = 0 (32-bit overflow)</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>size_t pixel_count = width * height;</p>
 <p>size_t buffer_size = pixel_count * 4;</p>
-<p>printf("Allocating %zu bytes for %ux%u image\n",</p>
+<p>printf ("Allocating % zu bytes for % ux% u image\n",</p>
 <p>buffer_size, width, height);</p>
-<p>uint8_t *buffer = malloc(buffer_size); // malloc(0) = tiny buffer</p>
+<p>uint 8_t *buffer = malloc (buffer_size); // malloc (0) = tiny buffer</p>
 <p>// Loop usa bounds "correctos" pero buffer es tiny</p>
-<p>for (size_t i = 0; i < (size_t)width * height; i++) {</p>
+<p>for (size_t i = 0; i < (size_t) width * height; i++) {</p>
 <p>buffer[i * 4] = data[i % 1024]; // Massive overflow!</p>
-<p>free(buffer);</p>
-<p>int main(void) {</p>
+<p>free (buffer);</p>
+<p>int main (void) {</p>
 <p>// Dimensiones controladas por atacante</p>
-<p>uint32_t width = 0x10000; // 65536</p>
-<p>uint32_t height = 0x10000; // 65536</p>
-<p>// width * height = 0x100000000 → overflow a 0</p>
-<p>uint8_t fake_data[1024];</p>
-<p>memset(fake_data, 'A', sizeof(fake_data));</p>
-<p>process_image(width, height, fake_data);</p>
+<p>uint 32_t width = 0 x 10000; // 65536</p>
+<p>uint 32_t height = 0 x 10000; // 65536</p>
+<p>// width * height = 0 x 100000000 → overflow a 0</p>
+<p>uint 8_t fake_data[1024];</p>
+<p>memset (fake_data, 'A', sizeof (fake_data));</p>
+<p>process_image (width, height, fake_data);</p>
 <p>return 0;</p>
 <p>Salida de UBSAN + ASAN:</p>
 <p>vuln_intoverflow. c:7:32: runtime error: unsigned integer overflow:</p>
-<p>65536 * 65536 cannot be represented in type 'uint32_t'</p>
-<p>==39011==ERROR: AddressSanitizer: heap-buffer-overflow on address</p>
-<p>0x502000000014 at pc 0x5fa5104bd933</p>
-<p>WRITE of size 1 at 0x502000000014 thread T0</p>
-<p>#0 0x5fa5104bd932 in process_image vuln_intoverflow. c:17:23</p>
-<p>0x502000000014 is located 3 bytes after 1-byte region</p>
-<p>[0x502000000010,0x502000000011) allocated by:</p>
-<p>#1 malloc() returned 1 byte (due to malloc(0))</p>
+<p>65536 * 65536 cannot be represented in type 'uint 32_t'</p>
+<p>==39011==ERROR: Address Sanitizer: heap-buffer-overflow on address</p>
+<p>0 x 502000000014 at pc 0 x 5 fa 5104 bd 933</p>
+<p>WRITE of size 1 at 0 x 502000000014 thread T0</p>
+<p>#0 0 x 5 fa 5104 bd 932 in process_image vuln_intoverflow. c:17:23</p>
+<p>0 x 502000000014 is located 3 bytes after 1-byte region</p>
+<p>[0 x 502000000010,0 x 502000000011) allocated by:</p>
+<p>#1 malloc () returned 1 byte (due to malloc (0))</p>
 <p>Cadena de Explotación:</p>
 <p>┌───────────────────────────────────────────────────────────┐</p>
 <p>│ 1. Integer Overflow │</p>
-<p>│ width * height = 0x10000 * 0x10000 = 0 │</p>
+<p>│ width * height = 0 x 10000 * 0 x 10000 = 0 │</p>
 <p>│ (overflow de 32 bits, envuelve a 0) │</p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>│ 2. Bajo-allocación │</p>
-<p>│ malloc(0) asigna chunk tiny │</p>
+<p>│ malloc (0) asigna chunk tiny │</p>
 <p>│ 3. Loop con bounds originales │</p>
 <p>│ Loop itera 4 mil millones de veces │</p>
 <p>│ (usando valor sin overflow de 64-bit) │</p>
@@ -725,79 +725,79 @@
 <p>│ Corrompe metadatos de heap y objetos adyacentes │</p>
 <p>└───────────────────────────────────────────────────────────┘</p>
 <p>Evaluación de Explotabilidad: EXPLOITABLE</p>
-<p>Ejemplo Real Similar:CVE-2024-38063(WindowsTCP/IPIntegerUnderflowRCE)</p>
+<p>Ejemplo Real Similar: CVE-2024-38063(Windows TCP/IP Integer Underflow RCE)</p>
 <ol>
   <li>8. 2. 8 Desarrollo de Harnesses de Fuzzing</li>
 </ol>
-<p>UnharnessdefuzzingeselcódigoqueconectaelfuzzerconeltargetAPI. Unharnessbiendiseñado</p>
+<p>Unharnessdefuzzingeselcódigoqueconectaelfuzzerconeltarget API. Unharnessbiendiseñado</p>
 <p>escríticoparafuzzingefectivo.</p>
 <p>Harness Malo vs Harness Bueno:</p>
 <p>// HARNESS MALO: Lento, ineficiente</p>
-<p>int main(int argc, char **argv) {</p>
-<p>FILE *f = fopen(argv[1], "rb"); // I/O de archivo cada iteración</p>
+<p>int main (int argc, char **argv) {</p>
+<p>FILE *f = fopen (argv[1], "rb"); // I/O de archivo cada iteración</p>
 <p>// ... leer archivo ...</p>
 <p>// ... llamar API target ...</p>
-<p>fclose(f);</p>
+<p>fclose (f);</p>
 <p>return 0;</p>
 <p>// HARNESS BUENO: Rápido, in-process</p>
-<p>extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {</p>
+<p>extern "C" int LLVM Fuzzer Test One Input (const uint 8_t *data, size_t size) {</p>
 <p>// Buffer de memoria directo, sin I/O</p>
 <p>// Se llama miles de veces por segundo en el mismo proceso</p>
-<p>target_api(data, size);</p>
+<p>target_api (data, size);</p>
 <p>return 0;</p>
 <ol>
   <li>8.1. 2. 8.1 Ejemplo: Harness para Parser JSON</li>
 </ol>
 <p>// fuzz_json. c - Harness para fuzzing de json-c</p>
 <p>#include <json-c/json. h></p>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>#include <stdint. h></p>
 <p>#include <stddef. h></p>
-<p>int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {</p>
-<p>const char *data1 = (const char *)data;</p>
-<p>json_tokener *tok = json_tokener_new();</p>
-<p>json_object *obj = json_tokener_parse_ex(tok, data1, size);</p>
+<p>int LLVM Fuzzer Test One Input (const uint 8_t *data, size_t size) {</p>
+<p>const char *data 1 = (const char *) data;</p>
+<p>json_tokener *tok = json_tokener_new ();</p>
+<p>json_object *obj = json_tokener_parse_ex (tok, data 1, size);</p>
 <p>if (obj) {</p>
 <p>// Ejercitar diferentes funciones API para aumentar cobertura</p>
-<p>json_object_to_json_string_ext(obj,</p>
+<p>json_object_to_json_string_ext (obj,</p>
 <h2>JSON_C_TO_STRING_PRETTY | JSON_C_TO_STRING_SPACED);</h2>
-<p>if (json_object_is_type(obj, json_type_object)) {</p>
-<p>json_object_object_foreach(obj, key, val) {</p>
-<p>(void)json_object_get_type(val);</p>
-<p>(void)json_object_get_string(val);</p>
-<p>if (json_object_is_type(obj, json_type_array)) {</p>
-<p>size_t len = json_object_array_length(obj);</p>
+<p>if (json_object_is_type (obj, json_type_object)) {</p>
+<p>json_object_object_foreach (obj, key, val) {</p>
+<p>(void) json_object_get_type (val);</p>
+<p>(void) json_object_get_string (val);</p>
+<p>if (json_object_is_type (obj, json_type_array)) {</p>
+<p>size_t len = json_object_array_length (obj);</p>
 <p>for (size_t i = 0; i < len; i++) {</p>
-<p>json_object_array_get_idx(obj, i);</p>
-<p>json_object_put(obj); // Liberar objeto</p>
-<p>json_tokener_free(tok); // Cleanup</p>
+<p>json_object_array_get_idx (obj, i);</p>
+<p>json_object_put (obj); // Liberar objeto</p>
+<p>json_tokener_free (tok); // Cleanup</p>
 <p>return 0;</p>
 <p>Compilación y Ejecución:</p>
-<h1>Compilar harness con libFuzzer y sanitizers</h1>
-<p>clang-19 -g -fsanitize=address,fuzzer \</p>
+<h1>Compilar harness con lib Fuzzer y sanitizers</h1>
+<p>clang-19 -g -fsanitize=address, fuzzer \</p>
 <p>-I./json-c \</p>
 <p>fuzz_json. c \</p>
 <p>json-c/libjson-c. a \</p>
 <p>-o fuzz_json</p>
 <h1>Crear corpus de semillas con archivos JSON válidos</h1>
 <p>mkdir -p corpus</p>
-<p>echo '{"name": "test", "value": 42}' > corpus/valid1. json</p>
-<p>echo '[1, 2, 3, {"nested": "object"}]' > corpus/valid2. json</p>
+<p>echo '{"name": "test", "value": 42}' > corpus/valid 1. json</p>
+<p>echo '[1, 2, 3, {"nested": "object"}]' > corpus/valid 2. json</p>
 <h1>Ejecutar fuzzer</h1>
-<p>CAPÍTULO3. FUZZING BitácoraRedTeam</p>
+<p>CAPÍTULO3. FUZZING Bitácora Red Team</p>
 <p>./fuzz_json corpus/ -max_total_time=300 -print_final_stats=1</p>
 <ol>
   <li>8.2. 2. 8.2 Principios de Diseño de Harness</li>
 </ol>
 <p>Principio Descripción Impacto</p>
-<p>Ejecución In-Process LLVMFuzzerTestOneInput-sin 10-100xmásrápido</p>
+<p>Ejecución In-Process LLVM Fuzzer Test One Input-sin 10-100 xmásrápido</p>
 <p>overheadfork/exec</p>
-<p>TargetDirecto de API Llamarfuncionescore,noCLI Evitaparsingde</p>
+<p>Target Directo de API Llamarfuncionescore, no CLI Evitaparsingde</p>
 <p>argumentos</p>
 <p>Maximización de Cobertura Ejercitarmúltiplescaminosde Encuentramásbugs</p>
 <p>código</p>
-<p>Cleanup Apropiado Liberarmemoriaasignada PrevieneOOM</p>
-<p>Compatible con Sanitizers FuncionaconASAN/UBSAN Mejordeteccióndebugs</p>
+<p>Cleanup Apropiado Liberarmemoriaasignada Previene OOM</p>
+<p>Compatible con Sanitizers Funcionacon ASAN/UBSAN Mejordeteccióndebugs</p>
 <p>Preguntasde Discusión del Capítulo:</p>
 <ol>
   <li>¿Porquéun harnessin-processes órdenesde magnitudmás rápidoqueun wrapperbasado</li>
@@ -810,25 +810,25 @@
 <ol>
   <li>¿Cuálessonlosriesgosde“over-mocking”enunharness(bypassdedemasiadainicialización)?</li>
   <li>¿Cómodeterminarsiunacampañadefuzzinghallegadoarendimientosdecrecientes?</li>
-  <li>8.3. Conclusiones del Capítulo 2</li>
+  <li>8.3. Conclusiones del <a href="02-clases-vulnerabilidades.html">Capítulo 2</a></li>
   <li>El fuzzing encuentra vulnerabilidades reales: No solo crashes teóricos, sino bugs explota-</li>
 </ol>
 <p>blesensoftwaredeproducción.</p>
 <ol>
-  <li>El fuzzing guiado por cobertura es poderoso: AFL++, Honggfuzz y FuzzTest exploran inte-</li>
+  <li>El fuzzing guiado por cobertura es poderoso: AFL++, Honggfuzz y Fuzz Test exploran inte-</li>
 </ol>
 <p>ligentementecaminosdecódigoenlugardemutaciónaleatoria.</p>
 <ol>
-  <li>Los sanitizers son esenciales:ASAN,UBSANconviertenbugssutilesencrashesinmediatos.</li>
-  <li>El tiempo importa:Muchosbugsrequierenhoras/díasdefuzzingparaserdescubiertos.</li>
-  <li>Lacalidaddelcorpusdesemillasafectaresultados:Comenzarconentradasválidasayuda</li>
+  <li>Los sanitizers son esenciales: ASAN, UBSA Nconviertenbugssutilesencrashesinmediatos.</li>
+  <li>El tiempo importa: Muchosbugsrequierenhoras/díasdefuzzingparaserdescubiertos.</li>
+  <li>Lacalidaddelcorpusdesemillasafectaresultados: Comenzarconentradasválidasayuda</li>
 </ol>
 <p>aalcanzarcaminosdecódigomásprofundos.</p>
 <ol>
   <li>Los parsers son objetivos principales: Image parsers, protocol parsers, file format parsers</li>
 </ol>
 <p>sonfrecuentementefuzzeadoscongranéxito.</p>
-<p>Capítulo 4</p>
+<p><a href="04-patch-diffing.html">Capítulo 4</a></p>
 <p>Patch Diffing</p>
 <p>El patch diffing es una técnica poderosa de investigación de vulnerabilidades que analiza las dife-</p>
 <p>renciasentreversionesvulnerablesyparcheadasdesoftware. Estecapítulocubrelosfundamentos,</p>
@@ -848,9 +848,9 @@
 </ol>
 <p>Por Qué Importa el Patch Diffing</p>
 <p>Beneficio Descripción</p>
-<p>Única Fuente de Verdad SindetallesdeCVEoPoC,elparcherevelaqué</p>
+<p>Única Fuente de Verdad Sindetallesde CV Eo Po C, elparcherevelaqué</p>
 <p>estabaroto</p>
-<p>Descubrimientode Variantes Mientrasanalizasunacorrección,puedesencontrar</p>
+<p>Descubrimientode Variantes Mientrasanalizasunacorrección, puedesencontrar</p>
 <p>bugsadicionalescercanos</p>
 <p>Desarrollode Habilidades Proveeprácticaenfocadaenreversingcontargets</p>
 <p>conocidos</p>

