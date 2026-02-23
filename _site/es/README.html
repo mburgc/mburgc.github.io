@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<script>
+function search() {
+    let input = document.getElementById('searchbar').value.toLowerCase();
+    let content = document.getElementsByClassName('container')[0];
+    let paragraphs = content.getElementsByTagName('p');
+    let lis = content.getElementsByTagName('li');
+    let headers = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+    let all_elements = [...paragraphs, ...lis, ...headers];
+
+    for (let i = 0; i < all_elements.length; i++) {
+        let element = all_elements[i];
+        if (input === "") {
+            element.style.display = "";
+            element.innerHTML = element.textContent; // Restore original content
+        } else {
+            let text = element.textContent.toLowerCase();
+            if (text.includes(input)) {
+                element.style.display = "";
+                let originalText = element.textContent;
+                let newText = originalText.replace(new RegExp(input, 'gi'), `<span class="highlight">$&</span>`);
+                element.innerHTML = newText;
+            } else {
+                element.style.display = "none";
+            }
+        }
+    }
+}
+</script>
+<style>
+.highlight {
+    background-color: yellow;
+}
+.language-selector {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+</style>
+
+</head>
+<body>
+<div class="language-selector">
+    <a href="../en\index.html">Switch to English</a>
+</div>
+<div class="container">
+<input id="searchbar" onkeyup="search()" type="text" name="search" placeholder="Search...">
+<h1>Bitácora Red Team: Explotación Moderna del Kernel de Linux</h1>
+<p>Esta es una conversión de la "Bitácora Red Team" a formato Markdown para una mejor legibilidad y mantenimiento.</p>
+<h2>Índice</h2>
+<ul>
+<li><a href="01-introduccion.md">Introducción</a></li>
+<li><a href="02-clases-vulnerabilidades.md">Clases de Vulnerabilidades</a></li>
+<li><a href="03-fuzzing.md">Fuzzing</a></li>
+<li><a href="04-patch-diffing.md">Patch Diffing</a></li>
+<li><a href="05-analisis-crashes.md">Análisis de Crashes</a></li>
+</ul>
+</div>
+</body>
+</html>

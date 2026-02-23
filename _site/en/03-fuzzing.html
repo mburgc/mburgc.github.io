@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3: Fuzzing | Bitácora Red Team</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    /* Hacker Red Team Color Palette */
+    --crimson-dark: #8B0000;
+    --crimson: #DC143C;
+    --crimson-light: #FF2442;
+    --crimson-glow: rgba(220, 20, 60, 0.6);
+    
+    /* Grays */
+    --gray-900: #0a0a0a;
+    --gray-800: #1a1a1a;
+    --gray-700: #2d2d2d;
+    --gray-600: #404040;
+    --gray-500: #525252;
+    --gray-400: #737373;
+    --gray-300: #a3a3a3;
+    --gray-200: #d4d4d4;
+    --gray-100: #f5f5f5;
+    --white: #ffffff;
+    
+    /* Accent colors */
+    --accent-red: #ff4444;
+    --accent-orange: #ff6b35;
+    --matrix-green: #00ff41;
+    --terminal-green: #39ff14;
+    
+    /* Typography */
+    --font-mono: 'Fira Code', 'JetBrains Mono', 'Source Code Pro', monospace;
+    
+    /* Sizing */
+    --sidebar-width: 280px;
+    --header-height: 70px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-mono);
+    background: var(--gray-900);
+    color: var(--gray-200);
+    line-height: 1.8;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Background with cover image */
+.page-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: 
+        linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(26, 26, 26, 0.9) 50%, rgba(45, 45, 45, 0.85) 100%),
+        url('images/image-000.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Scanline effect */
+.page-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    pointer-events: none;
+    animation: scanlines 10s linear infinite;
+}
+
+@keyframes scanlines {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(3px); }
+}
+
+/* Matrix rain effect (subtle) */
+.matrix-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.03;
+    background: 
+        linear-gradient(180deg, transparent 0%, var(--crimson) 100%),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 40px,
+            var(--accent-red) 40px,
+            var(--accent-red) 42px
+        );
+}
+
+/* Header */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.98) 0%, rgba(26, 26, 26, 0.95) 100%);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(220, 20, 60, 0.3);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--white);
+    box-shadow: 0 0 20px var(--crimson-glow);
+}
+
+.logo-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 1px;
+}
+
+.logo-text span {
+    color: var(--crimson);
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-input {
+    background: rgba(45, 45, 45, 0.8);
+    border: 1px solid rgba(220, 20, 60, 0.3);
+    border-radius: 8px;
+    padding: 8px 15px;
+    padding-right: 40px;
+    color: var(--gray-200);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    width: 220px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--crimson);
+    box-shadow: 0 0 15px rgba(220, 20, 60, 0.3);
+    width: 280px;
+}
+
+.search-input::placeholder {
+    color: var(--gray-500);
+}
+
+.search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.search-btn:hover {
+    color: var(--crimson);
+}
+
+.language-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lang-btn {
+    background: transparent;
+    border: 1px solid var(--gray-600);
+    color: var(--gray-300);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lang-btn:hover, .lang-btn.active {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    color: var(--white);
+    box-shadow: 0 0 15px var(--crimson-glow);
+}
+
+.menu-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--gray-600);
+    color: var(--gray-200);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.98) 0%, rgba(26, 26, 26, 0.95) 100%);
+    border-right: 1px solid rgba(220, 20, 60, 0.2);
+    overflow-y: auto;
+    z-index: 900;
+    padding: 30px 20px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: var(--gray-800);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--gray-600);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--crimson);
+}
+
+.sidebar-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--gray-500);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+}
+
+.toc-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: var(--gray-300);
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+}
+
+.toc-link:hover {
+    background: rgba(220, 20, 60, 0.1);
+    color: var(--white);
+    transform: translateX(5px);
+}
+
+.toc-link.active {
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(220, 20, 60, 0.1) 100%);
+    color: var(--crimson);
+    border-left: 3px solid var(--crimson);
+}
+
+.chapter-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--crimson);
+    background: rgba(220, 20, 60, 0.1);
+    padding: 4px 8px: 4px;
+    min-width;
+    border-radius: 30px;
+    text-align: center;
+}
+
+.chapter-title {
+    flex: 1;
+    line-height: 1.3;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 850;
+}
+
+/* Main content */
+.main-content {
+    margin-left: var(--sidebar-width);
+    margin-top: var(--header-height);
+    min-height: calc(100vh - var(--header-height));
+    padding: 40px 50px;
+}
+
+.content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Content area styling */
+.content-area {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 45, 45, 0.9) 100%);
+    border: 1px solid rgba(220, 20, 60, 0.2);
+    border-radius: 16px;
+    padding: 50px;
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(220, 20, 60, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.content-area h1 {
+    font-size: 2.2rem;
+    color: var(--white);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--crimson);
+    text-shadow: 0 0 20px var(--crimson-glow);
+}
+
+.content-area h2 {
+    font-size: 1.6rem;
+    color: var(--crimson);
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding-left: 15px;
+    border-left: 3px solid var(--crimson);
+}
+
+.content-area h3 {
+    font-size: 1.3rem;
+    color: var(--gray-100);
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.content-area h4 {
+    font-size: 1.1rem;
+    color: var(--gray-300);
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.content-area p {
+    margin-bottom: 20px;
+    color: var(--gray-200);
+    text-align: justify;
+}
+
+.content-area a {
+    color: var(--crimson);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.content-area a:hover {
+    color: var(--crimson-light);
+    border-bottom-color: var(--crimson-light);
+    text-shadow: 0 0 10px var(--crimson-glow);
+}
+
+.content-area ul, .content-area ol {
+    margin-bottom: 20px;
+    padding-left: 30px;
+}
+
+.content-area li {
+    margin-bottom: 10px;
+    color: var(--gray-200);
+}
+
+.content-area li::marker {
+    color: var(--crimson);
+}
+
+/* Code blocks */
+.content-area code {
+    font-family: var(--font-mono);
+    background: rgba(220, 20, 60, 0.1);
+    color: var(--crimson-light);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.content-area pre {
+    background: var(--gray-900);
+    border: 1px solid rgba(220, 20, 60, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 20px 0;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.content-area pre code {
+    background: none;
+    padding: 0;
+    color: var(--terminal-green);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+/* Tables */
+.content-area table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9rem;
+}
+
+.content-area th {
+    background: linear-gradient(135deg, var(--crimson-dark) 0%, var(--crimson) 100%);
+    color: var(--white);
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
+
+.content-area td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(220, 20, 60, 0.1);
+    color: var(--gray-200);
+}
+
+.content-area tr:hover {
+    background: rgba(220, 20, 60, 0.05);
+}
+
+.content-area tr:nth-child(even) {
+    background: rgba(45, 45, 45, 0.3);
+}
+
+/* Search highlight */
+.search-highlight {
+    background: var(--crimson);
+    color: var(--white);
+    padding: 2px 6px;
+    border-radius: 3px;
+    box-shadow: 0 0 10px var(--crimson-glow);
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray-400);
+    font-size: 1.1rem;
+    display: none;
+}
+
+.no-results i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: var(--crimson);
+}
+
+/* Navigation buttons */
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(220, 20, 60, 0.2);
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(220, 20, 60, 0.1) 100%);
+    border: 1px solid rgba(220, 20, 60, 0.3);
+    border-radius: 8px;
+    color: var(--gray-200);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 100%);
+    border-color: var(--crimson);
+    color: var(--white);
+    box-shadow: 0 0 20px var(--crimson-glow);
+    transform: translateY(-2px);
+}
+
+.nav-btn i {
+    transition: transform 0.3s ease;
+}
+
+.nav-btn:hover i {
+    transform: scale(1.2);
+}
+
+.nav-prev i {
+    margin-right: 5px;
+}
+
+.nav-next i {
+    margin-left: 5px;
+}
+
+.nav-home {
+    background: linear-gradient(135deg, rgba(45, 45, 45, 0.8) 0%, rgba(26, 26, 26, 0.8) 100%);
+    border-color: var(--gray-600);
+}
+
+.nav-home:hover {
+    background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-700) 100%);
+    border-color: var(--gray-400);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Footer */
+.page-footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--gray-500);
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(220, 20, 60, 0.1);
+    margin-top: 50px;
+}
+
+.page-footer a {
+    color: var(--crimson);
+    text-decoration: none;
+}
+
+.page-footer a:hover {
+    text-shadow: 0 0 10px var(--crimson-glow);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 20px var(--crimson-glow);
+    }
+    50% {
+        box-shadow: 0 0 40px var(--crimson-glow), 0 0 60px var(--crimson-glow);
+    }
+}
+
+.logo-icon {
+    animation: glow 3s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 30px 20px;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .search-input {
+        width: 150px;
+    }
+    
+    .search-input:focus {
+        width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-header {
+        padding: 0 15px;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    .search-container {
+        display: none;
+    }
+    
+    .language-switch {
+        gap: 5px;
+    }
+    
+    .lang-btn {
+        padding: 5px 10px;
+        font-size: 0.65rem;
+    }
+    
+    .content-area {
+        padding: 30px 20px;
+    }
+    
+    .content-area h1 {
+        font-size: 1.6rem;
+    }
+    
+    .content-area h2 {
+        font-size: 1.3rem;
+    }
+    
+    .content-area h3 {
+        font-size: 1.1rem;
+    }
+    
+    .nav-buttons {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .nav-btn {
+        flex: 1;
+        justify-content: center;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-area {
+        padding: 20px 15px;
+        border-radius: 12px;
+    }
+    
+    .content-area h1 {
+        font-size: 1.4rem;
+    }
+    
+    .nav-buttons {
+        flex-direction: column;
+    }
+    
+    .nav-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Print styles */
+@media print {
+    .page-background,
+    .matrix-rain,
+    .sidebar,
+    .main-header,
+    .nav-buttons {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 0;
+    }
+    
+    .content-area {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="page-background"></div>
+    <div class="matrix-rain"></div>
+    
+    <!-- Header -->
+    <header class="main-header">
+        <div class="logo">
+            <button class="menu-toggle" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-icon">
+                <i class="fas fa-skull"></i>
+            </div>
+            <div class="logo-text">
+                RED<span>TEAM</span> LOG
+            </div>
+        </div>
+        
+        <div class="header-controls">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchbar" placeholder="Search content...">
+                <button class="search-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="language-switch">
+                <a href="../es\03-fuzzing.html" class="lang-btn">Español</a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Sidebar overlay for mobile -->
+    <div class="sidebar-overlay"></div>
+    
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-title">Chapters</div>
+        <a href="03-fuzzing.html" class="toc-link active">
+            <span class="chapter-num">03</span>
+            <span class="chapter-title">Fuzzing</span>
+        </a><a href="04-patch-diffing.html" class="toc-link ">
+            <span class="chapter-num">04</span>
+            <span class="chapter-title">Patch Diffing</span>
+        </a>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <article class="content-area">
+                <h1>Chapter 3: Fuzzing</h1>
+<p>Fuzzing is an automated vulnerability discovery technique that has found thousands of critical security bugs in production software. This chapter covers the fundamentals of fuzzing, key tools, and methodologies for finding vulnerabilities.</p>
+<h2>3.1. 2.1 Fuzzing Fundamentals</h2>
+<p><strong>What is Fuzzing?</strong></p>
+<p>Fuzzing is the process of feeding a program with malformed, unexpected, or random data in an attempt to provoke a crash or anomalous behavior. It is a form of black-box or gray-box testing that does not require access to the source code.</p>
+<p><strong>Types of Fuzzers:</strong></p>
+<ul>
+<li><strong>Dumb Fuzzers:</strong> Generate random inputs without knowledge of the input format. They are simple but inefficient.</li>
+<li><strong>Smart Fuzzers:</strong> Have knowledge of the input format and generate inputs that are more likely to cause errors.</li>
+<li><strong>Coverage-Guided Fuzzers:</strong> (The most common today) Use instrumentation to track which parts of the code are executed with a given input. Then, they mutate the inputs to explore new code paths.</li>
+</ul>
+<h2>3.2. 2.2 AFL++ and Coverage-Guided Fuzzing</h2>
+<p>AFL++ is a state-of-the-art coverage-guided fuzzer that has found a large number of vulnerabilities in real-world software.</p>
+<p><strong>How it Works:</strong></p>
+<ol>
+<li><strong>Instrumentation:</strong> The source code is compiled with special instrumentation that records code coverage.</li>
+<li><strong>Initial Corpus:</strong> The fuzzer starts with a set of valid test inputs (the corpus).</li>
+<li><strong>Mutation:</strong> AFL++ mutates the corpus inputs in various ways (bit flipping, arithmetic, etc.).</li>
+<li><strong>Execution:</strong> The instrumented program is run with the mutated input.</li>
+<li><strong>Analysis:</strong> If the mutated input explores a new code path, it is added to the corpus. If it causes a crash, it is saved for analysis.</li>
+</ol>
+<h2>3.3. 2.3 FuzzTest and In-Process Fuzzing</h2>
+<p>FuzzTest is an in-process fuzzing framework from Google. Unlike AFL++, which runs the program in a separate process for each input, FuzzTest runs the fuzzer within the same process as the code being tested. This can be much faster for certain types of applications.</p>
+<h2>3.4. 2.4 Honggfuzz and Protocol Fuzzing</h2>
+<p>Honggfuzz is another popular coverage-guided fuzzer. It is known for its performance and advanced features, such as persistent fuzzing and network protocol fuzzing.</p>
+<h2>3.5. 2.5 Syzkaller and Kernel Fuzzing</h2>
+<p>Syzkaller is a specialized fuzzer for finding vulnerabilities in operating system kernels. It uses a system call description language to generate programs that exercise the kernel interfaces. Syzkaller has been extremely successful in finding vulnerabilities in the Linux kernel.</p>
+<h2>3.6. 2.6 Practical AFL++ Configuration</h2>
+<h3>Step-by-Step Installation</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install build dependencies</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>build-essential<span class="w"> </span>gcc-13-plugin-dev<span class="w"> </span>cpio<span class="w"> </span>python3-dev<span class="w"> </span>
+<span class="w">    </span>libcapstone-dev<span class="w"> </span>pkg-config<span class="w"> </span>libglib2.0-dev<span class="w"> </span>libpixman-1-dev<span class="w"> </span>
+<span class="w">    </span>automake<span class="w"> </span>autoconf<span class="w"> </span>python3-pip<span class="w"> </span>ninja-build<span class="w"> </span>cmake<span class="w"> </span>git<span class="w"> </span>wget<span class="w"> </span>meson
+
+<span class="c1"># Install LLVM 19 (check for the latest version at https://apt.llvm.org/)</span>
+wget<span class="w"> </span>https://apt.llvm.org/llvm.sh
+chmod<span class="w"> </span>+x<span class="w"> </span>llvm.sh
+sudo<span class="w"> </span>./llvm.sh<span class="w"> </span><span class="m">19</span><span class="w"> </span>all
+
+<span class="c1"># Verify LLVM installation</span>
+clang-19<span class="w"> </span>--version
+llvm-config-19<span class="w"> </span>--version
+
+<span class="c1"># Install Rust (required for some AFL++ components)</span>
+curl<span class="w"> </span>--proto<span class="w"> </span><span class="s1">&#39;=https&#39;</span><span class="w"> </span>--tlsv1.2<span class="w"> </span>-sSf<span class="w"> </span><span class="s2">&quot;https://sh.rustup.rs&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+<span class="nb">source</span><span class="w"> </span>~/.cargo/env
+
+<span class="c1"># Compile and install AFL++</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>~/soft<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/soft
+git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/AFLplusplus/AFLplusplus.git
+<span class="nb">cd</span><span class="w"> </span>AFLplusplus
+make<span class="w"> </span>distrib
+sudo<span class="w"> </span>make<span class="w"> </span>install
+
+<span class="c1"># Verify installation</span>
+which<span class="w"> </span>afl-fuzz
+afl-fuzz<span class="w"> </span>--version
+</code></pre></div>
+
+<h3>Target Compilation with Instrumentation</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Compile C/C++ program with AFL++ instrumentation</span>
+<span class="nv">CC</span><span class="o">=</span>/usr/local/bin/afl-clang-fast<span class="w"> </span>
+<span class="nv">CXX</span><span class="o">=</span>/usr/local/bin/afl-clang-fast++<span class="w"> </span>
+cmake<span class="w"> </span>..
+make<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span>
+
+<span class="c1"># Enable sanitizers for better bug detection</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">AFL_USE_ASAN</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">AFL_USE_UBSAN</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">ASAN_OPTIONS</span><span class="o">=</span><span class="s2">&quot;detect_leaks=1:abort_on_error=1:symbolize=1&quot;</span>
+</code></pre></div>
+
+<h3>Fuzzer Execution</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Configure the system for optimal fuzzing</span>
+<span class="nb">echo</span><span class="w"> </span>core<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/proc/sys/kernel/core_pattern
+<span class="nb">echo</span><span class="w"> </span>performance<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+<span class="c1"># Create seed corpus</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>seeds
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">0</span>..4<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/urandom<span class="w"> </span><span class="nv">of</span><span class="o">=</span>seeds/seed_<span class="nv">$i</span><span class="w"> </span><span class="nv">bs</span><span class="o">=</span><span class="m">64</span><span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">10</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<span class="k">done</span>
+
+<span class="c1"># Run the fuzzer</span>
+afl-fuzz<span class="w"> </span>-i<span class="w"> </span>seeds/<span class="w"> </span>-o<span class="w"> </span>findings/<span class="w"> </span>-m<span class="w"> </span>none<span class="w"> </span>-d<span class="w"> </span>--<span class="w"> </span>./target_binary<span class="w"> </span>@@
+
+<span class="c1"># Parallel fuzzing (multiple instances)</span>
+<span class="c1"># Terminal 1: Master instance</span>
+afl-fuzz<span class="w"> </span>-i<span class="w"> </span>seeds/<span class="w"> </span>-o<span class="w"> </span>findings/<span class="w"> </span>-M<span class="w"> </span>Master<span class="w"> </span>--<span class="w"> </span>./target<span class="w"> </span>@@
+
+<span class="c1"># Terminal 2+: Slave instances</span>
+afl-fuzz<span class="w"> </span>-i<span class="w"> </span>seeds/<span class="w"> </span>-o<span class="w"> </span>findings/<span class="w"> </span>-S<span class="w"> </span>Slave1<span class="w"> </span>--<span class="w"> </span>./target<span class="w"> </span>@@
+afl-fuzz<span class="w"> </span>-i<span class="w"> </span>seeds/<span class="w"> </span>-o<span class="w"> </span>findings/<span class="w"> </span>-S<span class="w"> </span>Slave2<span class="w"> </span>--<span class="w"> </span>./target<span class="w"> </span>@@
+
+<span class="c1"># Check status</span>
+afl-whatsup<span class="w"> </span>findings/
+</code></pre></div>
+
+<h2>3.7. 2.7 Crash Analysis and Exploitability Assessment</h2>
+<p>Crash analysis is the process of determining whether a crash discovered by fuzzing represents an exploitable vulnerability. This section covers the tools and methodologies for systematic crash triage.</p>
+<h3>Decision Tree for Crash Analysis</h3>
+<div class="codehilite"><pre><span></span><code><span class="w">                      </span><span class="n">CRASH</span><span class="w"> </span><span class="n">RECEIVED</span>
+<span class="w">                            </span><span class="err">│</span>
+<span class="w">                            </span><span class="err">▼</span>
+<span class="w">                  </span><span class="err">┌───────────────────────┐</span>
+<span class="w">                  </span><span class="err">│</span><span class="w"> </span><span class="n">Source</span><span class="w"> </span><span class="n">code</span><span class="w">           </span><span class="err">│</span>
+<span class="w">                  </span><span class="err">│</span><span class="w">   </span><span class="n">available</span><span class="o">?</span><span class="w">          </span><span class="err">│</span>
+<span class="w">                  </span><span class="err">└───────────────────────┘</span>
+<span class="w">                       </span><span class="err">│</span><span class="w">                    </span><span class="err">│</span>
+<span class="w">                      </span><span class="n">Yes</span><span class="w">                   </span><span class="n">No</span>
+<span class="w">                       </span><span class="err">│</span><span class="w">                    </span><span class="err">│</span>
+<span class="w">                       </span><span class="err">▼</span><span class="w">                    </span><span class="err">▼</span>
+<span class="w">         </span><span class="err">┌─────────────────────┐</span><span class="w">    </span><span class="err">┌─────────────────────┐</span>
+<span class="w">         </span><span class="err">│</span><span class="w"> </span><span class="n">Recompile</span><span class="w"> </span><span class="n">with</span><span class="w">      </span><span class="err">│</span><span class="w">    </span><span class="err">│</span><span class="w"> </span><span class="n">Use</span><span class="w"> </span><span class="n">debugger</span><span class="w">        </span><span class="err">│</span>
+<span class="w">         </span><span class="err">│</span><span class="w"> </span><span class="n">ASAN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UBSAN</span><span class="w">        </span><span class="err">│</span><span class="w">    </span><span class="err">│</span><span class="w"> </span><span class="p">(</span><span class="n">GDB</span><span class="o">/</span><span class="n">WinDbg</span><span class="p">)</span><span class="w">          </span><span class="err">│</span>
+<span class="w">         </span><span class="err">└─────────────────────┘</span><span class="w">    </span><span class="err">└─────────────────────┘</span>
+<span class="w">                       </span><span class="err">│</span><span class="w">                    </span><span class="err">│</span>
+<span class="w">                       </span><span class="err">▼</span><span class="w">                    </span><span class="err">▼</span>
+<span class="w">         </span><span class="err">┌─────────────────────┐</span><span class="w">    </span><span class="err">┌─────────────────────┐</span>
+<span class="w">         </span><span class="err">│</span><span class="w"> </span><span class="n">Execute</span><span class="w"> </span><span class="n">crash</span><span class="w">       </span><span class="err">│</span><span class="w">    </span><span class="err">│</span><span class="w"> </span><span class="n">Analyze</span><span class="w"> </span><span class="n">registers</span><span class="w">   </span><span class="err">│</span>
+<span class="w">         </span><span class="err">│</span><span class="w"> </span><span class="n">Get</span><span class="w"> </span><span class="n">report</span><span class="w">          </span><span class="err">│</span><span class="w">    </span><span class="err">│</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">memory</span><span class="w">            </span><span class="err">│</span>
+<span class="w">         </span><span class="err">└─────────────────────┘</span><span class="w">    </span><span class="err">└─────────────────────┘</span>
+<span class="w">                       </span><span class="err">│</span><span class="w">                    </span><span class="err">│</span>
+<span class="w">                       </span><span class="err">└────────┬───────────┘</span>
+<span class="w">                                </span><span class="err">▼</span>
+<span class="w">                  </span><span class="err">┌───────────────────────────┐</span>
+<span class="w">                  </span><span class="err">│</span><span class="w"> </span><span class="n">Classify</span><span class="w"> </span><span class="n">vulnerability</span><span class="w">    </span><span class="err">│</span>
+<span class="w">                  </span><span class="err">│</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">CASR</span><span class="w">                 </span><span class="err">│</span>
+<span class="w">                  </span><span class="err">└───────────────────────────┘</span>
+</code></pre></div>
+
+<h3>3.7.1. 2.7.1 Case Study: Heap Buffer Overflow Analysis</h3>
+<p><strong>Scenario:</strong> Fuzzing discovered a crash in an image parser. Let's analyze step by step.</p>
+<p><strong>Vulnerable Code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// vuln_parser.c - Vulnerable image parser</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">build_huffman_table</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="n">input</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">codes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">table</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc</span><span class="p">(</span><span class="mi">256</span><span class="p">);</span>
+<span class="w">    </span><span class="n">memcpy</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="w"> </span><span class="n">codes</span><span class="p">,</span><span class="w"> </span><span class="n">table_size</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Built Huffman table with %u codes</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">table_size</span><span class="p">);</span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">table</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>ASAN Output:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="o">==</span><span class="mi">37160</span><span class="o">==</span><span class="nx">ERROR</span><span class="p">:</span><span class="w"> </span><span class="nx">AddressSanitizer</span><span class="p">:</span><span class="w"> </span><span class="nx">heap</span><span class="o">-</span><span class="nx">buffer</span><span class="o">-</span><span class="nx">overflow</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">address</span>
+<span class="mh">0x511000000140</span><span class="w"> </span><span class="nx">at</span><span class="w"> </span><span class="nx">pc</span><span class="w"> </span><span class="mh">0x56d6a37d0f62</span><span class="w"> </span><span class="nx">bp</span><span class="w"> </span><span class="mh">0x7ffd9f024440</span><span class="w"> </span><span class="nx">sp</span><span class="w"> </span><span class="mh">0x7ffd9f023c00</span>
+<span class="nx">WRITE</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">size</span><span class="w"> </span><span class="mi">512</span><span class="w"> </span><span class="nx">at</span><span class="w"> </span><span class="mh">0x511000000140</span><span class="w"> </span><span class="nx">thread</span><span class="w"> </span><span class="nx">T0</span>
+</code></pre></div>
+
+<p><strong>Interpretation:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bug Type</td>
+<td>heap-buffer-overflow</td>
+<td>Heap overflow</td>
+</tr>
+<tr>
+<td>Operation</td>
+<td>WRITE of size 512</td>
+<td>Writing 512 bytes</td>
+</tr>
+<tr>
+<td>Location</td>
+<td>vuln_parser.c:16</td>
+<td>Bug line</td>
+</tr>
+<tr>
+<td>Allocation</td>
+<td>256-byte buffer</td>
+<td>Buffer allocated</td>
+</tr>
+<tr>
+<td>Overflow</td>
+<td>512 - 256 = 256</td>
+<td>Overflow amount</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Assessment: EXPLOITABLE</strong> - Attacker controls both overflow size and data.</p>
+<h3>3.7.2. 2.7.2 Case Study: Use-After-Free Analysis</h3>
+<p><strong>Vulnerable Code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">process</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="n">Handler</span><span class="p">;</span>
+
+<span class="n">Handler</span><span class="w"> </span><span class="o">*</span><span class="n">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">unregister_handler</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">handler</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">free</span><span class="p">(</span><span class="n">handler</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// BUG: Missing handler = NULL</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">call_handler</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">handler</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">handler</span><span class="o">-&gt;</span><span class="n">process</span><span class="p">();</span><span class="w"> </span><span class="c1">// UAF!</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Exploitation Strategy:</strong>
+1. Free handler
+2. Heap grooming: allocate objects of same size
+3. Reclaim freed memory with controlled data
+4. Trigger UAF → code execution</p>
+<p><strong>Assessment: EXPLOITABLE</strong></p>
+<h3>3.7.3. 2.7.3 Case Study: Integer Overflow → Heap Corruption</h3>
+<p><strong>Vulnerable Code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">process_image</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="c1">// overflow!</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc</span><span class="p">(</span><span class="n">buffer_size</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">buffer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="c1">// massive overflow</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Chain:</strong> Integer overflow → malloc(0) → loop with large bounds → heap corruption</p>
+<p><strong>Assessment: EXPLOITABLE</strong></p>
+<h2>3.8. 2.8 Developing Fuzzing Harnesses</h2>
+<h3>3.8.1. 2.8.1 Example: JSON Parser Harness</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// fuzz_json.c</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;json-c/json.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stddef.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">LLVMFuzzerTestOneInput</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">data1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="n">json_tokener</span><span class="w"> </span><span class="o">*</span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">json_tokener_new</span><span class="p">();</span>
+<span class="w">    </span><span class="n">json_object</span><span class="w"> </span><span class="o">*</span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">json_tokener_parse_ex</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span><span class="w"> </span><span class="n">data1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">json_object_to_json_string_ext</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="n">JSON_C_TO_STRING_PRETTY</span><span class="p">);</span>
+<span class="w">        </span><span class="n">json_object_put</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">json_tokener_free</span><span class="p">(</span><span class="n">tok</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Compilation:</strong></p>
+<div class="codehilite"><pre><span></span><code>clang-19<span class="w"> </span>-g<span class="w"> </span>-fsanitize<span class="o">=</span>address,fuzzer<span class="w"> </span>-I./json-c<span class="w"> </span>fuzz_json.c<span class="w"> </span>json-c/libjson-c.a<span class="w"> </span>-o<span class="w"> </span>fuzz_json
+./fuzz_json<span class="w"> </span>corpus/<span class="w"> </span>-max_total_time<span class="o">=</span><span class="m">300</span>
+</code></pre></div>
+
+<h3>3.8.2. 2.8.2 Harness Design Principles</h3>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Description</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>In-Process Execution</td>
+<td>LLVMFuzzerTestOneInput without fork</td>
+<td>10-100x faster</td>
+</tr>
+<tr>
+<td>Direct API Target</td>
+<td>Call core functions</td>
+<td>Avoids arg parsing</td>
+</tr>
+<tr>
+<td>Coverage Maximization</td>
+<td>Exercise multiple paths</td>
+<td>Finds more bugs</td>
+</tr>
+<tr>
+<td>Proper Cleanup</td>
+<td>Free memory</td>
+<td>Prevents OOM</td>
+</tr>
+<tr>
+<td>Sanitizer Compatible</td>
+<td>ASAN/UBSAN</td>
+<td>Better detection</td>
+</tr>
+</tbody>
+</table>
+<h3>3.8.3. Chapter 2 Conclusions</h3>
+<ol>
+<li>
+<p><strong>Fuzzing finds real vulnerabilities</strong> - Not just theoretical crashes.</p>
+</li>
+<li>
+<p><strong>Coverage-guided fuzzing is powerful</strong> - AFL++, Honggfuzz, FuzzTest.</p>
+</li>
+<li>
+<p><strong>Sanitizers are essential</strong> - ASAN, UBSAN detect subtle bugs.</p>
+</li>
+<li>
+<p><strong>Time matters</strong> - Many bugs require hours/days.</p>
+</li>
+<li>
+<p><strong>Corpus quality affects results</strong> - Valid inputs reach deep code.</p>
+</li>
+<li>
+<p><strong>Parsers are primary targets</strong> - Image, protocol, file format parsers.</p>
+</li>
+</ol>
+<p><strong>Discussion Questions:</strong></p>
+<ol>
+<li>
+<p>Why is in-process faster than file-based wrappers?</p>
+</li>
+<li>
+<p>How does corpus quality affect fuzzer penetration?</p>
+</li>
+<li>What are the risks of over-mocking in harnesses?</li>
+<li>How to determine if fuzzing has reached diminishing returns?</li>
+</ol>
+            </article>
+            
+            <!-- Navigation -->
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-btn nav-home">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a><a href="04-patch-diffing.html" class="nav-btn nav-next">
+            <span>Next</span>
+            <i class="fas fa-chevron-right"></i>
+        </a>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="page-footer">
+                <p>© 2024 Red Team Logbook | <a href="https://github.com/mburgc/mburgc.github.io" target="_blank">
+                    <i class="fab fa-github"></i> mburgc
+                </a></p>
+            </footer>
+        </div>
+    </main>
+    
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('searchbar');
+    const searchBtn = document.getElementById('search-btn');
+    
+    function performSearch() {
+        let input = searchInput.value.toLowerCase().trim();
+        let content = document.querySelector('.content-area');
+        let paragraphs = content.getElementsByTagName('p');
+        let lis = content.getElementsByTagName('li');
+        let headers = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        let codeBlocks = content.querySelectorAll('pre, code');
+        
+        let all_elements = [...paragraphs, ...lis, ...headers, ...codeBlocks];
+        
+        // Reset all elements first
+        for (let i = 0; i < all_elements.length; i++) {
+            let el = all_elements[i];
+            el.style.display = '';
+            if (el.classList.contains('highlight')) {
+                el.classList.remove('highlight');
+                el.innerHTML = el.textContent;
+            }
+        }
+        
+        if (input === "") {
+            return;
+        }
+        
+        for (let i = 0; i < all_elements.length; i++) {
+            let element = all_elements[i];
+            let text = element.textContent.toLowerCase();
+            if (text.includes(input)) {
+                element.style.display = "";
+                let originalText = element.textContent;
+                let escaped = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                let newText = originalText.replace(new RegExp('(' + escaped + ')', 'gi'), '<span class="search-highlight">$1</span>');
+                element.innerHTML = newText;
+            } else {
+                element.style.display = "none";
+            }
+        }
+        
+        // Show no results message
+        let visibleCount = 0;
+        for (let i = 0; i < all_elements.length; i++) {
+            if (all_elements[i].style.display !== "none") visibleCount++;
+        }
+        
+        let noResults = document.getElementById('no-results');
+        if (visibleCount === 0) {
+            if (!noResults) {
+                noResults = document.createElement('div');
+                noResults.id = 'no-results';
+                noResults.className = 'no-results';
+                noResults.innerHTML = '<i class="fas fa-search"></i> No se encontraron resultados / No results found';
+                content.insertBefore(noResults, content.firstChild);
+            }
+            noResults.style.display = 'block';
+        } else if (noResults) {
+            noResults.style.display = 'none';
+        }
+    }
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', performSearch);
+    }
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') performSearch();
+            if (this.value === '') {
+                let all_elements = document.querySelectorAll('.search-highlight');
+                all_elements.forEach(el => {
+                    let parent = el.parentNode;
+                    parent.innerHTML = parent.textContent;
+                });
+                let noResults = document.getElementById('no-results');
+                if (noResults) noResults.style.display = 'none';
+            }
+        });
+    }
+    
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+    
+    // Scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.content-area > *').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+    
+    // Trigger initial animation
+    setTimeout(() => {
+        document.querySelectorAll('.content-area > *').forEach((el, index) => {
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+    }, 100);
+    
+    // Table of contents highlighting
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const contentHeaders = document.querySelectorAll('.content-area h1, .content-area h2, .content-area h3');
+    
+    window.addEventListener('scroll', () => {
+        let current = '';
+        contentHeaders.forEach(header => {
+            const headerTop = header.offsetTop;
+            if (window.pageYOffset >= headerTop - 100) {
+                current = header.getAttribute('id');
+            }
+        });
+        
+        tocLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

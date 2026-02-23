@@ -153,4 +153,162 @@ El análisis de crashes es el proceso de determinar si un crash descubierto por 
                   │ con CASR                  │
                   └───────────────────────────┘
 ```
-... (El resto del capítulo seguiría la misma estructura)
+
+### 3.7.1. 2.7.1 Caso de Estudio: Análisis de Heap Buffer Overflow
+
+**Escenario:** El fuzzing descubrió un crash en un parser de imágenes. Analicemos paso a paso.
+
+**Código Vulnerable:**
+
+```c
+// vuln_parser.c - Parser de imágenes vulnerable
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+void build_huffman_table(uint8_t *input, size_t size) {
+    if (size < 8) return;
+
+    uint32_t table_size = *(uint32_t*)input;
+    uint8_t *codes = input + 4;
+    uint8_t *table = malloc(256);
+    memcpy(table, codes, table_size);
+    printf("Built Huffman table with %u codes\n", table_size);
+    free(table);
+}
+```
+
+**Salida de ASAN:**
+
+```
+==37160==ERROR: AddressSanitizer: heap-buffer-overflow on address
+0x511000000140 at pc 0x56d6a37d0f62 bp 0x7ffd9f024440 sp 0x7ffd9f023c00
+WRITE of size 512 at 0x511000000140 thread T0
+```
+
+**Interpretación:**
+
+| Campo | Valor | Significado |
+|-------|-------|-------------|
+| Tipo de Bug | heap-buffer-overflow | Desbordamiento de heap |
+| Operación | WRITE of size 512 | Escribiendo 512 bytes |
+| Ubicación | vuln_parser.c:16 | Línea del bug |
+| Asignación | 256-byte buffer | Búfer asignado |
+| Overflow | 512 - 256 = 256 | Cantidad de overflow |
+
+**Evaluación: EXPLOITABLE** - Atacante controla tamaño y datos del overflow.
+
+### 3.7.2. 2.7.2 Caso de Estudio: Análisis de Use-After-Free
+
+**Código Vulnerable:**
+
+```c
+typedef struct {
+    char *name;
+    void (*process)(void);
+} Handler;
+
+Handler *handler = NULL;
+
+void unregister_handler(void) {
+    if (handler) {
+        free(handler);
+        // BUG: Falta handler = NULL
+    }
+}
+
+void call_handler(void) {
+    if (handler) {
+        handler->process(); // UAF!
+    }
+}
+```
+
+**Estrategia de Explotación:**
+1. Liberar handler
+2. Heap grooming: asignar objetos del mismo tamaño
+3. Reclamar memoria liberada con datos controlados
+4. Trigger UAF → ejecución de código
+
+**Evaluación: EXPLOITABLE**
+
+### 3.7.3. 2.7.3 Caso de Estudio: Integer Overflow → Heap Corruption
+
+**Código Vulnerable:**
+
+```c
+void process_image(uint32_t width, uint32_t height, uint8_t *data) {
+    size_t buffer_size = width * height * 4; // overflow!
+    uint8_t *buffer = malloc(buffer_size);
+    for (size_t i = 0; i < width * height; i++) {
+        buffer[i] = data[i]; // massive overflow
+    }
+}
+```
+
+**Cadena:** Integer overflow → malloc(0) → loop con bounds grandes → heap corruption
+
+**Evaluación: EXPLOITABLE**
+
+## 3.8. 2.8 Desarrollo de Harnesses de Fuzzing
+
+### 3.8.1. 2.8.1 Ejemplo: Harness para Parser JSON
+
+```c
+// fuzz_json.c
+#include <json-c/json.h>
+#include <stdint.h>
+#include <stddef.h>
+
+int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+    const char *data1 = (const char *)data;
+    json_tokener *tok = json_tokener_new();
+    json_object *obj = json_tokener_parse_ex(tok, data1, size);
+    if (obj) {
+        json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PRETTY);
+        json_object_put(obj);
+    }
+    json_tokener_free(tok);
+    return 0;
+}
+```
+
+**Compilación:**
+
+```bash
+clang-19 -g -fsanitize=address,fuzzer -I./json-c fuzz_json.c json-c/libjson-c.a -o fuzz_json
+./fuzz_json corpus/ -max_total_time=300
+```
+
+### 3.8.2. 2.8.2 Principios de Diseño de Harness
+
+| Principio | Descripción | Impacto |
+|----------|------------|--------|
+| Ejecución In-Process | LLVMFuzzerTestOneInput sin fork | 10-100x más rápido |
+| Target Directo de API | Llamar funciones core | Evita parsing args |
+| Maximización de Cobertura | Ejercitar múltiples caminos | Encuentra más bugs |
+| Cleanup Apropiado | Liberar memoria | Previene OOM |
+| Compatible Sanitizers | ASAN/UBSAN | Mejor detección |
+
+### 3.8.3. Conclusiones del Capítulo 2
+
+1. **El fuzzing encuentra vulnerabilidades reales** - No solo crashes teóricos.
+
+2. **Fuzzing guiado por cobertura es poderoso** - AFL++, Honggfuzz, FuzzTest.
+
+3. **Sanitizers son esenciales** - ASAN, UBSAN detectan bugs sutiles.
+
+4. **El tiempo importa** - Muchos bugs requieren horas/días.
+
+5. **Calidad del corpus afecta resultados** - Entradas válidas alcanzan código profundo.
+
+6. **Parsers son objetivos principales** - Image, protocol, file format parsers.
+
+**Preguntas de Discusión:**
+
+1. ¿Por qué in-process es más rápido que wrappers basados en archivos?
+
+2. ¿Cómo afecta la calidad del corpus a la penetración del fuzzer?
+3. ¿Cuáles son riesgos de over-mocking en harnesses?
+4. ¿Cómo determinar si fuzzing llegó a rendimientos decrecientes?
