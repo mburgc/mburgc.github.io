@@ -16,6 +16,14 @@ CHAPTER_ORDER = [
     "05-analisis-crashes",
 ]
 
+CHAPTER_NAMES = {
+    "01": ("01-introduccion", "Introducción"),
+    "02": ("02-clases-vulnerabilidades", "Clases de Vulnerabilidades"),
+    "03": ("03-fuzzing", "Fuzzing"),
+    "04": ("04-patch-diffing", "Patch Diffing"),
+    "05": ("05-analisis-crashes", "Análisis de Crashes"),
+}
+
 
 def load_template():
     return TEMPLATE_FILE.read_text(encoding="utf-8")
@@ -23,12 +31,12 @@ def load_template():
 
 def get_navigation(markdown_files):
     nav = ""
-    chapter_names = {
-        "01-introduccion": ("Introducción", "fa-book"),
-        "02-clases-vulnerabilidades": ("Clases de Vulnerabilidades", "fa-bug"),
-        "03-fuzzing": ("Fuzzing", "fa-flask"),
-        "04-patch-diffing": ("Patch Diffing", "fa-code-branch"),
-        "05-analisis-crashes": ("Análisis de Crashes", "fa-exclamation-triangle"),
+    chapter_icons = {
+        "01-introduccion": "fa-book",
+        "02-clases-vulnerabilidades": "fa-bug",
+        "03-fuzzing": "fa-flask",
+        "04-patch-diffing": "fa-code-branch",
+        "05-analisis-crashes": "fa-exclamation-triangle",
     }
 
     for i, chapter_key in enumerate(CHAPTER_ORDER):
@@ -36,7 +44,10 @@ def get_navigation(markdown_files):
         file_info = next((f for f in markdown_files if f.name == chapter_file), None)
 
         if file_info:
-            title, icon = chapter_names.get(chapter_key, (chapter_key, "fa-file"))
+            icon = chapter_icons.get(chapter_key, "fa-file")
+            title = CHAPTER_NAMES.get(
+                chapter_key.split("-")[0], (chapter_key, chapter_key)
+            )[1]
             nav += f'''
             <a href="{chapter_key}.html" class="nav-item">
                 <i class="fas {icon}"></i>{title}
@@ -67,8 +78,198 @@ def extract_chapter(md_file):
     return md_file.stem.split("-")[0]
 
 
+def convert_text_tables_to_markdown(content):
+    """
+    Convert text that looks like tables to proper Markdown tables.
+    Detects patterns like:
+    Campo
+    Valor
+    Título
+    Bitácora
+    """
+    lines = content.split("\n")
+    result = []
+    i = 0
+
+    while i < len(lines):
+        line = lines[i].strip()
+
+        # Detect potential table: multiple short lines in sequence that could be key-value
+        # Pattern: 3+ lines of short text (not headers, not bullets)
+        potential_table = []
+        if (
+            line
+            and not line.startswith("#")
+            and not line.startswith("•")
+            and not line.startswith("-")
+            and not line.startswith("|")
+            and len(line) < 60
+            and i + 1 < len(lines)
+        ):
+            j = i
+            while j < len(lines) and j < i + 20:
+                current = lines[j].strip()
+                if (
+                    current
+                    and not current.startswith("#")
+                    and not current.startswith("•")
+                    and not current.startswith("-")
+                    and not current.startswith("|")
+                    and not current.startswith("---")
+                    and len(current) < 60
+                ):
+                    potential_table.append(current)
+                    j += 1
+                else:
+                    break
+
+            # If we have 4+ lines that could be a table, convert it
+            if len(potential_table) >= 4:
+                # Check if even-indexed lines could be values (pairs)
+                if len(potential_table) >= 4:
+                    # Split into pairs: even = key, odd = value
+                    table_lines = []
+                    for k in range(0, len(potential_table) - 1, 2):
+                        key = potential_table[k].strip()
+                        val = (
+                            potential_table[k + 1].strip()
+                            if k + 1 < len(potential_table)
+                            else ""
+                        )
+                        if key and val:
+                            table_lines.append(f"| {key} | {val} |")
+
+                    if len(table_lines) >= 2:
+                        # Add header separator
+                        header_len = max(len(l) for l in table_lines)
+                        separator = f"|{'--' * (header_len // 2 + 1)}|"
+
+                        result.append("")
+                        result.append("| Campo | Valor |")
+                        result.append(separator)
+                        result.extend(table_lines)
+                        result.append("")
+                        i = j
+                        continue
+
+        result.append(line)
+        i += 1
+
+    return "\n".join(result)
+
+
+def add_cross_references(content):
+    """
+    Convert chapter references like 'Capítulo 1', 'Capítulo 2', etc. to clickable links.
+    Also converts section references to anchor links.
+    """
+    # Map chapter numbers to file paths
+    for ch_num, (ch_file, ch_title) in CHAPTER_NAMES.items():
+        # Match "Capítulo X" or "Capítulo X: Title"
+        pattern = rf"(Capítulo\s+{ch_num}[^\n<]*)"
+        replacement = rf"[\1]({ch_file}.html)"
+        content = re.sub(pattern, replacement, content, flags=re.IGNORECASE)
+
+        # Also handle "Capítulo 1", "Capítulo 2", etc. in any context
+        pattern2 = rf"\*?(Capítulo\s+{ch_num}[^\n\*]*)\*?"
+        replacement2 = rf"**[\1]({ch_file}.html)**"
+        content = re.sub(pattern2, replacement2, content, flags=re.IGNORECASE)
+
+    # Convert section references to anchor links (e.g., "Sección 1.1" -> link to #11)
+    content = re.sub(
+        r"(Sección\s+(\d+\.\d+))", r"[\1](#\2)", content, flags=re.IGNORECASE
+    )
+
+    # Convert "Ver capítulo X" or "Véase capítulo X" references
+    for ch_num, (ch_file, ch_title) in CHAPTER_NAMES.items():
+        patterns = [
+            rf"(?:Ver|Véase|Consultar)\s+capítulo\s+{ch_num}",
+            rf"(?:capítulo|chapter)\s+{ch_num}",
+        ]
+        for pattern in patterns:
+            content = re.sub(
+                pattern, rf"[{ch_title}]({ch_file}.html)", content, flags=re.IGNORECASE
+            )
+
+    return content
+
+
+def format_hyperlinks(content):
+    """
+    Convert raw URLs to clickable Markdown links.
+    """
+    # Match URLs that aren't already in markdown link format
+    url_pattern = r"(?<!\[)(?<!\])(https?://[^\s\)<>\]]+)(?!\])"
+
+    def replace_url(match):
+        url = match.group(1)
+        # Truncate long URLs for display
+        display = url
+        if len(url) > 50:
+            display = url[:47] + "..."
+        return f"[{display}]({url})"
+
+    content = re.sub(url_pattern, replace_url, content)
+
+    # Convert email addresses to mailto links
+    email_pattern = r"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})"
+    content = re.sub(email_pattern, r"[\1](mailto:\1)", content)
+
+    return content
+
+
+def clean_markup(content):
+    lines = content.split("\n")
+    result = []
+    
+    for line in lines:
+        original = line
+        
+        line = re.sub(r"\(\s*(\w+)\s*\)", r"\1", line)
+        line = re.sub(r"  +", " ", line)
+        
+        line = re.sub(r"(\d+\.\d+)\s+\1", r"\1", line)
+        
+        line = re.sub(r"^(###+)\s+\d+\.\s+(\d+\.\d+)", r"\1 \2", line)
+        line = re.sub(r"^(###+)\s+(\d+\.\d+)\.\s*", r"\1 \2", line)
+        line = re.sub(r"^(####+)\s+\d+\.\s+(\d+\.\d+)", r"\1 \2", line)
+        line = re.sub(r"^(####+)\s+(\d+\.\d+)\.\s*", r"\1 \2", line)
+        
+        line = re.sub(r"\.(\s+)", r"\1", line)
+        line = re.sub(r"\.{3,}", "", line)
+        line = line.strip()
+        
+        if line == "###" or line == "####":
+            continue
+            
+        result.append(line)
+    
+    content = "\n".join(result)
+    
+    content = content.replace("﴾", "(").replace("﴿", ")")
+    content = content.replace("‐", "-").replace("‑", "-").replace("–", "-")
+    content = content.replace('"', '"').replace('"', '"')
+    content = content.replace(""", "'").replace(""", "'")
+
+    return content
+
+
+def preprocess_markdown(content):
+    """
+    Apply all preprocessing steps to clean and enhance the markdown.
+    """
+    content = clean_markup(content)
+    content = convert_text_tables_to_markdown(content)
+    content = add_cross_references(content)
+    content = format_hyperlinks(content)
+    return content
+
+
 def markdown_to_html(content):
     fm, content = extract_frontmatter(content)
+
+    # Pre-process markdown before conversion
+    content = preprocess_markdown(content)
 
     md = markdown.Markdown(
         extensions=[
@@ -77,6 +278,7 @@ def markdown_to_html(content):
             TocExtension(baselevel=1),
             "tables",
             "fenced_code",
+            "nl2br",  # Convert newlines to <br>
         ]
     )
 
@@ -143,7 +345,7 @@ def main():
             output_path = OUTPUT_DIR / f"{md_file.stem}.html"
             output_path.write_text(page, encoding="utf-8")
 
-    index_content = f'''<!DOCTYPE html>
+    index_content = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -152,7 +354,7 @@ def main():
 <body>
     <p>Redireccionando a <a href="01-introduccion.html">Capítulo 1: Introducción</a>...</p>
 </body>
-</html>'''
+</html>"""
     (OUTPUT_DIR / "index.html").write_text(index_content, encoding="utf-8")
 
     print("¡Generación completada!")
