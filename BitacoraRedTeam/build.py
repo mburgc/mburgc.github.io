@@ -175,6 +175,9 @@ document.addEventListener('DOMContentLoaded', function() {
 """
 
     html = markdown.markdown(text, extensions=["tables", "fenced_code", "codehilite"])
+    
+    # Fix markdown links (.md -> .html) for all pages
+    html = html.replace(".md", ".html")
 
     # Build chapter navigation
     chapter_nav = ""
@@ -1153,7 +1156,9 @@ def main():
                         + ".html"
                     )
                     break
-            other_language_path = os.path.join("../en", en_filename)
+            # Convert Spanish filename to English for language switch
+            en_switch = en_filename.replace("clases-vulnerabilidades", "vulnerability-classes").replace("analisis-crashes", "crash-analysis").replace("introduccion", "introduction")
+            other_language_path = "../en/" + en_switch
 
             # Get title from first h1
             lines = text.split("\n")
@@ -1182,12 +1187,22 @@ def main():
     en_markdown_files = [
         f for f in os.listdir("en") if f.endswith(".md") and f != "README.md"
     ]
+    # Map Spanish file names to English equivalents
+    es_to_en_map = {
+        "01-introduccion": "01-introduction",
+        "02-clases-vulnerabilidades": "02-vulnerability-classes",
+        "05-analisis-crashes": "05-crash-analysis",
+    }
     en_chapters = []
     for ch in all_chapters:
         for md_file in en_markdown_files:
-            if ch["file"].replace("-", "") in md_file.replace("-", "").replace(" ", ""):
+            # Try both Spanish and English filename
+            es_file = es_to_en_map.get(ch["file"], ch["file"])
+            if es_file.replace("-", "") in md_file.replace("-", "").replace(" ", ""):
+                # Convert Spanish file to English for the chapters list
+                en_filename = ch["file"].replace("clases-vulnerabilidades", "vulnerability-classes").replace("analisis-crashes", "crash-analysis").replace("introduccion", "introduction")
                 en_chapters.append(
-                    {"num": ch["num"], "file": ch["file"], "title": ch["title_en"]}
+                    {"num": ch["num"], "file": en_filename, "title": ch["title_en"]}
                 )
                 break
 
@@ -1221,7 +1236,7 @@ def main():
                         + ".html"
                     )
                     break
-            other_language_path = os.path.join("../es", es_filename)
+            other_language_path = "../es/" + es_filename
 
             # Get title from first h1
             lines = text.split("\n")
