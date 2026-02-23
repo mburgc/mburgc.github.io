@@ -37,4 +37,120 @@ Honggfuzz es otro popular fuzzer guiado por cobertura. Es conocido por su rendim
 ## 3.5. 2.5 Syzkaller y Fuzzing de Kernel
 
 Syzkaller es un fuzzer especializado para encontrar vulnerabilidades en los kernels de los sistemas operativos. Utiliza un lenguaje de descripción de sistemas de llamadas para generar programas que ejercen las interfaces del kernel. Syzkaller ha sido extremadamente exitoso en la búsqueda de vulnerabilidades en el kernel de Linux.
+
+## 3.6. 2.6 Configuración Práctica de AFL++
+
+### Instalación Paso a Paso
+
+```bash
+# Instalar dependencias de compilación
+sudo apt update
+sudo apt install -y build-essential gcc-13-plugin-dev cpio python3-dev 
+    libcapstone-dev pkg-config libglib2.0-dev libpixman-1-dev 
+    automake autoconf python3-pip ninja-build cmake git wget meson
+
+# Instalar LLVM 19 (verificar última versión en https://apt.llvm.org/)
+wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh 19 all
+
+# Verificar instalación de LLVM
+clang-19 --version
+llvm-config-19 --version
+
+# Instalar Rust (requerido para algunos componentes de AFL++)
+curl --proto '=https' --tlsv1.2 -sSf "https://sh.rustup.rs" | sh
+source ~/.cargo/env
+
+# Compilar e instalar AFL++
+mkdir -p ~/soft && cd ~/soft
+git clone --depth 1 https://github.com/AFLplusplus/AFLplusplus.git
+cd AFLplusplus
+make distrib
+sudo make install
+
+# Verificar instalación
+which afl-fuzz
+afl-fuzz --version
+```
+
+### Compilación de Target con Instrumentación
+
+```bash
+# Compilar programa C/C++ con instrumentación AFL++
+CC=/usr/local/bin/afl-clang-fast 
+CXX=/usr/local/bin/afl-clang-fast++ 
+cmake ..
+make -j$(nproc)
+
+# Habilitar sanitizers para mejor detección de bugs
+export AFL_USE_ASAN=1
+export AFL_USE_UBSAN=1
+export ASAN_OPTIONS="detect_leaks=1:abort_on_error=1:symbolize=1"
+```
+
+### Ejecución del Fuzzer
+
+```bash
+# Configurar sistema para fuzzing óptimo
+echo core | sudo tee /proc/sys/kernel/core_pattern
+echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+# Crear corpus de semillas
+mkdir -p seeds
+for i in {0..4}; do
+    dd if=/dev/urandom of=seeds/seed_$i bs=64 count=10 2>/dev/null
+done
+
+# Ejecutar fuzzer
+afl-fuzz -i seeds/ -o findings/ -m none -d -- ./target_binary @@
+
+# Fuzzing paralelo (múltiples instancias)
+# Terminal 1: Instancia Master
+afl-fuzz -i seeds/ -o findings/ -M Master -- ./target @@
+
+# Terminal 2+: Instancias Slave
+afl-fuzz -i seeds/ -o findings/ -S Slave1 -- ./target @@
+afl-fuzz -i seeds/ -o findings/ -S Slave2 -- ./target @@
+
+# Verificar estado
+afl-whatsup findings/
+```
+
+## 3.7. 2.7 Análisis de Crashes y Evaluación de Explotabilidad
+
+El análisis de crashes es el proceso de determinar si un crash descubierto por fuzzing representa una vulnerabilidad explotable. Esta sección cubre las herramientas y metodologías para triage sistemático de crashes.
+
+### Árbol de Decisión para Análisis de Crashes
+
+```
+                      CRASH RECIBIDO
+                            │
+                            ▼
+                  ┌───────────────────────┐
+                  │ ¿Código fuente        │
+                  │   disponible?         │
+                  └───────────────────────┘
+                       │                    │
+                      Sí                    No
+                       │                    │
+                       ▼                    ▼
+         ┌─────────────────────┐    ┌─────────────────────┐
+         │ Recompilar con      │    │ Usar depurador        │
+         │ ASAN + UBSAN        │    │ (GDB/WinDbg)          │
+         └─────────────────────┘    └─────────────────────┘
+                       │                    │
+                       ▼                    ▼
+         ┌─────────────────────┐    ┌─────────────────────┐
+         │ Ejecutar crash      │    │ Analizar registros    │
+         │ Obtener reporte     │    │ y memoria             │
+         └─────────────────────┘    └─────────────────────┘
+                       │                    │
+                       └────────┬───────────┘
+                                ▼
+                  ┌───────────────────────────┐
+                  │ Clasificar vulnerabilidad │
+                  │ con CASR                  │
+                  └───────────────────────────┘
+```
 ... (El resto del capítulo seguiría la misma estructura)

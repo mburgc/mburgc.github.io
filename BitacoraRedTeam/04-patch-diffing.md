@@ -28,4 +28,71 @@ Un script de PowerShell puede automatizar el proceso de descarga y extracción d
 ## 4.4. 3.4 Caso de Estudio: CVE-2022-34718 (EvilESP)
 
 Este caso de estudio muestra cómo se utilizó el "patch diffing" para analizar una vulnerabilidad en el protocolo ESP de Windows. El análisis reveló un error en el manejo de paquetes ESP fragmentados que podía llevar a la ejecución remota de código.
+
+## 4.5. 3.5 Pipeline de Automatización de Patch Diffing
+
+### ¿Por Qué Automatizar?
+
+-   Microsoft libera parches mensualmente (Patch Tuesday - 2do martes de cada mes)
+-   Analizar cada actualización manualmente consume mucho tiempo
+-   Detección temprana de vulnerabilidades provee ventaja competitiva
+-   La automatización permite monitoreo continuo
+
+### Etapas del Pipeline:
+
+1.  **MONITOREAR:** MSRC API, Patch Tuesday
+2.  **DESCARGAR:** WinbIndex, Update Catalog
+3.  **EXTRAER:** Expand MSU, Extract CAB
+4.  **SÍMBOLOS:** symchk.exe, Symbol Server
+5.  **DIFF:** Ghidriff, BinDiff
+6.  **REPORTE:** HTML/PDF, JSON para CI
+7.  **ALERTA:** Email, Ticket, Slack/Teams
+
+### Script de Automatización Python para Ghidriff
+
+```python
+#!/usr/bin/env python3
+import subprocess
+import json
+import os
+from pathlib import Path
+from datetime import datetime
+
+class PatchDiffer:
+    # ... (implementación del script)
+```
+
+## 4.6. 3.6 Patch Diffing en Linux Kernel
+
+### 3.6.1. Diferencias con Windows
+
+| Aspecto             | Windows                            | Linux                              |
+| ------------------- | ---------------------------------- | ---------------------------------- |
+| Código Fuente       | Cerrado (solo binarios)            | Abierto (git.kernel.org)           |
+| Formato Binario     | PE/COFF                            | ELF                                |
+| Símbolos Debug      | PDB via Symbol Server              | DWARF en paquetes -dbgsym          |
+| Distribución        | Windows Update                     | apt/yum + distro-specific          |
+| Modificaciones Vendor| Ninguna                            | Backports, parches custom          |
+
+### 3.6.2. Flujo de Trabajo para Linux
+
+1.  **Identificar Versiones de Kernel**
+2.  **Descargar Imágenes de Kernel y Símbolos**
+3.  **Extraer vmlinux**
+4.  **Identificar Módulos Cambiados**
+5.  **Diff con Ghidriff**
+
+### 3.6.3. Diff a Nivel de Código Fuente
+
+```bash
+# Clonar fuente del kernel
+git clone --branch v6.8 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+cd linux
+
+# Buscar commits de CVE
+git log --all --grep="CVE" --oneline | head -20
+
+# Ver diff de commit específico
+git show f342de4e2f33e0e39165d8639387aa6c19dff660
+```
 ... (El resto del capítulo seguiría la misma estructura)

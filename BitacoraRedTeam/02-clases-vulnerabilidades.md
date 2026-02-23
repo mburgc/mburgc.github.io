@@ -289,4 +289,174 @@ Los desbordamientos de heap en parsers de imágenes son particularmente peligros
 -   Son compartidas rutinariamente y consideradas “seguras”
 -   Parsers de imagen optimizan rendimiento, sacrificando verificaciones de seguridad
 -   La complejidad de formatos de compresión (Huffman, LZW, etc.) introduce bugs
+
+### 2.1.4. 1.1.4 Lectura Fuera de Límites (Out-of-Bounds Read / Info Leak)
+
+**Descripción General**
+
+Una lectura fuera de límites (Out-of-Bounds Read) ocurre cuando un programa lee memoria pasando los límites de un búfer sin modificarla. Aunque no permite escritura directa, frecuentemente se utiliza para:
+-   Filtrar punteros para bypass de ASLR/KASLR
+-   Exponer metadatos de objetos para construir primitivas más poderosas
+-   Revelar diseño de memoria del kernel para explotación confiable
+
+**Rol en Cadenas de Explotación:**
+
+```
+      CADENA DE EXPLOTACIÓN TÍPICA
++--------------------------------+
+|   1. OOB READ (Info Leak)      | <--- Filtrar direcciones de kernel
+|   └─────────┬─────────┘        |
+|             │                  |
+|             ▼                  |
+|   2. KASLR BYPASS              | <--- Calcular direcciones reales
+|   └─────────┬─────────┘        |
+|             │                  |
+|             ▼                  |
+|   3. WRITE PRIMITIVE           | <--- Otra vulnerabilidad (UAF, overflow)
+|   └─────────┬─────────┘        |
+|             │                  |
+|             ▼                  |
+|   4. CODE EXECUTION            | <--- Escribir a ubicación conocida
++--------------------------------+
+```
+
+**Caso de Estudio: CVE-2024-53108 — Linux AMDGPU Display Driver**
+
+| Campo             | Detalle                               |
+| ----------------- | ------------------------------------- |
+| Producto Afectado | Linux Kernel (driver AMD Display)     |
+| Tipo              | Out-of-Bounds Read (slab-out-of-bounds)|
+| Vector            | Datos EDID/display maliciosos         |
+| Severidad         | Media-Alta                            |
+| Diff del Parche   | git.kernel.org                        |
+
+**El Bug**
+
+En el driver de display AMD del kernel Linux, la ruta de parsing EDID/VSDB (Video Specification Database) tenía verificación insuficiente de límites al extraer identificadores de capacidades. Cuando procesaba datos EDID con campos de longitud manipulados, el driver leía más allá de los límites del búfer EDID asignado.
+
+El bug fue detectado por KASAN (Kernel AddressSanitizer) que reportó acceso slab-out-of-bounds durante la extracción de datos del display.
+
+**El Ataque**
+
+Un flujo de datos EDID/display maliciosamente construido podría:
+1.  Disparar lectura OOB en espacio de kernel
+2.  Exponer contenidos de memoria de kernel (incluyendo punteros)
+3.  Proporcionar información para evadir KASLR
+4.  Ser encadenado con otra vulnerabilidad de escritura para explotación completa
+
+**Impacto**
+
+-   Divulgación de información: Exposición de contenido de memoria del kernel
+-   Potencial inestabilidad del sistema: Lectura de memoria inválida puede causar oops
+-   Habilitador de explotación: Utilizable para evadir KASLR en cadenas de explotación más complejas
+
+**Por Qué las OOB Reads Importan:**
+
+En contextos de kernel:
+-   KASLR es una mitigación fundamental contra explotación
+-   Sin info leak, escritura ciega falla - el atacante necesita saber dónde escribir
+-   OOB reads son el primer paso de la mayoría de exploits modernos de kernel
+
+**Mitigación**
+
+Las actualizaciones del kernel ajustaron la validación de longitud:
+-   Verificar que bLength sea >= tamaño mínimo esperado
+-   Validar offsets antes de acceder a campos
+-   Asegurar que todas las lecturas permanezcan dentro de los límites del búfer EDID
+
+**Observaciones**
+
+Las lecturas OOB puras son valiosas para construir cadenas de explotación confiables:
+-   Proporcionan información necesaria para bypass de ASLR/KASLR
+-   Son frecuentemente la primera etapa de exploits multi-paso
+-   En kernel, derrotar KASLR es pivotal para explotación confiable
+
+### 2.1.5. 1.1.5 Uso de Memoria No Inicializada (Uninitialized Memory Use)
+
+**Descripción General**
+
+Usar memoria de pila/heap/pool antes de que sea inicializada puede exponer contenidos residuales de operaciones previas. Estos contenidos pueden incluir:
+-   Punteros previos (direcciones del kernel para bypass de KASLR)
+-   Flags de capacidad (para escalada de privilegios)
+-   Campos de estructura (para confusión de tipos)
+
+**Por Qué Es Peligroso:**
+
+```c
+// Código vulnerable - variable no inicializada
+void vulnerable_function(struct netlink_msg *msg) {
+    struct nft_pipapo_match *m; // <--- NO INICIALIZADO
+
+     // Si algún camino de código no asigna 'm'...
+     if (some_condition(msg)) {
+         m = find_match(msg);
+     }
+     // ... pero 'm' se usa incondicionalmente
+
+     copy_to_user(response, &m, sizeof(m)); // <--- Filtra pila residual
+}
+```
+
+**Caso de Estudio: CVE-2024-26581 — Linux Kernel Netfilter**
+
+| Campo             | Detalle                               |
+| ----------------- | ------------------------------------- |
+| Producto Afectado | Linux Kernel (subsistema netfilter)   |
+| Tipo              | Uso de Variable No Inicializada       |
+| Vector            | Mensajes netlink locales              |
+| Severidad         | Alta                                  |
+| PoC Disponible    | sploitus.com/exploit?id=A4D521EE-225F-57D5-8C31-9F1C86D066B6 |
+
+**El Bug**
+
+El subsistema netfilter del kernel Linux contenía una vulnerabilidad de variable no inicializada en el componente nf_tables. Al procesar mensajes netlink para configurar reglas de firewall, la función `nft_pipapo_walk()` fallaba en inicializar una variable local antes de su uso.
+
+La variable no inicializada de pila podría contener datos residuales de llamadas a funciones previas, incluyendo punteros del kernel y direcciones de memoria sensibles.
+
+**El Ataque (Paso a Paso)**
+
+1.  **Obtener Capacidades:**
+    -   Atacante está en espacio de nombres de usuario no privilegiado
+    -   User namespaces otorgan CAP_NET_ADMIN (default en Ubuntu, Debian)
+2.  **Disparar el Bug:**
+    -   Enviar mensajes netlink específicos de configuración de nf_tables
+    -   Causar que se ejecute la ruta de código con variable no inicializada
+    -   La variable se lee y se copia de vuelta al espacio de usuario
+3.  **Recolectar Información:**
+    -   Repetir el trigger múltiples veces
+    -   Analizar datos retornados
+    -   Extraer direcciones de kernel (heap, stack, código)
+4.  **Explotar con Información:**
+    -   Usar direcciones filtradas para evadir KASLR
+    -   Combinar con otra vulnerabilidad de escritura de netfilter
+    -   Lograr escalada de privilegios completa (LPE chain)
+
+**Impacto**
+
+-   Divulgación de información → bypass de KASLR
+-   Las direcciones del kernel filtradas permiten explotación confiable de otras vulnerabilidades
+-   Particularmente peligrosa cuando se combina con otros bugs de netfilter para cadenas LPE completas
+
+**Peligro del Combo: Netfilter + User Namespaces**
+
+Muchas distribuciones Linux permiten user namespaces no privilegiados por defecto:
+-   Ubuntu: Habilitado por defecto
+-   Debian: Habilitado por defecto
+-   Fedora: Habilitado por defecto
+
+Esto significa que CAP_NET_ADMIN está disponible para usuarios no privilegiados, haciendo que bugs de netfilter sean explotables sin privilegios root.
+
+**Mitigación**
+
+Linux kernel 6.8-rc1 (febrero 2024):
+-   Añadió inicialización apropiada: `struct nft_pipapo_match *m = NULL;`
+-   Habilitó inicializadores designados para estructuras de pila
+-   Habilitó advertencias de compilador más estrictas (`-Wuninitialized`) para netfilter
+
+**Observaciones**
+
+Las lecturas de memoria no inicializada son frecuentemente la primera etapa en cadenas de explotación:
+-   Proporcionan reducciones de entropía para evadir mitigaciones modernas
+-   Son particularmente valiosas en explotación de kernel donde KASLR es esencial
+-   La combinación de user namespaces no privilegiados y fugas de netfilter hace esta clase de vulnerabilidad accesible a atacantes locales sin requerir privilegios root
 ... (El resto del capítulo seguiría la misma estructura)
