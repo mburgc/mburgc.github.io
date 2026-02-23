@@ -1090,22 +1090,22 @@ def main():
     ]
 
     # Create the output directories
-    if not os.path.exists("../_site"):
-        os.makedirs("../_site")
-    if not os.path.exists("../_site/es"):
-        os.makedirs("../_site/es")
-    if not os.path.exists("../_site/en"):
-        os.makedirs("../_site/en")
+    if not os.path.exists("../bitacora"):
+        os.makedirs("../bitacora")
+    if not os.path.exists("../bitacora/es"):
+        os.makedirs("../bitacora/es")
+    if not os.path.exists("../bitacora/en"):
+        os.makedirs("../bitacora/en")
 
     # Copy images folder
     if os.path.exists("images"):
-        if not os.path.exists("../_site/images"):
-            os.makedirs("../_site/images")
+        if not os.path.exists("../bitacora/images"):
+            os.makedirs("../bitacora/images")
         import shutil
 
         for file in os.listdir("images"):
             src = os.path.join("images", file)
-            dst = os.path.join("../_site/images", file)
+            dst = os.path.join("../bitacora/images", file)
             if os.path.isfile(src):
                 shutil.copy2(src, dst)
 
@@ -1173,7 +1173,7 @@ def main():
                 all_chapters,
             )
             html_file = os.path.join(
-                "../_site/es", os.path.splitext(md_file)[0] + ".html"
+                "../bitacora/es", os.path.splitext(md_file)[0] + ".html"
             )
             with open(html_file, "w", encoding="utf-8") as f:
                 f.write(html_content)
@@ -1241,7 +1241,7 @@ def main():
                 all_chapters,
             )
             html_file = os.path.join(
-                "../_site/en", os.path.splitext(md_file)[0] + ".html"
+                "../bitacora/en", os.path.splitext(md_file)[0] + ".html"
             )
             with open(html_file, "w", encoding="utf-8") as f:
                 f.write(html_content)
@@ -1742,7 +1742,7 @@ body {
 </body>
 </html>"""
 
-    with open(os.path.join("../_site", "index.html"), "w", encoding="utf-8") as f:
+    with open(os.path.join("../bitacora", "index.html"), "w", encoding="utf-8") as f:
         f.write(index_html)
 
     # Create index pages for each language
@@ -1907,7 +1907,7 @@ body {
 </body>
 </html>"""
 
-    with open(os.path.join("../_site/es", "index.html"), "w", encoding="utf-8") as f:
+    with open(os.path.join("../bitacora/es", "index.html"), "w", encoding="utf-8") as f:
         f.write(es_index_html)
 
     # English index
@@ -2071,10 +2071,10 @@ body {
 </body>
 </html>"""
 
-    with open(os.path.join("../_site/en", "index.html"), "w", encoding="utf-8") as f:
+    with open(os.path.join("../bitacora/en", "index.html"), "w", encoding="utf-8") as f:
         f.write(en_index_html)
 
-    print("✅ Build complete! Output in ../_site/")
+    print("✅ Build complete! Output in ../bitacora/")
     print("   - Main index: _site/index.html")
     print("   - Spanish: _site/es/")
     print("   - English: _site/en/")
