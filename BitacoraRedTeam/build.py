@@ -3,8 +3,8 @@ import os
 
 def main():
     # Create the output directory
-    if not os.path.exists("docs"):
-        os.makedirs("docs")
+    if not os.path.exists("../_site"):
+        os.makedirs("../_site")
 
     # Get all markdown files
     markdown_files = [f for f in os.listdir('.') if f.endswith('.md')]
@@ -30,12 +30,12 @@ def main():
 </html>"""
 
             # Save the HTML file
-            html_file = os.path.join("docs", os.path.splitext(md_file)[0] + '.html')
+            html_file = os.path.join("../_site", os.path.splitext(md_file)[0] + '.html')
             with open(html_file, 'w', encoding='utf-8') as f:
                 f.write(html_content)
 
     # Create the index.html file
-    with open(os.path.join("docs", "index.html"), 'w', encoding='utf-8') as f:
+    with open(os.path.join("../_site", "index.html"), 'w', encoding='utf-8') as f:
         f.write('<!DOCTYPE html><html><head><title>Bitacora Red Team</title>')
         f.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">')
         f.write('</head><body><div class="container">')
