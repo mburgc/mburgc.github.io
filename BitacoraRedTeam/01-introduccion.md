@@ -12,7 +12,7 @@
 
 ## 1.2. Índice de Contenidos
 
-### 1.2.1. Capítulo 1: Clases de Vulnerabilidades
+### 1.2.1. [Capítulo 1: Clases de Vulnerabilidades](02-clases-vulnerabilidades.md)
 
 - **1.1 Fundamentos de Corrupción de Memoria**
   - 1.1.1 Desbordamiento de Búfer en Pila
@@ -35,7 +35,7 @@
 - **1.5 Vulnerabilidades de Drivers y Sistemas de Archivos**
 - **1.6 Evaluación de Impacto y Clasificación**
 
-### 1.2.2. Capítulo 2: Fuzzing
+### 1.2.2. [Capítulo 2: Fuzzing](03-fuzzing.md)
 
 - **2.1 Fundamentos de Fuzzing**
 - **2.2 AFL++ y Fuzzing Guiado por Cobertura**
@@ -43,14 +43,14 @@
 - **2.4 Honggfuzz y Fuzzing de Protocolos**
 - **2.5 Syzkaller y Fuzzing de Kernel**
 
-### 1.2.3. Capítulo 3: Patch Diffing
+### 1.2.3. [Capítulo 3: Patch Diffing](04-patch-diffing.md)
 
 - **3.1 Fundamentos de Patch Diffing**
 - **3.2 Extracción de Parches de Windows**
 - **3.3 Herramientas de Diffing Binario**
 - **3.4 Análisis de Casos de Estudio**
 
-### 1.2.4. Capítulo 4: Análisis de Crashes
+### 1.2.4. [Capítulo 4: Análisis de Crashes](05-analisis-crashes.md)
 
 - **4.1 Fundamentos del Análisis de Crashes**
 - **4.2 Depuradores y Configuración**

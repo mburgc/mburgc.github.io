@@ -6,9 +6,9 @@ Este capítulo documenta las principales clases de vulnerabilidades encontradas 
 
 **Recursos de Lectura Recomendados:**
 - “The Art of Software Security Assessment” por Mark Dowd, John McDonald, Justin Schuh - Capítulo 5: Memory Corruption
-- Memory Corruption: Examples, Impact, and 4 Ways to Prevent It
-- Microsoft Security Research: Memory Safety
-- Google Project Zero Blog - Hallazgos recientes de corrupción de memoria
+- [Memory Corruption: Examples, Impact, and 4 Ways to Prevent It](https://en.wikipedia.org/wiki/Memory_corruption)
+- [Microsoft Security Research: Memory Safety](https://www.zdnet.com/article/microsoft-70-of-all-security-bugs-are-memory-safety-issues/)
+- [Google Project Zero Blog - Hallazgos recientes de corrupción de memoria](https://googleprojectzero.blogspot.com/2022/04/the-more-you-know-more-you-know-you.html)
 
 ## 2.1. 1.1 Fundamentos de Corrupción de Memoria
 
@@ -57,7 +57,7 @@ Un desbordamiento de búfer en pila (stack buffer overflow) ocurre cuando un pro
 | Tipo              | Stack Buffer Overflow                         |
 | Vector            | Interfaz de administración web                |
 | Severidad         | Crítica                                       |
-| PoC Disponible    | github.com/watchtowrlabs/CVE-2024-27130       |
+| PoC Disponible    | [github.com/watchtowrlabs/CVE-2024-27130](https://github.com/watchtowrlabs/CVE-2024-27130)       |
 
 **El Bug**
 
@@ -236,7 +236,7 @@ Similar a los desbordamientos de pila, los desbordamientos de heap ocurren cuand
 | Tipo              | Heap Buffer Overflow                          |
 | Vector            | Imagen WebP maliciosa                         |
 | Severidad         | Crítica                                       |
-| PoC Disponible    | github.com/mistymntncop/CVE-2023-4863         |
+| PoC Disponible    | [github.com/mistymntncop/CVE-2023-4863](https://github.com/mistymntncop/CVE-2023-4863)         |
 
 **El Bug**
 
@@ -328,7 +328,7 @@ Una lectura fuera de límites (Out-of-Bounds Read) ocurre cuando un programa lee
 | Tipo              | Out-of-Bounds Read (slab-out-of-bounds)|
 | Vector            | Datos EDID/display maliciosos         |
 | Severidad         | Media-Alta                            |
-| Diff del Parche   | git.kernel.org                        |
+| Diff del Parche   | [git.kernel.org](https://git.kernel.org)                        |
 
 **El Bug**
 
@@ -405,7 +405,7 @@ void vulnerable_function(struct netlink_msg *msg) {
 | Tipo              | Uso de Variable No Inicializada       |
 | Vector            | Mensajes netlink locales              |
 | Severidad         | Alta                                  |
-| PoC Disponible    | sploitus.com/exploit?id=A4D521EE-225F-57D5-8C31-9F1C86D066B6 |
+| PoC Disponible    | [sploitus.com/exploit?id=A4D521EE-225F-57D5-8C31-9F1C86D066B6](https://sploitus.com/exploit?id=A4D521EE-225F-57D5-8C31-9F1C86D066B6) |
 
 **El Bug**
 
