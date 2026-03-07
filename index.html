@@ -554,10 +554,40 @@
         }
 
         @media (max-width: 768px) {
+            .container {
+                padding: 16px 14px;
+            }
+
+            header {
+                padding: 44px 20px 38px;
+                margin-bottom: 24px;
+                border-radius: 14px;
+            }
+
+            .title {
+                font-size: 2.2rem;
+                letter-spacing: -0.5px;
+            }
+
+            .subtitle {
+                letter-spacing: 2px;
+                font-size: 0.78rem;
+            }
+
+            .manual-btn {
+                font-size: 0.72rem;
+                padding: 9px 18px;
+                letter-spacing: 1.5px;
+            }
+
+            .research-highlight {
+                margin: 0 0 24px 0;
+            }
+
             .research-card {
                 flex-direction: column;
                 text-align: center;
-                padding: 22px 18px;
+                padding: 20px 16px;
             }
 
             .research-label::before {
@@ -570,6 +600,65 @@
 
             .research-title {
                 font-size: 1rem;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .glass-section {
+                padding: 18px 16px;
+            }
+
+            .matrix-widget-container iframe {
+                height: 240px !important;
+            }
+
+            #visitorInfo {
+                font-size: 0.73rem;
+                max-height: 220px;
+            }
+
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+
+            .video-container {
+                border-radius: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.75rem;
+            }
+
+            .subtitle {
+                font-size: 0.7rem;
+                letter-spacing: 1.5px;
+            }
+
+            header {
+                padding: 36px 16px 30px;
+            }
+
+            .research-icon {
+                font-size: 1.8rem;
+            }
+
+            .research-title {
+                font-size: 0.95rem;
+            }
+
+            .social-link {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -864,6 +953,7 @@
         // Manually pin a specific video ID (e.g. unlisted). Set to '' to use auto-detection.
         const FEATURED_VIDEO_ID = '';
         const YT_CACHE_KEY = 'yt_last_video_id';
+        const YT_CACHE_EXPIRY = 12 * 60 * 60 * 1000; // 12 hours
 
         function embedVideo(videoId) {
             document.getElementById('video-wrapper').innerHTML =
@@ -928,8 +1018,20 @@
 
             if (FEATURED_VIDEO_ID) {
                 localStorage.setItem(YT_CACHE_KEY, FEATURED_VIDEO_ID);
+                localStorage.setItem(YT_CACHE_KEY + '_timestamp', Date.now().toString());
                 embedVideo(FEATURED_VIDEO_ID);
                 return;
+            }
+
+            // Cache-first: serve immediately if fresh enough
+            const cachedId = localStorage.getItem(YT_CACHE_KEY);
+            const cacheTimestamp = localStorage.getItem(YT_CACHE_KEY + '_timestamp');
+            if (cachedId && cacheTimestamp) {
+                const cacheAge = Date.now() - parseInt(cacheTimestamp, 10);
+                if (cacheAge < YT_CACHE_EXPIRY) {
+                    embedVideo(cachedId);
+                    return;
+                }
             }
 
             try {
@@ -940,7 +1042,9 @@
                 // Try the first two videos, pick the first embeddable one.
                 for (const id of videoIds.slice(0, 2)) {
                     if (await isVideoEmbeddable(id)) {
+                        // Persist to cache immediately on first success
                         localStorage.setItem(YT_CACHE_KEY, id);
+                        localStorage.setItem(YT_CACHE_KEY + '_timestamp', Date.now().toString());
                         embedVideo(id);
                         return;
                     }
@@ -948,6 +1052,7 @@
 
                 throw new Error('No embeddable videos found');
             } catch (error) {
+                // Fallback: use any cached ID regardless of age
                 const cached = localStorage.getItem(YT_CACHE_KEY);
                 if (cached) {
                     embedVideo(cached);
