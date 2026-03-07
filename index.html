@@ -891,8 +891,9 @@
             }
 
             try {
+                const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`;
                 const response = await fetch(
-                    `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`
+                    `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`
                 );
                 if (!response.ok) throw new Error('Feed unavailable');
 
