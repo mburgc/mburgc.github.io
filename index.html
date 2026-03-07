@@ -861,32 +861,63 @@
 
         // YouTube Latest Video
         const youtubeChannelId = 'UCdGaa7KjkL7o58LU1jQ3SRA';
+        // Manually pin a specific video ID (e.g. unlisted). Set to '' to use auto-detection.
+        const FEATURED_VIDEO_ID = '';
+        const YT_CACHE_KEY = 'yt_last_video_id';
+
+        function embedVideo(videoId) {
+            document.getElementById('video-wrapper').innerHTML =
+                `<div class="video-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen="" loading="lazy"></iframe></div>`;
+        }
+
+        async function isVideoEmbeddable(videoId) {
+            try {
+                const res = await fetch(
+                    `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+                );
+                return res.ok;
+            } catch {
+                return false;
+            }
+        }
 
         async function getLatestYouTubeVideo() {
             const videoWrapper = document.getElementById('video-wrapper');
-            
+
+            if (FEATURED_VIDEO_ID) {
+                localStorage.setItem(YT_CACHE_KEY, FEATURED_VIDEO_ID);
+                embedVideo(FEATURED_VIDEO_ID);
+                return;
+            }
+
             try {
                 const response = await fetch(
                     `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`
                 );
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch video data');
-                }
+                if (!response.ok) throw new Error('Feed unavailable');
 
                 const data = await response.json();
-                
-                if (!data.items || data.items.length === 0) {
-                    throw new Error('No videos found');
+                if (!data.items || data.items.length === 0) throw new Error('No videos found');
+
+                // Try latest, then penultimate if not embeddable.
+                for (const item of data.items.slice(0, 2)) {
+                    const videoId = item.link.split('v=')[1];
+                    if (await isVideoEmbeddable(videoId)) {
+                        localStorage.setItem(YT_CACHE_KEY, videoId);
+                        embedVideo(videoId);
+                        return;
+                    }
                 }
 
-                const latestVideo = data.items[0];
-                const videoId = latestVideo.link.split('v=')[1];
-
-                videoWrapper.innerHTML = `<div class="video-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen="" loading="lazy"></iframe></div>`;
-
+                throw new Error('No embeddable videos found');
             } catch (error) {
-                videoWrapper.innerHTML = '<p style="color: #999;">Could not load latest video. Please check back later.</p>';
+                // RSS failed — use the last known working video from cache.
+                const cached = localStorage.getItem(YT_CACHE_KEY);
+                if (cached) {
+                    embedVideo(cached);
+                } else {
+                    videoWrapper.innerHTML = '<p style="color: #999;">Could not load latest video. Please check back later.</p>';
+                }
                 console.error("Error fetching YouTube video:", error);
             }
         }
