@@ -881,6 +881,48 @@
             }
         }
 
+        // Parse YouTube Atom XML feed and extract video IDs.
+        function parseVideoIds(xmlText) {
+            const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+            const entries = doc.querySelectorAll('entry');
+            const ids = [];
+            for (const entry of entries) {
+                const videoIdEl = entry.getElementsByTagName('yt:videoId')[0];
+                if (videoIdEl) ids.push(videoIdEl.textContent);
+            }
+            return ids;
+        }
+
+        // Attempt to fetch the YouTube RSS feed through multiple CORS proxies.
+        async function fetchYouTubeFeed() {
+            const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`;
+            const proxies = [
+                (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                (url) => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`
+            ];
+
+            for (const proxy of proxies) {
+                try {
+                    const res = await fetch(proxy(feedUrl));
+                    if (!res.ok) continue;
+
+                    const contentType = res.headers.get('content-type') || '';
+                    // allorigins returns raw XML; rss2json returns JSON.
+                    if (contentType.includes('json')) {
+                        const data = await res.json();
+                        if (data.items && data.items.length > 0) {
+                            return data.items.map(i => i.link.split('v=')[1]).filter(Boolean);
+                        }
+                    } else {
+                        const xml = await res.text();
+                        const ids = parseVideoIds(xml);
+                        if (ids.length > 0) return ids;
+                    }
+                } catch { /* try next proxy */ }
+            }
+            return [];
+        }
+
         async function getLatestYouTubeVideo() {
             const videoWrapper = document.getElementById('video-wrapper');
 
@@ -891,33 +933,26 @@
             }
 
             try {
-                const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`;
-                const response = await fetch(
-                    `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`
-                );
-                if (!response.ok) throw new Error('Feed unavailable');
+                const videoIds = await fetchYouTubeFeed();
 
-                const data = await response.json();
-                if (!data.items || data.items.length === 0) throw new Error('No videos found');
+                if (videoIds.length === 0) throw new Error('No videos found from any source');
 
-                // Try latest, then penultimate if not embeddable.
-                for (const item of data.items.slice(0, 2)) {
-                    const videoId = item.link.split('v=')[1];
-                    if (await isVideoEmbeddable(videoId)) {
-                        localStorage.setItem(YT_CACHE_KEY, videoId);
-                        embedVideo(videoId);
+                // Try the first two videos, pick the first embeddable one.
+                for (const id of videoIds.slice(0, 2)) {
+                    if (await isVideoEmbeddable(id)) {
+                        localStorage.setItem(YT_CACHE_KEY, id);
+                        embedVideo(id);
                         return;
                     }
                 }
 
                 throw new Error('No embeddable videos found');
             } catch (error) {
-                // RSS failed — use the last known working video from cache.
                 const cached = localStorage.getItem(YT_CACHE_KEY);
                 if (cached) {
                     embedVideo(cached);
                 } else {
-                    videoWrapper.innerHTML = '<p style="color: #999;">Could not load latest video. Please check back later.</p>';
+                    videoWrapper.innerHTML = '<p style="color: var(--star-dim);">Could not load latest video.</p>';
                 }
                 console.error("Error fetching YouTube video:", error);
             }
