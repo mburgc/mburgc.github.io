@@ -29,7 +29,21 @@ a:hover{background:linear-gradient(135deg,rgba(220,20,60,0.2),rgba(220,20,60,0.1
 a:hover .arrow{opacity:1;transform:translateX(5px)}
 .back{color:var(--crimson);text-decoration:none;margin-bottom:30px;display:inline-flex;align-items:center;gap:10px;transition:all 0.3s}
 .back:hover{text-shadow:0 0 15px var(--crimson-glow)}
-@media(max-width:600px){h1{font-size:1.8rem}a{padding:15px}.num{font-size:1.2rem}}
+.physical-card{margin:25px 0;position:relative}
+.physical-card a{display:flex;align-items:center;gap:18px;padding:16px 22px;background:linear-gradient(135deg,rgba(220,20,60,0.08),rgba(26,26,26,0.9));border:1px solid rgba(220,20,60,0.25);border-radius:12px;text-decoration:none;color:var(--gray-200);transition:all 0.35s;overflow:hidden}
+.physical-card a::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(220,20,60,0.06),transparent);transition:left 0.6s}
+.physical-card a:hover::before{left:100%}
+.physical-card a:hover{border-color:var(--crimson);box-shadow:0 0 35px rgba(220,20,60,0.2);transform:translateY(-3px)}
+.phys-content{display:flex;align-items:center;gap:18px;flex:1;position:relative;z-index:1}
+.phys-icon{width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(220,20,60,0.2),rgba(220,20,60,0.08));border-radius:10px;font-size:1.4rem;color:var(--crimson);flex-shrink:0}
+.phys-info{flex:1}
+.phys-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--crimson);opacity:0.7;margin-bottom:2px}
+.phys-title{font-size:0.95rem;font-weight:600;color:var(--white)}
+.phys-sub{font-size:0.75rem;color:var(--gray-200);opacity:0.6}
+.phys-arrow{color:var(--crimson);opacity:0;transition:all 0.3s;position:relative;z-index:1}
+.physical-card a:hover .phys-arrow{opacity:1;transform:translateX(4px)}
+.phys-badge{position:absolute;top:8px;right:10px;font-size:0.55rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(220,20,60,0.6);z-index:1}
+@media(max-width:600px){h1{font-size:1.8rem}a{padding:15px}.num{font-size:1.2rem}.phys-icon{width:44px;height:44px;font-size:1.1rem}.phys-title{font-size:0.85rem}}
 </style>
 </head>
 <body>
@@ -42,6 +56,23 @@ a:hover .arrow{opacity:1;transform:translateX(5px)}
 <a href="es/" class="btn btn-es"><i class="fas fa-book"></i>Español</a>
 <a href="en/" class="btn btn-en"><i class="fas fa-book-open"></i>English</a>
 </div>
+
+<!-- Physical copy -->
+<div class="physical-card">
+<a href="https://www.amazon.com/dp/B0GTGBRS7W" target="_blank" rel="noopener noreferrer">
+<div class="phys-content">
+<div class="phys-icon"><i class="fas fa-book"></i></div>
+<div class="phys-info">
+<div class="phys-label">Physical Copy</div>
+<div class="phys-title">Red Team Logbook</div>
+<div class="phys-sub">Modern Linux Kernel Exploitation</div>
+</div>
+<div class="phys-arrow"><i class="fas fa-arrow-right"></i></div>
+</div>
+<div class="phys-badge"><i class="fab fa-amazon"></i> amazon</div>
+</a>
+</div>
+
 <ul>
 <li><a href="es/01-introduccion.html"><span class="num">01</span><span class="name">Introducción</span><i class="fas fa-chevron-right arrow"></i></a></li>
 <li><a href="es/02-clases-vulnerabilidades.html"><span class="num">02</span><span class="name">Clases de Vulnerabilidades</span><i class="fas fa-chevron-right arrow"></i></a></li>
