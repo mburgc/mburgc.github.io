@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'BitacoraRedTeam/**'
+      - 'bitacora/**'
       - '.github/workflows/deploy-bitacora.yml'
 
 permissions:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Build HTML
         run: |
-          cd BitacoraRedTeam
+          cd bitacora
           python build.py
 
       - name: Upload artifact
