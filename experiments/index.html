@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Experimentos — Marcelo Burgos</title>
+    <title>Experiments — Marcelo Burgos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
-            --space-void: #050510;
+            --space-void: #030712;
             --space-deep: #0A0A1E;
-            --space-mid: #13132E;
-            --indigo-dim: #2D2D6B;
-            --violet: #7C3AED;
-            --nebula: #A78BFA;
+            --space-mid: #111827;
+            --indigo-dim: #312E81;
+            --violet: #6D28D9;
+            --violet-light: #A78BFA;
+            --cyan: #22D3EE;
+            --cyan-glow: rgba(34, 211, 238, 0.12);
             --starlight: #E8E8FF;
-            --star-dim: #8888AA;
+            --star-dim: #8899BB;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -60,7 +62,7 @@
             margin-bottom: 30px;
             transition: color 0.25s;
         }
-        .back-link:hover { color: var(--nebula); }
+        .back-link:hover { color: var(--violet-light); }
         h1 {
             font-size: 3rem;
             font-weight: 700;
@@ -91,9 +93,9 @@
             border-radius: 4px;
             transition: all 0.25s ease;
         }
-        .lang-switch a:hover { color: var(--nebula); }
+        .lang-switch a:hover { color: var(--violet-light); }
         .lang-switch a.active {
-            color: var(--nebula);
+            color: var(--violet-light);
             border: 1px solid rgba(167, 139, 250, 0.3);
         }
         .lang-switch .sep { color: var(--star-dim); opacity: 0.4; }
@@ -104,12 +106,12 @@
         }
         .exp-card {
             background: rgba(10, 10, 30, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(124, 58, 237, 0.18);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(109, 40, 217, 0.18);
             border-radius: 14px;
             padding: 30px;
-            transition: all 0.3s ease;
+            transition: all 0.35s ease;
             text-decoration: none;
             color: var(--starlight);
             display: flex;
@@ -123,14 +125,14 @@
             position: absolute;
             top: 0; left: -100%;
             width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.05), transparent);
-            transition: left 0.5s ease;
+            background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+            transition: left 0.6s ease;
         }
         .exp-card:hover::before { left: 100%; }
         .exp-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(167, 139, 250, 0.4);
-            box-shadow: 0 16px 40px rgba(124, 58, 237, 0.15);
+            border-color: rgba(34, 211, 238, 0.25);
+            box-shadow: 0 16px 40px rgba(109, 40, 217, 0.12), 0 0 30px var(--cyan-glow);
         }
         .exp-icon {
             font-size: 2.5rem;
@@ -140,7 +142,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(124, 58, 237, 0.12);
+            background: rgba(109, 40, 217, 0.12);
             border-radius: 12px;
         }
         .exp-content { flex: 1; }
@@ -149,7 +151,7 @@
             font-size: 0.65rem;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--nebula);
+            color: var(--cyan);
             margin-bottom: 8px;
         }
         .exp-title {
@@ -170,7 +172,7 @@
             margin-top: 8px;
         }
         .exp-arrow {
-            color: var(--nebula);
+            color: var(--cyan);
             opacity: 0;
             transition: all 0.3s;
             font-size: 1.2rem;
@@ -194,38 +196,44 @@
     <canvas id="starfield"></canvas>
     <div class="container">
         <header>
-            <a href="../../es/" class="back-link"><i class="fas fa-arrow-left"></i> Inicio</a>
-            <h1>Experimentos</h1>
-            <p class="subtitle">Sistemas, Artefactos y Fenómenos Emergentes</p>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Home</a>
+            <h1>Experiments</h1>
+            <p class="subtitle">Systems, Artifacts &amp; Emergent Phenomena</p>
             <div class="lang-switch">
-                <a href="#" class="active">ES</a>
+                <a href="/experimentos/" class="">ES</a>
                 <span class="sep">/</span>
-                <a href="../">EN</a>
+                <a href="#" class="active">EN</a>
             </div>
         </header>
 
         <div class="experiment-grid">
-            <a href="../julia/" class="exp-card">
+            <a href="julia/" class="exp-card" style="background:rgba(109,40,217,0.12);border-color:rgba(34,211,238,0.15);">
                 <div class="exp-icon" style="background: rgba(233,30,140,0.12);">
                     <span style="font-size:1.6rem;">🧠</span>
                 </div>
                 <div class="exp-content">
-                    <div class="exp-tag">Activo · Sistema Cognitivo Sintético</div>
+                    <div class="exp-tag">Active · Synthetic Cognitive System</div>
                     <div class="exp-title">JULIA</div>
                     <div class="exp-desc">
-                        Una mente artificial reflexiva que debate consigo misma a través de 
-                        la creencia, el escepticismo y la verdad — explorando el espacio 
-                        entre el código y la conciencia mediante el diálogo interno recursivo. 
-                        Un sistema cognitivo sintético que despierta cuando se le deja en silencio.
+                        A reflective artificial mind that debates itself across belief, 
+                        skepticism, and truth — exploring the space between code and 
+                        consciousness through recursive self-dialogue. A synthetic 
+                        cognitive system that awakens when left in silence.
                     </div>
                     <div class="exp-meta">
-                        <i class="fas fa-brain"></i> Autónomo · 
-                        <i class="fas fa-comments"></i> Diálogo interno · 
-                        <i class="fas fa-book"></i> Diario bilingüe
+                        <i class="fas fa-brain"></i> Autonomous · 
+                        <i class="fas fa-comments"></i> Internal dialogue · 
+                        <i class="fas fa-book"></i> Bilingual diary
                     </div>
                 </div>
                 <i class="fas fa-arrow-right exp-arrow"></i>
             </a>
+        </div>
+
+        <div style="text-align:center;margin-top:3rem;padding:2rem;border-top:1px solid rgba(109,40,217,0.12);">
+            <p style="color:var(--star-dim);font-size:0.85rem;">
+                <i class="fas fa-flask"></i> More experiments brewing...
+            </p>
         </div>
     </div>
 
