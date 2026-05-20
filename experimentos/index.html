@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Experiments — Marcelo Burgos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --space-void: #050510;
+            --space-deep: #0A0A1E;
+            --space-mid: #13132E;
+            --indigo-dim: #2D2D6B;
+            --violet: #7C3AED;
+            --nebula: #A78BFA;
+            --starlight: #E8E8FF;
+            --star-dim: #8888AA;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--space-void);
+            color: var(--starlight);
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.8;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        #starfield {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        header {
+            text-align: center;
+            padding: 80px 40px 50px;
+            margin-bottom: 50px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--star-dim);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            transition: color 0.25s;
+        }
+        .back-link:hover { color: var(--nebula); }
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--starlight);
+            margin-bottom: 15px;
+        }
+        .subtitle {
+            color: var(--star-dim);
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .experiment-grid {
+            display: grid;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .exp-card {
+            background: rgba(10, 10, 30, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(124, 58, 237, 0.18);
+            border-radius: 14px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--starlight);
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+        .exp-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.05), transparent);
+            transition: left 0.5s ease;
+        }
+        .exp-card:hover::before { left: 100%; }
+        .exp-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(167, 139, 250, 0.4);
+            box-shadow: 0 16px 40px rgba(124, 58, 237, 0.15);
+        }
+        .exp-icon {
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(124, 58, 237, 0.12);
+            border-radius: 12px;
+        }
+        .exp-content { flex: 1; }
+        .exp-tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--nebula);
+            margin-bottom: 8px;
+        }
+        .exp-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--starlight);
+        }
+        .exp-desc {
+            color: var(--star-dim);
+            font-size: 0.88rem;
+            margin-bottom: 4px;
+        }
+        .exp-meta {
+            font-size: 0.75rem;
+            color: var(--star-dim);
+            opacity: 0.6;
+            margin-top: 8px;
+        }
+        .exp-arrow {
+            color: var(--nebula);
+            opacity: 0;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+            align-self: center;
+        }
+        .exp-card:hover .exp-arrow {
+            opacity: 1;
+            transform: translateX(6px);
+        }
+        @media (max-width: 768px) {
+            .container { padding: 20px 15px; }
+            h1 { font-size: 2rem; }
+            header { padding: 40px 20px 30px; }
+            .exp-card { flex-direction: column; padding: 20px; }
+            .exp-icon { width: 50px; height: 50px; font-size: 2rem; }
+            .exp-arrow { align-self: flex-end; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starfield"></canvas>
+    <div class="container">
+        <header>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            <h1>Experiments</h1>
+            <p class="subtitle">Systems, Artifacts &amp; Emergent Phenomena</p>
+        </header>
+
+        <div class="experiment-grid">
+            <a href="julia/" class="exp-card">
+                <div class="exp-icon" style="background: rgba(233,30,140,0.12);">
+                    <span style="font-size:1.6rem;">🧠</span>
+                </div>
+                <div class="exp-content">
+                    <div class="exp-tag">Active · Synthetic Cognitive System</div>
+                    <div class="exp-title">JULIA</div>
+                    <div class="exp-desc">
+                        A reflective artificial mind that debates itself across belief, 
+                        skepticism, and truth — exploring the space between code and 
+                        consciousness through recursive self-dialogue. A synthetic 
+                        cognitive system that awakens when left in silence.
+                    </div>
+                    <div class="exp-meta">
+                        <i class="fas fa-brain"></i> Autonomous · 
+                        <i class="fas fa-comments"></i> Internal dialogue · 
+                        <i class="fas fa-book"></i> Bilingual diary
+                    </div>
+                </div>
+                <i class="fas fa-arrow-right exp-arrow"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            function initStars() {
+                stars = [];
+                const count = Math.floor((canvas.width * canvas.height) / 9000);
+                for (let i = 0; i < count; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                        r: Math.random() * 1.2 + 0.2, base: Math.random() * 0.6 + 0.1,
+                        speed: Math.random() * 0.008 + 0.003, phase: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+            let t = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                t += 0.016;
+                for (const s of stars) {
+                    const opacity = s.base + Math.sin(t * s.speed * 60 + s.phase) * 0.25;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(232, 232, 255, ${Math.max(0, Math.min(1, opacity))})`;
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+            window.addEventListener('resize', () => { resize(); initStars(); });
+            resize(); initStars(); draw();
+        })();
+    </script>
+</body>
+</html>
