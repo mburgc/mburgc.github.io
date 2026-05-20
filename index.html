@@ -1129,7 +1129,12 @@
                 redditWrapper.classList.remove('reddit-post-loading');
 
             } catch (error) {
-                redditWrapper.innerHTML = '<p style="color: #999; font-size: 0.85rem;">Could not load Reddit post</p>';
+                // Fallback manual post
+                redditWrapper.innerHTML = `
+                    <h3>🔥 Featured Post</h3>
+                    <a href="https://www.reddit.com/r/pwnagotchi/comments/1kchsjr/toxic_update_jail_is_the_limit/" target="_blank" rel="noopener noreferrer">Toxic Update: Jail is the Limit</a>
+                    <div class="reddit-post-meta">⬆️ r/pwnagotchi</div>
+                `;
                 redditWrapper.classList.remove('reddit-post-loading');
                 console.error("Error fetching Reddit post:", error);
             }
