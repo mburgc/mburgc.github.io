@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Marcelo Burgos - Portfolio</title>
+    <title>Marcelo Burgos - Portafolio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,6 @@
             --starlight: #E8E8FF;
             --star-dim: #8888AA;
             --star-ghost: rgba(124, 58, 237, 0.06);
-            /* legacy aliases kept for components not yet updated */
             --primary-color: #7C3AED;
             --secondary-color: #13132E;
             --accent-color: #A78BFA;
@@ -466,7 +465,6 @@
             border-radius: 8px !important;
         }
 
-        /* Recent Research Section */
         .research-highlight {
             margin: -30px auto 40px auto;
             max-width: 800px;
@@ -704,26 +702,25 @@
     <div class="container">
         <header class="animate__animated animate__fadeInDown">
             <h1 class="title">Marcelo Burgos</h1>
-            <p class="subtitle" id="slogan">Solutions and Science</p>
+            <p class="subtitle" id="slogan">Soluciones y Ciencia</p>
             <div class="lang-switch">
-                <a href="/es/" class="">ES</a>
+                <a href="#" class="active">ES</a>
                 <span class="sep">/</span>
-                <a href="#" class="active">EN</a>
+                <a href="/">EN</a>
             </div>
             <br>
             <a href="/bitacora/" class="manual-btn"><i class="fas fa-book-open"></i>Bitácora Red Team</a>
             <a href="/experimentos/" class="manual-btn" style="background:rgba(233,30,140,0.12);border-color:rgba(233,30,140,0.4);"><i class="fas fa-flask"></i>Experimentos</a>
         </header>
 
-        <!-- Recent Research Highlight -->
         <section class="research-highlight animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
             <a href="https://zenodo.org/records/18228132" class="research-card" target="_blank" rel="noopener noreferrer">
                 <div class="research-pulse"></div>
                 <i class="fas fa-flask research-icon"></i>
                 <div class="research-content">
-                    <div class="research-label">Recent Research</div>
+                    <div class="research-label">Investigación Reciente</div>
                     <h3 class="research-title">Template-Free Geometric Reconstruction of Gravitational-Wave Events</h3>
-                    <span class="research-source"><i class="fas fa-external-link-alt"></i> Published on Zenodo</span>
+                    <span class="research-source"><i class="fas fa-external-link-alt"></i> Publicado en Zenodo</span>
                 </div>
                 <i class="fas fa-arrow-right research-arrow"></i>
             </a>
@@ -732,12 +729,12 @@
         <div class="main-content">
             <div class="sidebar">
                 <section id="about" class="animate__animated glass-section">
-                    <h2>About Me</h2>
-                    <p>I work at the convergence of mathematics, geometry, and computation, transforming abstract structures into functional systems. My approach blends rigorous analysis with intuition forged through experimentation, combining a hacker’s pragmatism, a scientist’s skepticism, and an engineer’s precision. I explore complex systems by decomposing them into first principles, revealing hidden patterns and leveraging constraints as tools for innovation.</p>
+                    <h2>Sobre Mí</h2>
+                    <p>Trabajo en la convergencia de las matemáticas, la geometría y la computación, transformando estructuras abstractas en sistemas funcionales. Mi enfoque combina el análisis riguroso con la intuición forjada a través de la experimentación, fusionando el pragmatismo de un hacker, el escepticismo de un científico y la precisión de un ingeniero. Exploro sistemas complejos descomponiéndolos hasta sus primeros principios, revelando patrones ocultos y usando las limitaciones como herramientas para la innovación.</p>
                 </section>
 
                 <section id="social-media" class="animate__animated glass-section">
-                    <h2>Connect</h2>
+                    <h2>Conectar</h2>
                     <div class="social-links">
                         <a href="https://github.com/mburgc/mburgc" class="social-link" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/hackcocaine/" class="social-link" target="_blank" rel="noopener" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
@@ -748,11 +745,11 @@
                     </div>
 
                     <div id="reddit-post-wrapper" class="reddit-post reddit-post-loading">
-                        Loading latest post...
+                        Cargando última publicación...
                     </div>
 
                     <div class="matrix-widget-container">
-                        <h3>💬 Matrix Community</h3>
+                        <h3>💬 Comunidad Matrix</h3>
                         <iframe
                             src="https://matrix.to/#/#eXcomm:matrix.org"
                             title="Matrix eXcomm Room">
@@ -763,23 +760,23 @@
 
             <div class="content">
                 <section id="video-section" class="animate__animated">
-                    <h2>Latest Video</h2>
-                    <div id="video-wrapper" class="video-loading">Loading latest video...</div>
+                    <h2>Último Video</h2>
+                    <div id="video-wrapper" class="video-loading">Cargando último video...</div>
                 </section>
 
                 <section id="repositories" class="animate__animated">
-                    <h2>My Repositories</h2>
+                    <h2>Mis Repositorios</h2>
                     <div class="card-container" id="repo-container">
-                        <p>Loading repositories...</p>
+                        <p>Cargando repositorios...</p>
                     </div>
                 </section>
                 
                 <section id="visitor-section" class="animate__animated glass-section">
-                    <h2>Visitor Information</h2>
-                    <p>This is what I know about you:</p>
-                    <pre id="visitorInfo">Loading information...</pre>
+                    <h2>Información del Visitante</h2>
+                    <p>Esto es lo que sé sobre ti:</p>
+                    <pre id="visitorInfo">Cargando información...</pre>
                     <small>
-                        This information is displayed for demonstration purposes only and <strong>is not stored or sent to any server</strong> (except the IP, which is obtained anonymously via public API). No cookies or any tracking methods are used.
+                        Esta información se muestra solo con fines demostrativos y <strong>no se almacena ni envía a ningún servidor</strong> (excepto la IP, que se obtiene anónimamente a través de una API pública). No se utilizan cookies ni métodos de seguimiento.
                     </small>
                 </section>
             </div>
@@ -787,7 +784,6 @@
     </div>
 
     <script>
-        // Lightweight canvas starfield
         (function () {
             const canvas = document.getElementById('starfield');
             const ctx = canvas.getContext('2d');
@@ -835,16 +831,16 @@
 
         // Dynamic Slogans
         const slogans = [
-            'Creative Developer | Security & Privacy Advocate',
-            'Building Secure Solutions',
-            'Embrace Knowledge',
-            'Creative Thinking',
-            'Security & Privacy First',
-            'Innovative Problem Solver',
-            'Web Developer | Security Researcher',
-            'Push the Boundaries of Tech',
-            'Privacy Matters',
-            'Code with Purpose'
+            'Desarrollador Creativo | Privacidad y Seguridad',
+            'Construyendo Soluciones Seguras',
+            'Abraza el Conocimiento',
+            'Pensamiento Creativo',
+            'Seguridad y Privacidad Primero',
+            'Solucionador Innovador de Problemas',
+            'Desarrollador Web | Investigador de Seguridad',
+            'Empuja los Límites de la Tecnología',
+            'La Privacidad Importa',
+            'Código con Propósito'
         ];
 
         let currentSloganIndex = 0;
@@ -853,7 +849,6 @@
             const sloganElement = document.getElementById('slogan');
             if (!sloganElement) return;
 
-            // Pick a random slogan that's different from current
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * slogans.length);
@@ -861,11 +856,9 @@
             
             currentSloganIndex = randomIndex;
 
-            // Add fade-out animation
             sloganElement.classList.remove('fade-in');
             sloganElement.classList.add('fade-out');
 
-            // Change text and add fade-in animation
             setTimeout(() => {
                 sloganElement.textContent = slogans[currentSloganIndex];
                 sloganElement.classList.remove('fade-out');
@@ -873,7 +866,6 @@
             }, 250);
         }
 
-        // Change slogan immediately on page load, then every 5 seconds
         changeSlogon();
         setInterval(changeSlogon, 5000);
 
@@ -904,16 +896,15 @@
                 }
                 let repos = await response.json();
 
-                // Filter out specific repositories
                 const excludedRepos = ['mburgc', 'mburgc.github.io'];
                 repos = repos.filter(repo => !excludedRepos.includes(repo.name));
 
-                repoContainer.innerHTML = ''; // Clear loading message
+                repoContainer.innerHTML = '';
 
                 repos.forEach((repo, index) => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    if (index === 0) { // Highlight the first (most recent) repo
+                    if (index === 0) {
                         card.classList.add('highlight-card');
                     }
 
@@ -930,7 +921,7 @@
                     }
 
                     const description = document.createElement('p');
-                    description.textContent = repo.description || 'No description available.';
+                    description.textContent = repo.description || 'Sin descripción disponible.';
 
                     link.appendChild(title);
                     link.appendChild(description);
@@ -939,7 +930,7 @@
                 });
 
             } catch (error) {
-                repoContainer.innerHTML = '<p>Could not fetch repositories at this time. Please try again later.</p>';
+                repoContainer.innerHTML = '<p>No se pudieron cargar los repositorios en este momento. Intenta de nuevo más tarde.</p>';
                 console.error("Error fetching GitHub repos:", error);
             }
         }
@@ -948,7 +939,7 @@
         async function getVisitorData() {
             const infoDiv = document.getElementById('visitorInfo');
             
-            let ip = 'Unknown';
+            let ip = 'Desconocida';
             try {
                 const response = await fetch('https://api64.ipify.org?format=json');
                 if (response.ok) {
@@ -963,24 +954,24 @@
             const screenInfo = window.screen;
 
             const data = {
-                "IP Address": ip,
+                "Dirección IP": ip,
                 "User Agent": navigatorInfo.userAgent,
-                "Platform": navigatorInfo.platform,
-                "Language": navigatorInfo.language,
-                "Cookies Enabled": navigatorInfo.cookieEnabled,
-                "Screen Resolution": `${screenInfo.width}x${screenInfo.height}`,
-                "Color Depth": screenInfo.colorDepth,
-                "Time Zone": Intl.DateTimeFormat().resolvedOptions().timeZone || 'Not available',
-                "Connection Status": navigator.onLine ? 'Online' : 'Offline',
-                "CPU Cores": navigatorInfo.hardwareConcurrency || 'Not available',
-                "Device Memory (GB)": navigatorInfo.deviceMemory || 'Not available',
-                "Referrer": document.referrer || 'No referrer',
-                "Current Date & Time": new Date().toLocaleString()
+                "Plataforma": navigatorInfo.platform,
+                "Idioma": navigatorInfo.language,
+                "Cookies Habilitadas": navigatorInfo.cookieEnabled ? 'Sí' : 'No',
+                "Resolución de Pantalla": `${screenInfo.width}x${screenInfo.height}`,
+                "Profundidad de Color": screenInfo.colorDepth,
+                "Zona Horaria": Intl.DateTimeFormat().resolvedOptions().timeZone || 'No disponible',
+                "Estado de Conexión": navigator.onLine ? 'En línea' : 'Fuera de línea',
+                "Núcleos de CPU": navigatorInfo.hardwareConcurrency || 'No disponible',
+                "Memoria del Dispositivo (GB)": navigatorInfo.deviceMemory || 'No disponible',
+                "Referente": document.referrer || 'Sin referente',
+                "Fecha y Hora Actual": new Date().toLocaleString('es-CL')
             };
 
             let output = '';
             for (const [key, value] of Object.entries(data)) {
-                output += `${key.padEnd(20)}: ${value}\n`;
+                output += `${key.padEnd(25)}: ${value}\n`;
             }
 
             infoDiv.textContent = output;
@@ -992,10 +983,9 @@
 
         // YouTube Latest Video
         const youtubeChannelId = 'UCdGaa7KjkL7o58LU1jQ3SRA';
-        // Manually pin a specific video ID (e.g. unlisted). Set to '' to use auto-detection.
         const FEATURED_VIDEO_ID = '';
         const YT_CACHE_KEY = 'yt_last_video_id';
-        const YT_CACHE_EXPIRY = 12 * 60 * 60 * 1000; // 12 hours
+        const YT_CACHE_EXPIRY = 12 * 60 * 60 * 1000;
 
         function embedVideo(videoId) {
             document.getElementById('video-wrapper').innerHTML =
@@ -1013,7 +1003,6 @@
             }
         }
 
-        // Parse YouTube Atom XML feed and extract video IDs.
         function parseVideoIds(xmlText) {
             const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
             const entries = doc.querySelectorAll('entry');
@@ -1025,7 +1014,6 @@
             return ids;
         }
 
-        // Attempt to fetch the YouTube RSS feed through multiple CORS proxies.
         async function fetchYouTubeFeed() {
             const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`;
             const proxies = [
@@ -1039,7 +1027,6 @@
                     if (!res.ok) continue;
 
                     const contentType = res.headers.get('content-type') || '';
-                    // allorigins returns raw XML; rss2json returns JSON.
                     if (contentType.includes('json')) {
                         const data = await res.json();
                         if (data.items && data.items.length > 0) {
@@ -1050,7 +1037,7 @@
                         const ids = parseVideoIds(xml);
                         if (ids.length > 0) return ids;
                     }
-                } catch { /* try next proxy */ }
+                } catch { }
             }
             return [];
         }
@@ -1065,7 +1052,6 @@
                 return;
             }
 
-            // Cache-first: serve immediately if fresh enough
             const cachedId = localStorage.getItem(YT_CACHE_KEY);
             const cacheTimestamp = localStorage.getItem(YT_CACHE_KEY + '_timestamp');
             if (cachedId && cacheTimestamp) {
@@ -1081,10 +1067,8 @@
 
                 if (videoIds.length === 0) throw new Error('No videos found from any source');
 
-                // Try the first two videos, pick the first embeddable one.
                 for (const id of videoIds.slice(0, 2)) {
                     if (await isVideoEmbeddable(id)) {
-                        // Persist to cache immediately on first success
                         localStorage.setItem(YT_CACHE_KEY, id);
                         localStorage.setItem(YT_CACHE_KEY + '_timestamp', Date.now().toString());
                         embedVideo(id);
@@ -1094,12 +1078,11 @@
 
                 throw new Error('No embeddable videos found');
             } catch (error) {
-                // Fallback: use any cached ID regardless of age
                 const cached = localStorage.getItem(YT_CACHE_KEY);
                 if (cached) {
                     embedVideo(cached);
                 } else {
-                    videoWrapper.innerHTML = '<p style="color: var(--star-dim);">Could not load latest video.</p>';
+                    videoWrapper.innerHTML = '<p style="color: var(--star-dim);">No se pudo cargar el último video.</p>';
                 }
                 console.error("Error fetching YouTube video:", error);
             }
@@ -1110,19 +1093,17 @@
         // Reddit Latest Post
         const redditUsername = 'hackcocaine';
         const REDDIT_CACHE_KEY = 'reddit_top_post';
-        const REDDIT_CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+        const REDDIT_CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000;
 
         async function getLatestRedditPost() {
             const redditWrapper = document.getElementById('reddit-post-wrapper');
             
             try {
-                // Check if we have cached data
                 const cachedData = localStorage.getItem(REDDIT_CACHE_KEY);
                 const cacheTimestamp = localStorage.getItem(REDDIT_CACHE_KEY + '_timestamp');
                 
                 let topPost = null;
 
-                // If cache exists and is not expired, use it
                 if (cachedData && cacheTimestamp) {
                     const now = Date.now();
                     const cacheAge = now - parseInt(cacheTimestamp);
@@ -1132,7 +1113,6 @@
                     }
                 }
 
-                // If no valid cache, fetch fresh data
                 if (!topPost) {
                     const response = await fetch(
                         `https://corsproxy.io/?https://www.reddit.com/user/${redditUsername}/submitted.json?sort=top&limit=1`
@@ -1148,31 +1128,27 @@
                         throw new Error('No posts found');
                     }
 
-                    // Get the top upvoted post
                     topPost = data.data.children[0].data;
                     
-                    // Cache the data
                     localStorage.setItem(REDDIT_CACHE_KEY, JSON.stringify(topPost));
                     localStorage.setItem(REDDIT_CACHE_KEY + '_timestamp', Date.now().toString());
                 }
                 
-                // Extract post information
                 const title = topPost.title;
                 const link = `https://reddit.com${topPost.permalink}`;
                 const upvotes = topPost.score;
-                const pubDate = new Date(topPost.created_utc * 1000).toLocaleDateString();
+                const pubDate = new Date(topPost.created_utc * 1000).toLocaleDateString('es-CL');
 
                 redditWrapper.innerHTML = `
-                    <h3>🔥 Featured Post</h3>
+                    <h3>🔥 Publicación Destacada</h3>
                     <a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>
                     <div class="reddit-post-meta">⬆️ ${upvotes} • ${pubDate}</div>
                 `;
                 redditWrapper.classList.remove('reddit-post-loading');
 
             } catch (error) {
-                // Fallback manual post
                 redditWrapper.innerHTML = `
-                    <h3>🔥 Featured Post</h3>
+                    <h3>🔥 Publicación Destacada</h3>
                     <a href="https://www.reddit.com/r/pwnagotchi/comments/1kchsjr/toxic_update_jail_is_the_limit/" target="_blank" rel="noopener noreferrer">Toxic Update: Jail is the Limit</a>
                     <div class="reddit-post-meta">⬆️ r/pwnagotchi</div>
                 `;
