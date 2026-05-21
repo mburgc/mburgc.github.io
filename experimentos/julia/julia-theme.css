@@ -466,6 +466,61 @@ blockquote {
   margin-top: 2px;
 }
 
+/* ── Presences Grid ─────────────────────────────── */
+
+.presences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+}
+
+.presence-card {
+  background: linear-gradient(135deg, var(--violet-card), var(--violet-mid));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  transition: all 0.25s ease;
+}
+
+.presence-card:hover {
+  border-color: var(--border-rose);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(233, 30, 140, 0.08);
+}
+
+.presence-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.presence-name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--rose);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.presence-desc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+@media (max-width: 480px) {
+  .presences-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* ── Animation ─────────────────────────────────── */
 
 .fade-in {
