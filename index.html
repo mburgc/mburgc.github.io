@@ -60,9 +60,12 @@
         }
         
         header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            text-align: left;
             margin-bottom: 60px;
-            padding: 90px 40px 80px;
+            padding: 50px 44px;
             background: 
                 radial-gradient(ellipse 80% 60% at 50% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 70%),
                 radial-gradient(ellipse 60% 40% at 50% 0%, rgba(167, 139, 250, 0.08) 0%, transparent 60%),
@@ -75,6 +78,42 @@
                 inset 0 1px 0 rgba(167, 139, 250, 0.08);
             position: relative;
             overflow: hidden;
+        }
+
+        .header-portrait {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-portrait img {
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: 50% 22%;
+            border: 1px solid rgba(167, 139, 250, 0.32);
+            box-shadow: 
+                0 0 32px rgba(109, 40, 217, 0.22),
+                0 0 0 6px rgba(109, 40, 217, 0.07),
+                0 4px 20px rgba(0, 0, 0, 0.4);
+            display: block;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .header-portrait img:hover {
+            box-shadow: 
+                0 0 40px rgba(109, 40, 217, 0.3),
+                0 0 0 8px rgba(109, 40, 217, 0.1),
+                0 6px 24px rgba(0, 0, 0, 0.5);
+            transform: scale(1.02);
+        }
+
+        .header-text {
+            flex: 1;
+            position: relative;
+            z-index: 10;
+            min-width: 0;
         }
 
         header::before {
@@ -601,9 +640,21 @@
             }
 
             header {
-                padding: 44px 20px 38px;
+                flex-direction: column;
+                text-align: center;
+                padding: 36px 20px 32px;
                 margin-bottom: 24px;
                 border-radius: 14px;
+                gap: 18px;
+            }
+
+            .header-portrait img {
+                width: 96px;
+                height: 96px;
+            }
+
+            .header-text {
+                text-align: center;
             }
 
             .title {
@@ -710,16 +761,21 @@
 
     <div class="container">
         <header class="animate__animated animate__fadeInDown">
-            <h1 class="title">Marcelo Burgos</h1>
-            <p class="subtitle" id="slogan">Solutions and Science</p>
-            <div class="lang-switch">
-                <a href="/es/" class="">ES</a>
-                <span class="sep">/</span>
-                <a href="#" class="active">EN</a>
+            <div class="header-portrait">
+                <img src="images/marcelo-portrait.jpg" alt="Marcelo Burgos" width="112" height="112" loading="eager" decoding="async" />
             </div>
-            <br>
-            <a href="/bitacora/" class="manual-btn" style="background:rgba(109,40,217,0.12);border:1px solid rgba(109,40,217,0.4);"><i class="fas fa-book-open"></i>Red Team Logbook</a>
+            <div class="header-text">
+                <h1 class="title">Marcelo Burgos</h1>
+                <p class="subtitle" id="slogan">Solutions and Science</p>
+                <div class="lang-switch">
+                    <a href="/es/" class="">ES</a>
+                    <span class="sep">/</span>
+                    <a href="#" class="active">EN</a>
+                </div>
+                <br>
+                <a href="/bitacora/" class="manual-btn" style="background:rgba(109,40,217,0.12);border:1px solid rgba(109,40,217,0.4);"><i class="fas fa-book-open"></i>Red Team Logbook</a>
                 <a href="/experiments/" class="manual-btn" style="background:rgba(109,40,217,0.12);border:1px solid rgba(34,211,238,0.25);"><i class="fas fa-flask"></i>Experiments</a>
+            </div>
         </header>
 
         <!-- Recent Research Highlight -->
@@ -740,7 +796,9 @@
             <div class="sidebar">
                 <section id="about" class="animate__animated glass-section">
                     <h2>About Me</h2>
-                    <p>I design synthetic cognitive systems and explore the boundaries of machine consciousness — from the geometry of gravitational waves to the recursive self-dialogue of autonomous agents. My work blends mathematical foundations, security research, and emergent phenomena in artificial minds, approaching complex systems by decomposing them to first principles with a hacker's pragmatism, a scientist's skepticism, and an engineer's precision. Currently building <strong>JULIA</strong>, an experimental mind that debates itself across belief, skepticism, and truth.</p>
+                    <p><strong>Offensive Security Architect — AI Systems &amp; Adversarial Thinking | Research Director @ Hackfluency</strong></p>
+                    <p>I lead advanced Red Team &amp; OSINT operations for finance, retail and tech — web/mobile/IoT pentesting, malware &amp; exploit development, and manual code review across AWS/Azure/Kubernetes &amp; Docker. Senior Offensive Architect @ Ágil Chile; former Red Team &amp; CTI Leader @ BVS (2.8y), external reviewer @ 7ASecurity (Dublin) and AI Cyber Specialist @ Sepal AI (Los Angeles).</p>
+                    <p>CRTP · CEH · AWSE · CVSS v4 — OWASP/MSTG/WSTG, ATT&amp;CK, NIST/OSSTMM/PTES. Speaker @ BSides Chile, author of <a href="/bitacora/" style="color:var(--cyan);text-decoration:none;">Red Team LogBook</a>.</p>
                 </section>
 
                 <section id="social-media" class="animate__animated glass-section">
@@ -842,16 +900,15 @@
 
         // Dynamic Slogans
         const slogans = [
-            'Creative Developer | Security & Privacy Advocate',
-            'Building Secure Solutions',
-            'Embrace Knowledge',
-            'Creative Thinking',
-            'Security & Privacy First',
-            'Innovative Problem Solver',
-            'Web Developer | Security Researcher',
-            'Push the Boundaries of Tech',
-            'Privacy Matters',
-            'Code with Purpose'
+            'Offensive Security Architect — AI Systems & Adversarial Thinking',
+            'Research Director @ Hackfluency',
+            'Red Team & OSINT for Finance, Retail & Tech',
+            'Web · Mobile · IoT · Malware Lab · Cloud',
+            'Senior Offensive Architect @ Ágil Chile',
+            'Former 7ASecurity (Dublin) & Sepal AI (LA)',
+            'CRTP · CEH · AWSE · CVSS v4',
+            'Speaker @ BSides Chile',
+            'Author of Red Team LogBook'
         ];
 
         let currentSloganIndex = 0;
