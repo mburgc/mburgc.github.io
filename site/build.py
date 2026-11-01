@@ -134,7 +134,7 @@ def talk_html(item: dict, labels: dict) -> str:
 
 
 def group_html(group: dict, labels: dict) -> str:
-    sample = " · ".join(i["label"] for i in group["items"][:3])
+    sample = " · ".join(html.escape(i["label"]) for i in group["items"][:3])
     rest = len(group["items"]) - 3
     if rest > 0:
         sample += f" · +{rest}"
@@ -320,8 +320,13 @@ def render_work(lang: str, repos: list, videos: list, posts: list) -> str:
     sections = []
     for group in groups:
         items = "".join(
-            '<li>' + (f'<a href="{i["href"]}">{i["label"]}</a>' if i.get("href") else i["label"])
-            + (f'<span>{i["meta"]}</span>' if i.get("meta") else "")
+            '<li>'
+            + (
+                f'<a href="{html.escape(i["href"], quote=True)}">{html.escape(i["label"])}</a>'
+                if i.get("href")
+                else html.escape(i["label"])
+            )
+            + (f'<span>{html.escape(i["meta"])}</span>' if i.get("meta") else "")
             + "</li>"
             for i in group["items"]
         )
@@ -379,6 +384,14 @@ def render_work(lang: str, repos: list, videos: list, posts: list) -> str:
 {extra}
 {''.join(sections)}
     <a class="back" href="{back_href}">&larr; {back_label}</a>
+
+    <footer>
+      <a href="mailto:{LINKS['email']}">{LINKS['email']}</a>
+      <a href="{LINKS['github']}" rel="me noopener">GitHub</a>
+      <a href="{LINKS['linkedin']}" rel="me noopener">LinkedIn</a>
+      <a href="{LINKS['cv_pdf']}">CV (PDF)</a>
+      <span class="colophon">{L['colophon']}</span>
+    </footer>
   </main>
 </div>
 </body>
