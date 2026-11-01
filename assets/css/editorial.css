@@ -329,3 +329,6 @@ section{scroll-margin-top:24px}
   .margin-body{flex:1;min-height:0;overflow:auto}
 }
 
+
+/* `hidden` debe ganarle al display:flex del panel */
+.margin-idle[hidden],.margin-body[hidden]{display:none}

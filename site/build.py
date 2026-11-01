@@ -159,9 +159,8 @@ def group_preview(group: dict) -> dict:
         "kind": "group",
         "title": group["title"],
         "meta": group["meta"],
-        "text": group.get("text"),
         "items": group["items"],
-        "link": {"href": group["href"], "label": group["cta"]},
+        "link": {"href": group.get("source", group["href"]), "label": group["cta"]},
     }
 
 
@@ -328,7 +327,7 @@ def render_work(lang: str, repos: list, videos: list, posts: list) -> str:
         sections.append(
             f"""    <section aria-labelledby="g-{group['id']}">
       <h2 id="g-{group['id']}">{group['title']}</h2>
-      <p class="entry-meta" style="margin:12px 0 0">{group['meta']}</p>
+      <p class="entry-meta" style="margin:12px 0 0">{group['meta']} · <a href="{group['source']}">{group['cta']} &rarr;</a></p>
       <ul class="idx">{items}</ul>
     </section>"""
         )
@@ -339,10 +338,20 @@ def render_work(lang: str, repos: list, videos: list, posts: list) -> str:
     other_href = "/es/work/" if lang == "en" else "/work/"
     other_label = "ES" if lang == "en" else "EN"
     if lang == "en":
-        extra_text = f"Everything I publish, in one place: the {book['title']} ({book['meta'].lower()}), {julia['title']} ({julia['meta'].lower()}), public repositories, video and threads."
+        extra_text = (
+            f"Everything I publish, in one place: the {book['title']} "
+            f"({len(book['items'])} chapters, ES/EN), {julia['title']} "
+            f"({len(julia['items'])} entries, ES/EN), {len(repos)} public repositories, "
+            f"{len(videos)} videos and {len(posts)} Reddit threads."
+        )
         back_label = "Back to the CV"
     else:
-        extra_text = f"Todo lo que publico, en un solo lugar: la {book['title']} ({book['meta'].lower()}), {julia['title']} ({julia['meta'].lower()}), repositorios públicos, video e hilos."
+        extra_text = (
+            f"Todo lo que publico, en un solo lugar: la {book['title']} "
+            f"({len(book['items'])} capítulos, ES/EN), {julia['title']} "
+            f"({len(julia['items'])} entradas, ES/EN), {len(repos)} repositorios públicos, "
+            f"{len(videos)} videos y {len(posts)} hilos de Reddit."
+        )
         back_label = "Volver al CV"
     extra = f"""    <p class="lead" style="font-size:.95rem">{extra_text}</p>"""
 
