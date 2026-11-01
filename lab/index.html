@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab — What your browser reveals | Marcelo Burgos</title>
+<meta name="description" content="A small demonstration of what any website can read from your browser. Nothing is stored.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://mburgc.github.io/lab/">
+<link rel="stylesheet" href="/assets/css/editorial.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="shell shell--single">
+  <main id="main">
+    <header class="masthead" style="grid-template-columns:1fr">
+      <div>
+        <h1 style="font-size:1.5rem">Lab</h1>
+        <p class="role">What your browser reveals</p>
+      </div>
+    </header>
+
+    <section aria-labelledby="s-visitor">
+      <h2 id="s-visitor">Visitor information</h2>
+      <p class="lead" style="font-size:.95rem">This is what any page can read without asking. It is shown for demonstration only: <b>nothing is stored or sent anywhere except the IP lookup</b>, which goes to a public API.</p>
+      <pre class="data" id="visitorInfo">Loading information…</pre>
+      <p class="lab-note">No cookies, no analytics, no fingerprinting library. Close the tab and it is gone.</p>
+      <a class="back" href="/">&larr; Back to the CV</a>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var out = document.getElementById('visitorInfo');
+  var data = {
+    'User agent': navigator.userAgent,
+    'Platform': navigator.platform || 'n/a',
+    'Language': navigator.language,
+    'Languages': (navigator.languages || []).join(', '),
+    'Cookies enabled': navigator.cookieEnabled,
+    'Screen': screen.width + 'x' + screen.height,
+    'Viewport': window.innerWidth + 'x' + window.innerHeight,
+    'Colour depth': screen.colorDepth,
+    'Time zone': Intl.DateTimeFormat().resolvedOptions().timeZone || 'n/a',
+    'CPU cores': navigator.hardwareConcurrency || 'n/a',
+    'Device memory (GB)': navigator.deviceMemory || 'n/a',
+    'Online': navigator.onLine,
+    'Referrer': document.referrer || 'none'
+  };
+
+  function paint(ip) {
+    var lines = ['IP address'.padEnd(22) + ': ' + ip];
+    Object.keys(data).forEach(function (k) {
+      lines.push(k.padEnd(22) + ': ' + data[k]);
+    });
+    out.textContent = lines.join('\n');
+  }
+
+  paint('looking up…');
+  fetch('https://api64.ipify.org?format=json')
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function (j) { paint(j.ip); })
+    .catch(function () { paint('unavailable'); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+name: Build Bitácora
+
+# GitHub Pages publica desde la rama main (legacy), así que este workflow solo
+# compila los capítulos para verificar que el markdown no esté roto.
+# No sube artefactos ni despliega: hacerlo reemplazaría el sitio completo
+# por ./bitacora.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bitacora/**'
+      - '.github/workflows/build-bitacora.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install markdown==3.5
+
+      - name: Build HTML
+        run: |
+          cd bitacora
+          python build.py
