@@ -20,7 +20,8 @@
   var labels = {
     now: panel.dataset.labelNow || 'Now',
     preview: panel.dataset.labelPreview || 'Preview',
-    close: panel.dataset.labelClose || 'Close'
+    close: panel.dataset.labelClose || 'Close',
+    play: panel.dataset.labelPlay || 'Play'
   };
 
   var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -66,7 +67,7 @@
     }
 
     if (item.video) {
-      html += '<a class="poster" href="' + esc(item.link ? item.link.href : '#') + '" data-video="' + esc(item.video) + '" target="_blank" rel="noopener">'
+      html += '<a class="poster" href="' + esc(item.link ? item.link.href : '#') + '" data-video="' + esc(item.video) + '" target="_blank" rel="noopener" aria-label="' + esc(labels.play + ': ' + item.title) + '">'
         + '<img src="https://i.ytimg.com/vi/' + esc(item.video) + '/hqdefault.jpg" alt="" loading="lazy" decoding="async">'
         + '<span class="poster-play"><span>&#9654;</span></span></a>';
     }

@@ -51,12 +51,12 @@ HEAD = """<!doctype html>
 
 MARGIN = """
   <aside class="margin" id="margin-panel" aria-label="{peek}"
-         data-label-now="{now}" data-label-preview="{peek}" data-label-close="{close}">
+         data-label-now="{now}" data-label-preview="{peek}" data-label-close="{close}" data-label-play="{play}">
     <div class="margin-card" id="margin-card">
       <p class="margin-label"><span id="margin-label-text">{now}</span></p>
       <div class="margin-idle" id="margin-idle">
         <p class="idle-note">{idle_note}</p>
-        <a class="poster" data-video="{video}" href="https://www.youtube.com/live/{video}" target="_blank" rel="noopener">
+        <a class="poster" data-video="{video}" href="https://www.youtube.com/live/{video}" target="_blank" rel="noopener" aria-label="{play}: {video_label}">
           <img src="https://i.ytimg.com/vi/{video}/hqdefault.jpg" alt="" loading="lazy" decoding="async">
           <span class="poster-play"><span>&#9654;</span></span>
         </a>
@@ -291,6 +291,7 @@ def render(lang: str, repos: list, videos: list, posts: list) -> str:
         idle_hint=L["idle_hint"],
         video=video,
         video_label=next(t["title"] for t in c["talks"] if t.get("video")),
+        play=L["play"],
         index=L["index"],
         nav_profile=L["profile"],
         nav_exp=L["experience"],
