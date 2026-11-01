@@ -9,6 +9,15 @@
     "featured": true
   },
   {
+    "name": "SCATest",
+    "description": null,
+    "language": "Python",
+    "stars": 0,
+    "pushed": "2026-02-23",
+    "url": "https://github.com/mburgc/SCATest",
+    "featured": false
+  },
+  {
     "name": "engram.cloud",
     "description": "Cognitive architecture: LLM + knowledge graph + vector search, with Hebbian plasticity.",
     "language": "HTML",
@@ -27,6 +36,15 @@
     "featured": true
   },
   {
+    "name": "RobloxBlackList",
+    "description": null,
+    "language": "JavaScript",
+    "stars": 0,
+    "pushed": "2025-07-09",
+    "url": "https://github.com/mburgc/RobloxBlackList",
+    "featured": false
+  },
+  {
     "name": "PDFS",
     "description": "Keep your PDFs secure and private.",
     "language": "Python",
@@ -36,30 +54,12 @@
     "featured": true
   },
   {
-    "name": "SCATest",
-    "description": null,
-    "language": "Python",
-    "stars": 0,
-    "pushed": "2026-02-23",
-    "url": "https://github.com/mburgc/SCATest",
-    "featured": false
-  },
-  {
     "name": "twitchbots",
     "description": null,
     "language": "JavaScript",
     "stars": 0,
     "pushed": "2024-01-17",
     "url": "https://github.com/mburgc/twitchbots",
-    "featured": false
-  },
-  {
-    "name": "RobloxBlackList",
-    "description": null,
-    "language": "JavaScript",
-    "stars": 0,
-    "pushed": "2025-07-09",
-    "url": "https://github.com/mburgc/RobloxBlackList",
     "featured": false
   },
   {

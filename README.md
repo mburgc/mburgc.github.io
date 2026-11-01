@@ -39,6 +39,16 @@ python build.py     # writes the four HTML pages
 
 No dependencies. The HTML is generated, so edit `content.py`, never the output.
 
+To refresh the GitHub and YouTube snapshots:
+
+```bash
+python site/fetch_data.py   # rewrites data/repos.json and data/videos.json
+cd site && python build.py
+```
+
+It keeps the curated parts (featured flags, hand-written descriptions, video
+tags) and only updates what the APIs own: stars, languages, dates and titles.
+
 ## Work index
 
 The CV carries a **Work** section with five bodies of work, each one previewed
