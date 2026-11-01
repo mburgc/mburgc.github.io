@@ -54,6 +54,17 @@
       html += '<p class="margin-text">' + esc(item.text) + '</p>';
     }
 
+    if (item.items && item.items.length) {
+      html += '<ul class="margin-list margin-links">';
+      item.items.forEach(function (row) {
+        html += '<li>'
+          + (row.href ? '<a href="' + esc(row.href) + '">' + esc(row.label) + '</a>' : esc(row.label))
+          + (row.meta ? '<span class="margin-item-meta">' + esc(row.meta) + '</span>' : '')
+          + '</li>';
+      });
+      html += '</ul>';
+    }
+
     if (item.video) {
       html += '<a class="poster" href="' + esc(item.link ? item.link.href : '#') + '" data-video="' + esc(item.video) + '" target="_blank" rel="noopener">'
         + '<img src="https://i.ytimg.com/vi/' + esc(item.video) + '/hqdefault.jpg" alt="" loading="lazy" decoding="async">'

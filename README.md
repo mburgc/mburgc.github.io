@@ -11,9 +11,15 @@ bundler, no tracking.
 ```
 ├── index.html              # generated — English
 ├── es/index.html           # generated — Spanish
+├── work/index.html         # generated — index of everything published (EN)
+├── es/work/index.html      # generated — same, Spanish
 ├── site/
 │   ├── content.py          # single source of truth (ES/EN + previews)
-│   └── build.py            # renders both pages
+│   └── build.py            # renders the four pages
+├── data/
+│   ├── repos.json          # GitHub snapshot (no API calls at runtime)
+│   ├── videos.json         # YouTube snapshot
+│   └── reddit.json         # curated Reddit threads
 ├── assets/
 │   ├── css/editorial.css   # design system
 │   ├── js/preview.js       # margin panel + deferred video
@@ -28,10 +34,27 @@ bundler, no tracking.
 
 ```bash
 cd site
-python build.py     # writes ../index.html and ../es/index.html
+python build.py     # writes the four HTML pages
 ```
 
 No dependencies. The HTML is generated, so edit `content.py`, never the output.
+
+## Work index
+
+The CV carries a **Work** section with five bodies of work, each one previewed
+in the margin panel:
+
+| Group | Source | Content |
+|---|---|---|
+| Red Team LogBook | `bitacora/` | 5 chapters, ES/EN |
+| Code | `data/repos.json` | 8 public repositories |
+| JULIA | `experimentos/julia/` | 6 diary entries, ES/EN |
+| Video | `data/videos.json` | 5 YouTube pieces |
+| On Reddit | `data/reddit.json` | 7 curated threads |
+
+The full index lives at `/work/` (and `/es/work/`). Data files are committed
+snapshots: the browser never calls the GitHub, YouTube or Reddit APIs, so there
+are no CORS proxies and no third-party scripts.
 
 ## Design
 
@@ -39,6 +62,7 @@ No dependencies. The HTML is generated, so edit `content.py`, never the output.
   Raleway for headings, Source Sans 3 for body, both self-hosted.
 - The margin panel is sticky on desktop and becomes a bottom sheet on mobile
   (the `i` button on each entry).
+- The panel has a fixed height, so previews never shift the index below it.
 - Video is deferred: a poster loads first, the YouTube iframe only on click.
 - `prefers-reduced-motion` disables every transition.
 

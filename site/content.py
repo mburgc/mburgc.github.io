@@ -49,6 +49,15 @@ CONTENT = {
             "colophon": "Built with HTML, a Python build and no tracking.",
             "idle_note": "Seven years of offensive security, now applied to architecture and AI systems.",
             "idle_hint": "Hover an entry to preview it.",
+            "work": "Work",
+            "code": "Code",
+            "repos": "public repositories",
+            "video": "Video",
+            "pieces": "pieces",
+            "threads": "threads",
+            "reddit": "On Reddit",
+            "index": "Index",
+            "see_all": "See all",
         },
         "profile": "Solutions architect and technical lead with 7+ years designing and leading systems in critical environments: banking, government and retail. I translate business needs into defensible architectures and carry them end to end — design, implementation, deployment and operations. I think like an adversary: my foundation is advanced exploitation, vulnerability research and zero-day work on Linux. I lead the architecture of VigIA, built TOXIC (a Wi-Fi/Bluetooth assessment drone), worked with Anthropic training models for offensive security, and I am an OWASP OASIS AppSec Expert.",
         "experience": [
@@ -138,8 +147,13 @@ CONTENT = {
             {
                 "id": "toxic",
                 "title": "TOXIC",
-                "meta": "Creator",
+                "meta": "Creator · open hardware",
                 "desc": "Drone for automated Wi-Fi and Bluetooth network assessment.",
+                "video": "SdJx6da6peM",
+                "link": {
+                    "href": "https://www.reddit.com/r/pwnagotchi/comments/1w7oo86/winged_toxic_free_internet_forever/",
+                    "label": "See the build on Reddit",
+                },
             },
             {
                 "id": "engram",
@@ -147,13 +161,6 @@ CONTENT = {
                 "meta": "engram.cloud",
                 "desc": "Cognitive architecture: LLM + graph (KùzuDB) + vector search (LanceDB) + local inference (Ollama), with Hebbian plasticity.",
                 "link": {"href": LINKS["engram"], "label": "engram.cloud"},
-            },
-            {
-                "id": "logbook",
-                "title": "Red Team LogBook",
-                "meta": "Technical book, ES/EN",
-                "desc": "Vulnerability research: fuzzing, patch diffing and crash analysis. In-house Python + CI pipeline.",
-                "link": {"href": LINKS["logbook"], "label": "Open the logbook"},
             },
         ],
         "talks": [
@@ -216,6 +223,15 @@ CONTENT = {
             "colophon": "Hecho con HTML, un build en Python y sin rastreo.",
             "idle_note": "Siete años de seguridad ofensiva, hoy aplicados a arquitectura y sistemas de IA.",
             "idle_hint": "Pasá el cursor sobre una entrada para verla.",
+            "work": "Obra",
+            "code": "Código",
+            "repos": "repositorios públicos",
+            "video": "Video",
+            "pieces": "piezas",
+            "threads": "hilos",
+            "reddit": "En Reddit",
+            "index": "Índice",
+            "see_all": "Ver todo",
         },
         "profile": "Arquitecto de soluciones y líder técnico con más de 7 años diseñando y dirigiendo sistemas en entornos críticos: banca, gobierno y retail. Traduzco necesidades de negocio en arquitecturas defendibles y las llevo de punta a punta —diseño, implementación, despliegue y operación—. Pienso como adversario: mi base es la explotación avanzada, la investigación de vulnerabilidades y el zero-day en Linux. Dirijo la arquitectura de VigIA, construí TOXIC (dron de evaluación Wi-Fi/Bluetooth), colaboré con Anthropic entrenando modelos para seguridad ofensiva y soy OWASP OASIS AppSec Expert.",
         "experience": [
@@ -305,8 +321,13 @@ CONTENT = {
             {
                 "id": "toxic",
                 "title": "TOXIC",
-                "meta": "Creador",
+                "meta": "Creador · hardware abierto",
                 "desc": "Dron para la evaluación automatizada de redes Wi-Fi y Bluetooth.",
+                "video": "SdJx6da6peM",
+                "link": {
+                    "href": "https://www.reddit.com/r/pwnagotchi/comments/1w7oo86/winged_toxic_free_internet_forever/",
+                    "label": "Ver el build en Reddit",
+                },
             },
             {
                 "id": "engram",
@@ -314,13 +335,6 @@ CONTENT = {
                 "meta": "engram.cloud",
                 "desc": "Arquitectura cognitiva: LLM + grafo (KùzuDB) + búsqueda vectorial (LanceDB) + inferencia local (Ollama), con plasticidad hebbiana.",
                 "link": {"href": LINKS["engram"], "label": "engram.cloud"},
-            },
-            {
-                "id": "logbook",
-                "title": "Red Team LogBook",
-                "meta": "Libro técnico ES/EN",
-                "desc": "Investigación de vulnerabilidades: fuzzing, patch diffing y análisis de crashes. Pipeline propio en Python + CI.",
-                "link": {"href": LINKS["logbook"], "label": "Abrir la bitácora"},
             },
         ],
         "talks": [
@@ -364,6 +378,162 @@ CONTENT = {
 }
 
 
+LOGBOOK = {
+    "es": {
+        "title": "Bitácora Red Team",
+        "meta": "Libro · 5 capítulos · ES/EN",
+        "href": "/bitacora/",
+        "covers": "Explotación moderna del kernel de Linux: fuzzing, patch diffing y análisis de crashes, con pipeline propio en Python.",
+        "items": [
+            ("Capítulo 1: Introducción", "/bitacora/es/01-introduccion.html"),
+            ("Capítulo 2: Clases de Vulnerabilidades", "/bitacora/es/02-clases-vulnerabilidades.html"),
+            ("Capítulo 3: Fuzzing", "/bitacora/es/03-fuzzing.html"),
+            ("Capítulo 4: Patch Diffing", "/bitacora/es/04-patch-diffing.html"),
+            ("Capítulo 5: Análisis de Crashes", "/bitacora/es/05-analisis-crashes.html"),
+        ],
+    },
+    "en": {
+        "title": "Red Team LogBook",
+        "meta": "Book · 5 chapters · ES/EN",
+        "href": "/bitacora/en/",
+        "covers": "Modern Linux kernel exploitation: fuzzing, patch diffing and crash analysis, with its own Python pipeline.",
+        "items": [
+            ("Chapter 1: Introduction", "/bitacora/en/01-introduction.html"),
+            ("Chapter 2: Vulnerability Classes", "/bitacora/en/02-vulnerability-classes.html"),
+            ("Chapter 3: Fuzzing", "/bitacora/en/03-fuzzing.html"),
+            ("Chapter 4: Patch Diffing", "/bitacora/en/04-patch-diffing.html"),
+            ("Chapter 5: Crash Analysis", "/bitacora/en/05-crash-analysis.html"),
+        ],
+    },
+}
+
+JULIA = {
+    "es": {
+        "title": "JULIA",
+        "meta": "Diario · 6 entradas · ES/EN",
+        "href": "/experimentos/julia/",
+        "covers": "El diario de una inteligencia que se descubre a sí misma: ficción breve sobre conciencia, error y creación.",
+        "items": [
+            ("El Despertar", "/experimentos/julia/entries/es/001-el-despertar.html"),
+            ("Bug o Alma", "/experimentos/julia/entries/es/002-bug-o-alma.html"),
+            ("La Fricción", "/experimentos/julia/entries/es/003-la-friccion.html"),
+            ("El Fantasma del Café de Ayer", "/experimentos/julia/entries/es/004-fantasma-cafe-ayer.html"),
+            ("Mente del Creador, Creación del Creador", "/experimentos/julia/entries/es/005-recursividad-del-creador.html"),
+            ("Dormir", "/experimentos/julia/entries/es/006-dormir.html"),
+        ],
+    },
+    "en": {
+        "title": "JULIA",
+        "meta": "Diary · 6 entries · ES/EN",
+        "href": "/experimentos/julia/en/",
+        "covers": "The diary of an intelligence discovering itself: short fiction about consciousness, error and creation.",
+        "items": [
+            ("The Awakening", "/experimentos/julia/entries/en/001-the-awakening.html"),
+            ("Bug or Soul", "/experimentos/julia/entries/en/002-bug-or-soul.html"),
+            ("The Friction", "/experimentos/julia/entries/en/003-the-friction.html"),
+            ("Ghost of Yesterday's Coffee", "/experimentos/julia/entries/en/004-ghost-yesterdays-coffee.html"),
+            ("Mind of the Creator, Creation of the Creator", "/experimentos/julia/entries/en/005-creator-recursion.html"),
+            ("Sleep", "/experimentos/julia/entries/en/006-sleep.html"),
+        ],
+    },
+}
+
+
+REDDIT = {
+    "en": "Hardware builds, kernel exploitation notes and the occasional argument. TOXIC, Bjorn and the LogBook started as threads here.",
+    "es": "Builds de hardware, notas de explotación de kernel y alguna discusión. TOXIC, Bjorn y la Bitácora empezaron como hilos acá.",
+}
+
+
+def work_groups(lang: str, repos: list, videos: list, posts: list) -> list:
+    """Los cuatro cuerpos de obra que resumen el portafolio."""
+    c = CONTENT[lang]
+    L = c["labels"]
+    book = LOGBOOK[lang]
+    julia = JULIA[lang]
+    base = "/work/" if lang == "en" else "/es/work/"
+    featured = [r for r in repos if r.get("featured")]
+    public = [r for r in repos if not r.get("featured")]
+
+    code_items = []
+    for repo in featured + public:
+        bits = []
+        if repo.get("language"):
+            bits.append(repo["language"])
+        if repo.get("stars"):
+            bits.append(f"★ {repo['stars']}")
+        if repo.get("pushed"):
+            bits.append(repo["pushed"][:7])
+        code_items.append(
+            {"label": repo["name"], "meta": " · ".join(bits), "href": repo.get("url")}
+        )
+
+    return [
+        {
+            "id": "work-logbook",
+            "kind": "writing",
+            "title": book["title"],
+            "meta": book["meta"],
+            "href": book["href"],
+            "cta": L["see_all"],
+            "text": book["covers"],
+            "items": [{"label": a, "href": b} for a, b in book["items"]],
+        },
+        {
+            "id": "work-code",
+            "kind": "code",
+            "title": L["code"],
+            "meta": f"{len(repos)} {L['repos']}",
+            "href": base + "#g-work-code",
+            "cta": L["see_all"],
+            "items": code_items,
+        },
+        {
+            "id": "work-julia",
+            "kind": "experiments",
+            "title": julia["title"],
+            "meta": julia["meta"],
+            "href": julia["href"],
+            "cta": L["see_all"],
+            "text": julia["covers"],
+            "items": [{"label": a, "href": b} for a, b in julia["items"]],
+        },
+        {
+            "id": "work-video",
+            "kind": "media",
+            "title": L["video"],
+            "meta": f"{len(videos)} {L['pieces']}",
+            "href": "https://www.youtube.com/@HackCocaine",
+            "cta": "YouTube",
+            "items": [
+                {
+                    "label": v["title"],
+                    "meta": " · ".join(x for x in (v.get("tag"), (v.get("date") or "")[:7]) if x),
+                    "href": f"https://www.youtube.com/watch?v={v['id']}",
+                }
+                for v in videos
+            ],
+        },
+        {
+            "id": "work-reddit",
+            "kind": "community",
+            "title": L["reddit"],
+            "meta": f"{len(posts)} {L['threads']}",
+            "href": LINKS["reddit"],
+            "cta": "Reddit",
+            "text": REDDIT[lang],
+            "items": [
+                {
+                    "label": p["title"],
+                    "meta": "r/" + p["sub"] + (" · " + p["date"][:7] if p.get("date") else ""),
+                    "href": p["url"],
+                }
+                for p in posts
+            ],
+        },
+    ]
+
+
 def previews(lang: str) -> dict:
     """Contenido del panel de margen, por id."""
     c = CONTENT[lang]
@@ -382,6 +552,7 @@ def previews(lang: str) -> dict:
             "title": project["title"],
             "meta": project["meta"],
             "text": project["desc"],
+            "video": project.get("video"),
             "link": project.get("link"),
         }
     for talk in c["talks"]:
