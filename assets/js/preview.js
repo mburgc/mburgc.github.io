@@ -124,13 +124,18 @@
       el.addEventListener('focusin', function () { show(id); });
       el.addEventListener('focusout', function () {
         window.setTimeout(function () {
-          if (!el.contains(document.activeElement)) scheduleIdle();
+          var active = document.activeElement;
+          if (!active || el.contains(active)) return;
+          if (active.closest && active.closest('[data-preview]')) return;
+          if (panel.contains(active)) return;
+          scheduleIdle();
         }, 0);
       });
     });
 
     panel.addEventListener('mouseenter', function () { window.clearTimeout(hideTimer); });
     panel.addEventListener('mouseleave', scheduleIdle);
+    panel.addEventListener('focusin', function () { window.clearTimeout(hideTimer); });
     panel.addEventListener('focusout', scheduleIdle);
   }
 
