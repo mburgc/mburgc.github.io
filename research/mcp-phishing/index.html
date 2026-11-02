@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP OAuth en VS Code: análisis técnico — Marcelo Burgos</title>
+<meta name="description" content="El flujo de autenticación automática de VS Code y el abuso de OAuth en servidores MCP. Análisis completo para suscriptores Research.">
+<link rel="canonical" href="https://mburgc.github.io/research/mcp-phishing/">
+<style>
+:root{--ink:#101418;--soft:#5b6470;--line:#e5e1d8;--paper:#faf8f3;--accent:#c2410c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.7}
+header{max-width:860px;margin:0 auto;padding:28px 24px;border-bottom:1px solid var(--line);font-family:ui-sans-serif,system-ui,sans-serif}
+header a{color:var(--ink);text-decoration:none;font-weight:600;letter-spacing:.02em}
+main{max-width:760px;margin:0 auto;padding:48px 24px 80px}
+.kicker{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font-size:2.3rem;line-height:1.15;margin:0 0 14px;letter-spacing:-.02em}
+.sub{font-size:1.08rem;color:var(--soft);margin:0 0 26px}
+.byline{font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;color:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0;margin:0 0 30px}
+h2{font-size:1.35rem;margin:34px 0 12px}
+ul{padding-left:24px}
+li{margin:8px 0}
+.cta{margin:36px 0 0;padding:26px 24px;border:1px solid var(--line);border-left:4px solid var(--accent);background:#fff;border-radius:6px}
+.cta p{margin:0 0 14px}
+.cta a{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:11px 18px;border-radius:6px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:15px;font-weight:600}
+.note{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px;color:var(--soft);margin:14px 0 0}
+footer{max-width:760px;margin:0 auto;padding:0 24px 50px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;color:var(--soft)}
+</style>
+</head>
+<body>
+<header><a href="/">Marcelo Burgos</a></header>
+<main>
+<p class="kicker">Hackfluency Research · 2026</p>
+<h1>MCP OAuth en VS Code: análisis técnico</h1>
+<p class="sub">El flujo de autenticación automática de VS Code y el abuso de OAuth en servidores MCP.</p>
+<p class="byline">Por Marcelo Burgos · Investigación de Hackfluency Research</p>
+
+<p>VS Code implementa la especificación completa de MCP: tools, prompts, resources y autenticación OAuth 2.1. Cuando un servidor MCP requiere autorización, el cliente ejecuta automáticamente el descubrimiento OAuth, se registra dinámicamente y abre el navegador. El usuario solo ve un clic en <em>Allow</em>.</p>
+<p>Ese comportamiento no es un bug: es la especificación funcionando como fue diseñada. Y por eso es explotable.</p>
+
+<h2>Qué cubre el informe completo</h2>
+<ul>
+<li>El flujo del ataque paso a paso: descubrimiento, registro dinámico y página de consentimiento.</li>
+<li>Por qué el usuario no puede distinguir el servidor legítimo del controlado por el atacante.</li>
+<li>Qué datos quedan expuestos y cuáles no, con evidencia del PoC.</li>
+<li>Mitigaciones para equipos: allowlists, revisión de metadata, scopes mínimos y logging.</li>
+<li>Contexto de junio de 2026 y comparación con casos similares.</li>
+</ul>
+
+<div class="cta">
+<p><strong>Este análisis completo está disponible para suscriptores Research.</strong></p>
+<p>Acceso con el mismo email con el que te suscribiste en Ko-fi. Sin contraseñas: recibís un código por correo.</p>
+<a href="https://research.hackfluency.com/premium/mcp-phishing">Leer el informe completo</a>
+<p class="note">¿Todavía no sos suscriptor? <a href="https://ko-fi.com/mburgos/tiers">Ver membresías</a> · Research USD 12/mes.</p>
+</div>
+</main>
+<footer>© 2026 Marcelo Burgos · Hackfluency Research</footer>
+</body>
+</html>
